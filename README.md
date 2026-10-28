@@ -1,3 +1,5 @@
+<img width="843" height="363" alt="frag" src="https://github.com/user-attachments/assets/b4a9a1a2-79e6-40b4-9dd7-57e77df4ad23" />
+
 # Fragment
 
 Exemples interactifs (HTML / CSS / JS) à intégrer dans les notes de cours par une simple `<iframe>`.
