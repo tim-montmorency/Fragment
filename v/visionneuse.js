@@ -223,14 +223,14 @@
   }
 
   function panneauResultat() {
-    const iframe = document.createElement("iframe");
-    iframe.title = "Résultat de l'exemple";
-    iframe.setAttribute("allow", "fullscreen; autoplay; clipboard-write");
+    const zone = document.createElement("div");
+    const cadre = CadreDouble.creer(zone, { titre: "Résultat de l'exemple" });
     let demarre = false;
 
+    // Nouvelle version chargée en arrière-plan, puis échangée : aucun flash blanc
     const charger = () => {
-      if (modifiable) iframe.srcdoc = assembler();
-      else iframe.src = etat.url;
+      if (modifiable) cadre.charger({ srcdoc: assembler() });
+      else cadre.charger({ src: etat.url });
     };
 
     // Le résultat démarre seulement lorsqu'il est visible à l'écran,
@@ -242,7 +242,7 @@
     };
 
     return {
-      element: iframe,
+      element: zone,
       afficher(conteneur) {
         if (demarre) return;
         const obs = new IntersectionObserver((entrees) => {

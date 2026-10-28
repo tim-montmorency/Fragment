@@ -119,7 +119,18 @@
   const attributsSimples = (el, permis) => [...el.attributes].every((a) => permis.includes(a.name));
 
   function analyserIndex(html) {
-    const resultat = { titre: "", corps: "", ressources: [], module: false, extraTete: [], extraCorps: [] };
+    const resultat = {
+      titre: "", corps: "", ressources: [], module: false, extraTete: [], extraCorps: [],
+      attrsHtml: "", attrsBody: "",
+    };
+
+    // Attributs des balises <html> et <body> (lang="fr" est ajouté automatiquement)
+    const ouvertureHtml = html.match(/<html\b([^>]*)>/i);
+    if (ouvertureHtml) {
+      resultat.attrsHtml = ouvertureHtml[1].replace(/\s*\blang=(["'])fr\1/i, "").trim();
+    }
+    const ouvertureBody = trouverCorps(html)?.ouverture.match(/<body\b([^>]*)>/i);
+    if (ouvertureBody) resultat.attrsBody = ouvertureBody[1].trim();
 
     const titre = html.match(/<title[^>]*>([\s\S]*?)<\/title>/i);
     resultat.titre = titre ? titre[1].trim() : "";
@@ -171,6 +182,20 @@
 
   // ---------- Génération des fichiers ----------
 
+  /** Signale sur le bouton « ⚙ Exemple » que des attributs sont définis. */
+  function indiquerAttributs() {
+    const html = nettoyerAttributs($("attrs-html").value);
+    const body = nettoyerAttributs($("attrs-body").value);
+    const b = $("btn-exemple");
+    b.classList.toggle("defini", Boolean(html || body));
+    b.title = html || body
+      ? `Réglages de l'exemple\n<html ${html}>\n<body ${body}>`
+      : "Réglages de l'exemple";
+  }
+
+  /** Attributs saisis à la main : sans « < » ni « > », espaces superflus retirés. */
+  const nettoyerAttributs = (texte) => texte.replace(/[<>]/g, "").replace(/\s+/g, " ").trim();
+
   function importmap(modules) {
     const imports = Object.fromEntries(modules.map((r) => [r.cle, r.url]));
     const json = JSON.stringify({ imports }, null, 2).split("\n").map((l) => "    " + l).join("\n");
@@ -204,12 +229,16 @@
       '<link rel="stylesheet" href="style.css">',
     ];
 
+    const attrsHtml = nettoyerAttributs($("attrs-html").value);
+    const attrsBody = nettoyerAttributs($("attrs-body").value);
+    const lang = /(^|\s)lang=/i.test(attrsHtml) ? "" : ' lang="fr"';
+
     return `<!doctype html>
-<html lang="fr">
+<html${lang}${attrsHtml ? " " + attrsHtml : ""}>
 <head>
 ${lignesTete.map((l) => "  " + l).join("\n")}
 </head>
-<body>
+<body${attrsBody ? " " + attrsBody : ""}>
 ${indenter(lireEditeur("html"))}
 
 ${corps.map((l) => "  " + l).join("\n")}
@@ -242,10 +271,11 @@ ${corps.map((l) => "  " + l).join("\n")}
 
   // ---------- Aperçu en direct ----------
 
+  let apercu;   // CadreDouble : nouvelle version chargée en arrière-plan, sans flash blanc
   let minuterie;
   function planifierApercu() {
     clearTimeout(minuterie);
-    minuterie = setTimeout(() => { $("resultat").srcdoc = genererApercu(); }, DELAI_APERCU);
+    minuterie = setTimeout(() => apercu.charger({ srcdoc: genererApercu() }), DELAI_APERCU);
   }
 
   function marquerModifie() {
@@ -299,8 +329,10 @@ ${corps.map((l) => "  " + l).join("\n")}
     activer("html");
   }
 
+  let rechercheCdn;
+
   function creerBibliotheques() {
-    CDN.monter($("recherche-cdn"), {
+    rechercheCdn = CDN.monter($("recherche-cdn"), {
       statut,
       ajouter(liste) {
         liste.forEach((nouvelle) => {
@@ -329,6 +361,18 @@ ${corps.map((l) => "  " + l).join("\n")}
       puce.innerHTML = `<span class="type"></span><span class="nom"></span><button type="button" class="retirer" title="Retirer">×</button>`;
       puce.querySelector(".type").textContent = TYPES[r.type] + (r.tete ? " · head" : "");
       puce.querySelector(".nom").textContent = r.type === "module" ? r.cle : CDN.libelle(r);
+      // « + » : autre fichier du même paquet (ex. themes.css de daisyui)
+      const paquet = CDN.paquetDepuisUrl(r.url);
+      if (paquet && !r.url.endsWith("/")) {
+        const plus = document.createElement("button");
+        plus.type = "button";
+        plus.className = "ajouter";
+        plus.textContent = "+";
+        plus.title = `Ajouter un autre fichier de ${paquet.nom}@${paquet.version}`;
+        plus.addEventListener("click", () => rechercheCdn.fichiers(paquet.nom, paquet.version));
+        puce.querySelector(".retirer").before(plus);
+      }
+
       puce.querySelector(".retirer").addEventListener("click", () => {
         etat.ressources.splice(i, 1);
         afficherBibliotheques();
@@ -409,6 +453,9 @@ ${corps.map((l) => "  " + l).join("\n")}
     $("cours").value = cours;
     $("nom").value = nom;
     $("titre").value = titre;
+    $("attrs-html").value = analyse?.attrsHtml || "";
+    $("attrs-body").value = analyse?.attrsBody || "";
+    indiquerAttributs();
     remplacerEditeur("html", html);
     remplacerEditeur("css", css);
     remplacerEditeur("js", js);
@@ -416,7 +463,7 @@ ${corps.map((l) => "  " + l).join("\n")}
     $("ouvrir").value = ex || "";
     etat.modifie = false;
     clearTimeout(minuterie);
-    $("resultat").srcdoc = genererApercu();
+    apercu.charger({ srcdoc: genererApercu() });
   }
 
   async function nouvelExemple() {
@@ -557,7 +604,9 @@ ${corps.map((l) => "  " + l).join("\n")}
   // ---------- Démarrage ----------
 
   function brancherEvenements() {
-    ["cours", "nom", "titre"].forEach((id) => $(id).addEventListener("input", marquerModifie));
+    ["cours", "nom", "titre", "attrs-html", "attrs-body"].forEach((id) => $(id).addEventListener("input", marquerModifie));
+    ["attrs-html", "attrs-body"].forEach((id) => $(id).addEventListener("input", indiquerAttributs));
+    $("btn-exemple").addEventListener("click", () => $("config-exemple").showModal());
 
     $("ouvrir").addEventListener("change", async (e) => {
       const choix = e.target.value;
@@ -601,10 +650,11 @@ ${corps.map((l) => "  " + l).join("\n")}
   }
 
   async function demarrer() {
-    if (!window.CM || typeof GitHub === "undefined") {
+    if (!window.CM || typeof GitHub === "undefined" || typeof CadreDouble === "undefined") {
       document.body.innerHTML = '<p class="message">Le studio n\'a pas pu se charger.</p>';
       return;
     }
+    apercu = CadreDouble.creer($("resultat"), { titre: "Aperçu de l'exemple" });
     creerEditeurs();
     creerBibliotheques();
     brancherEvenements();
@@ -613,7 +663,7 @@ ${corps.map((l) => "  " + l).join("\n")}
     await chargerListe();
     if (demande && /^[a-z0-9_-]+(\/[a-z0-9_-]+)+$/i.test(demande)) await ouvrirExemple(demande);
     else await nouvelExemple();
-    if (!reglages.jeton) statut("Aucun jeton GitHub : l'aperçu fonctionne, mais l'enregistrement demandera un jeton (⚙).");
+    if (!reglages.jeton) statut("Aucun jeton GitHub : l'aperçu fonctionne, mais l'enregistrement demandera un jeton (bouton GitHub).");
   }
 
   demarrer();

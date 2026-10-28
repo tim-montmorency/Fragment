@@ -115,10 +115,12 @@ Interface pour créer ou modifier un exemple avec aperçu en direct, puis l'enre
 - **Bibliothèques** : recherche dans npm, servie par jsDelivr (version exacte, fichier principal choisi automatiquement).
   - **Entrée** ou clic : ajoute le fichier principal du paquet (et sa feuille de style s'il en a une).
   - **Fichiers ▸** (ou flèche droite) : choisir un autre fichier du paquet, par exemple `ScrollTrigger.min.js` dans `gsap`.
+  - **+** sur une pastille : ajouter un autre fichier du même paquet, par exemple `themes.css` dans `daisyui`.
   - Une adresse collée (`https://…`) s'ajoute telle quelle.
   - Les fichiers `.css` vont dans `<head>`, les `.js` à la fin du body, les modules ES (`three`, etc.) dans une importmap ; `script.js` passe alors en `type="module"`.
   - Glisser les pastilles pour changer l'ordre de chargement ; × pour retirer.
   - Les autres balises déjà présentes dans un exemple sont conservées.
+- **⚙ Exemple** — attributs de `<html>` et `<body>` : par exemple `data-theme="dark"` pour daisyUI, ou `class="…"` sur le body. `lang="fr"` est ajouté automatiquement, sauf si un autre `lang` est indiqué.
 - **Onglet HTML** : seulement le contenu de `<body>`. Le reste de `index.html` est généré.
 - **Enregistrer** (ou Cmd/Ctrl + S) : un seul commit avec `index.html`, `style.css` et `script.js`. GitHub Pages republie le site en moins d'une minute environ.
 
@@ -127,7 +129,7 @@ Interface pour créer ou modifier un exemple avec aperçu en direct, puis l'enre
 1. GitHub → *Settings → Developer settings → Personal access tokens → Fine-grained tokens → Generate new token*.
 2. *Resource owner* : `tim-montmorency`. *Repository access* : **Only select repositories** → `Fragment`.
 3. *Permissions → Repository permissions → Contents* : **Read and write**.
-4. Copier le jeton dans les réglages du studio (⚙), puis **Tester**.
+4. Copier le jeton dans le studio (bouton **GitHub**), puis **Tester**.
 
 Le jeton reste dans le navigateur seulement (localStorage). Sur un ordinateur partagé, utiliser **Oublier le jeton** à la fin.
 Après un enregistrement par le studio, faire un `git pull` dans la copie locale.

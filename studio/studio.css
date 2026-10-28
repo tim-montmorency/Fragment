@@ -69,12 +69,18 @@ a {
   display: flex;
   flex-direction: column;
   gap: 2px;
-  min-width: 120px;
+  min-width: 0;
 }
 
+.champ input {
+  width: 100%;
+}
+
+.champ:has(#cours) { flex: 0 1 110px; }
+.champ:has(#nom) { flex: 0 1 170px; }
+
 .champ-large {
-  flex: 1;
-  min-width: 160px;
+  flex: 1 1 160px;
 }
 
 .champ label {
@@ -211,6 +217,19 @@ button,
   color: var(--accent);
 }
 
+.puce .ajouter {
+  border: 0;
+  background: none;
+  color: var(--texte-attenue);
+  padding: 0 2px 0 4px;
+  font-size: 14px;
+  line-height: 1;
+}
+
+.puce .ajouter:hover {
+  color: var(--texte);
+}
+
 .puce.glisse {
   opacity: 0.4;
 }
@@ -328,6 +347,20 @@ button,
   font-size: 12px;
 }
 
+/* Bouton « ⚙ Exemple » : pastille quand des attributs sont définis */
+#btn-exemple.defini {
+  border-color: var(--accent);
+}
+
+dialog input.mono {
+  font: 13px var(--mono);
+}
+
+dialog code {
+  font: 12px var(--mono);
+  color: var(--texte);
+}
+
 /* ---------- Espace de travail ---------- */
 
 .espace {
@@ -423,11 +456,29 @@ button.onglet:hover {
 #resultat {
   position: absolute;
   inset: 0;
+  background: #fff;
+}
+
+/* Aperçu sans flash (voir cadre-double.js) */
+.cadre-double {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.cadre-double .cadre {
+  position: absolute;
+  inset: 0;
+  display: block;
   width: 100%;
   height: 100%;
   border: 0;
-  background: #fff;
 }
+
+.cadre-double .cadre-cache {
+  visibility: hidden;
+}
+
 
 /* Pastille « en direct » */
 .direct {

@@ -42,11 +42,14 @@ const CDN = (() => {
 
   async function chercher(texte, nombre = 8) {
     const d = await json(`${RECHERCHE}?text=${encodeURIComponent(texte)}&size=${nombre}`);
-    return d.objects.map((o) => ({
+    const resultats = d.objects.map((o) => ({
       nom: o.package.name,
       version: o.package.version,
       description: o.package.description || "",
     }));
+    // Le paquet dont le nom correspond exactement passe en premier
+    const exact = texte.trim().toLowerCase();
+    return resultats.sort((a, b) => (b.nom.toLowerCase() === exact) - (a.nom.toLowerCase() === exact));
   }
 
   /** Paquet exact (nom + version la plus récente), ou null. */
@@ -104,6 +107,12 @@ const CDN = (() => {
       return { type: "module", cle: m ? m[1] : url.split("/").pop().replace(/(\.module)?(\.min)?\.m?js$/i, ""), url };
     }
     return { type: "js", url };
+  }
+
+  /** Paquet npm et version d'une adresse jsDelivr, ou null. */
+  function paquetDepuisUrl(url) {
+    const m = url.match(/cdn\.jsdelivr\.net\/npm\/((?:@[^/@]+\/)?[^/@]+)@([^/]+)/);
+    return m ? { nom: m[1], version: m[2] } : null;
   }
 
   /** Libellé court : « gsap@3.13.0 · ScrollTrigger.min.js ». */
@@ -222,10 +231,12 @@ const CDN = (() => {
         return afficher(null, [message("Liste des fichiers indisponible.")]);
       }
 
-      // Fichier par défaut en premier, puis versions minifiées
+      // Fichier par défaut en premier, puis versions minifiées, puis les moins profonds
+      const profondeur = (c) => c.split("/").length;
       const tri = (a, b) =>
         (b === f.defaut) - (a === f.defaut) ||
         /\.min\./.test(b) - /\.min\./.test(a) ||
+        profondeur(a) - profondeur(b) ||
         a.localeCompare(b);
       const tous = [...f.liste].sort(tri);
 
@@ -339,7 +350,12 @@ const CDN = (() => {
     document.addEventListener("mousedown", (e) => {
       if (!conteneur.contains(e.target)) fermer();
     });
+
+    return {
+      /** Ouvre directement la liste des fichiers d'un paquet. */
+      fichiers: (nom, version) => afficherFichiers({ nom, version }),
+    };
   }
 
-  return { monter, libelle, ressourceDepuisUrl };
+  return { monter, libelle, ressourceDepuisUrl, paquetDepuisUrl };
 })();

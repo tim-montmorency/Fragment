@@ -37,7 +37,8 @@
     </div>
 
     <div class="actions">
-      <button type="button" id="btn-reglages" class="secondaire" title="Réglages GitHub">⚙</button>
+      <button type="button" id="btn-exemple" class="secondaire" title="Réglages de l'exemple">⚙ Exemple</button>
+      <button type="button" id="btn-reglages" class="secondaire" title="Connexion GitHub (jeton)">GitHub</button>
       <button type="button" id="btn-enregistrer" class="principal">Enregistrer</button>
     </div>
   </header>
@@ -60,14 +61,35 @@
         <span class="onglet actif">Résultat <span class="direct" title="Aperçu en direct"></span></span>
       </div>
       <div class="panneaux">
-        <iframe id="resultat" title="Aperçu de l'exemple"></iframe>
+        <div id="resultat"></div>
       </div>
     </section>
   </main>
 
   <footer class="statut" id="statut" aria-live="polite"></footer>
 
-  <!-- Réglages -->
+  <!-- Réglages de l'exemple -->
+  <dialog id="config-exemple">
+    <form method="dialog">
+      <h2>Réglages de l'exemple</h2>
+      <p class="aide">
+        Attributs ajoutés aux balises de la page, par exemple <code>data-theme="dark"</code> pour daisyUI.
+        <code>lang="fr"</code> est ajouté automatiquement, sauf si un autre <code>lang</code> est indiqué.
+      </p>
+      <label>Attributs de &lt;html&gt;
+        <input id="attrs-html" class="mono" placeholder='data-theme="dark"' spellcheck="false" autocomplete="off">
+      </label>
+      <label>Attributs de &lt;body&gt;
+        <input id="attrs-body" class="mono" placeholder='class="bg-base-200"' spellcheck="false" autocomplete="off">
+      </label>
+      <div class="pied-dialogue">
+        <span class="espaceur"></span>
+        <button value="ok" class="principal">Fermer</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- Réglages GitHub -->
   <dialog id="reglages">
     <form method="dialog" id="form-reglages">
       <h2>Réglages GitHub</h2>
@@ -110,6 +132,7 @@
   </dialog>
 
   <script src="../v/vendor/codemirror.js"></script>
+  <script src="../v/cadre-double.js"></script>
   <script src="github.js"></script>
   <script src="cdn.js"></script>
   <script src="studio.js"></script>
