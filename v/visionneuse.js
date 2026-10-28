@@ -76,7 +76,19 @@
     return lignes.map((l) => l.slice(retrait)).join("\n");
   }
 
-  const RE_BODY = /(<body[^>]*>)([\s\S]*?)(<\/body>)/i;
+  /**
+   * Repère la vraie balise <body> : la recherche commence après </head>, pour ignorer
+   * un « <body> » écrit dans un commentaire ou un texte de l'en-tête.
+   * Retourne { debut, fin, ouverture, contenu, fermeture } ou null.
+   */
+  function trouverCorps(html) {
+    const finTete = html.search(/<\/head\s*>/i);
+    const depart = finTete >= 0 ? finTete : 0;
+    const m = html.slice(depart).match(/(<body\b[^>]*>)([\s\S]*)(<\/body\s*>)/i);
+    if (!m) return null;
+    const debut = depart + m.index;
+    return { debut, fin: debut + m[0].length, ouverture: m[1], contenu: m[2], fermeture: m[3] };
+  }
   const RE_SCRIPT_SRC = /^[ \t]*<script\b[^>]*\bsrc=[^>]*>\s*<\/script>[ \t]*\r?\n?/gim;
 
   /**
@@ -84,10 +96,10 @@
    * Retourne aussi les balises retirées, pour pouvoir reconstruire la page.
    */
   function corpsHtml(html) {
-    const m = html.match(RE_BODY);
-    if (!m) return { texte: html, scripts: [] };
-    const scripts = (m[2].match(RE_SCRIPT_SRC) || []).map((s) => s.trim());
-    return { texte: desindenter(m[2].replace(RE_SCRIPT_SRC, "")), scripts };
+    const c = trouverCorps(html);
+    if (!c) return { texte: html, scripts: [] };
+    const scripts = (c.contenu.match(RE_SCRIPT_SRC) || []).map((s) => s.trim());
+    return { texte: desindenter(c.contenu.replace(RE_SCRIPT_SRC, "")), scripts };
   }
 
   /** Découpe le HTML coloré en lignes en refermant/rouvrant les <span> ouverts. */
@@ -146,8 +158,9 @@
       doc = courant.html;
     } else {
       const contenu = `\n${courant.html}\n${etat.scriptsCorps.join("\n")}\n`;
-      doc = RE_BODY.test(brut.html)
-        ? brut.html.replace(RE_BODY, (m, ouverture, ancien, fermeture) => ouverture + contenu + fermeture)
+      const c = trouverCorps(brut.html);
+      doc = c
+        ? brut.html.slice(0, c.debut) + c.ouverture + contenu + c.fermeture + brut.html.slice(c.fin)
         : courant.html;
     }
 

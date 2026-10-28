@@ -42,8 +42,12 @@
     </div>
   </header>
 
-  <div class="bibliotheques" id="bibliotheques">
+  <div class="bibliotheques">
     <span class="etiquette">Bibliothèques</span>
+    <div id="recherche-cdn"></div>
+    <ul class="ressources" id="ressources" aria-label="Bibliothèques ajoutées (glisser pour changer l'ordre)"></ul>
+    <span class="aucune" id="aucune">Aucune</span>
+    <span class="extra" id="extra"></span>
   </div>
 
   <main class="espace">
@@ -107,6 +111,7 @@
 
   <script src="../v/vendor/codemirror.js"></script>
   <script src="github.js"></script>
+  <script src="cdn.js"></script>
   <script src="studio.js"></script>
 </body>
 </html>

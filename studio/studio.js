@@ -18,41 +18,6 @@
   const DELAI_APERCU = 400;
   const CLE_REGLAGES = "fragment.studio.reglages";
 
-  const IMPORTMAP_THREE = `<script type="importmap">
-    {
-      "imports": {
-        "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js",
-        "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"
-      }
-    }
-  </script>`;
-
-  /** Bibliothèques proposées. « detecter » sert à les reconnaître dans un exemple existant. */
-  const LIBS = {
-    gsap: {
-      nom: "GSAP",
-      corps: ['<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>'],
-      detecter: /gsap(@[^/"']*)?\/dist\/gsap(\.min)?\.js/i,
-    },
-    scrolltrigger: {
-      nom: "ScrollTrigger",
-      requiert: "gsap",
-      corps: ['<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js"></script>'],
-      detecter: /ScrollTrigger(\.min)?\.js/i,
-    },
-    tailwind: {
-      nom: "Tailwind",
-      tete: ['<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>'],
-      detecter: /tailwindcss/i,
-    },
-    three: {
-      nom: "Three.js",
-      module: true,
-      tete: [IMPORTMAP_THREE],
-      detecter: /three(@[^/"']*)?\/build\/three(\.module)?(\.min)?\.js/i,
-    },
-  };
-
   const DEFAUTS = {
     html: "<h1>Bonjour</h1>",
     css: "body {\n  margin: 0;\n  font-family: system-ui, sans-serif;\n}",
@@ -65,10 +30,10 @@
 
   const etat = {
     ex: null,               // chemin de l'exemple ouvert (null = nouveau)
-    libs: new Set(),
+    ressources: [],         // bibliothèques : { type: "css" | "js" | "module", url, cle?, tete? } (voir cdn.js)
     module: false,          // script.js chargé en type="module"
     extraTete: [],          // balises de <head> non reconnues, conservées telles quelles
-    extraCorps: [],         // <script src> non reconnus, conservés tels quels
+    extraCorps: [],         // <script> non reconnus, conservés tels quels
     modifie: false,
     exemples: [],           // chemins des exemples existants
   };
@@ -136,58 +101,99 @@
 
   // ---------- Lecture d'un index.html existant ----------
 
+  /**
+   * Repère la vraie balise <body> : la recherche commence après </head>, pour ignorer
+   * un « <body> » écrit dans un commentaire ou un texte de l'en-tête.
+   * Retourne { debut, fin, ouverture, contenu, fermeture } ou null.
+   */
+  function trouverCorps(html) {
+    const finTete = html.search(/<\/head\s*>/i);
+    const depart = finTete >= 0 ? finTete : 0;
+    const m = html.slice(depart).match(/(<body\b[^>]*>)([\s\S]*)(<\/body\s*>)/i);
+    if (!m) return null;
+    const debut = depart + m.index;
+    return { debut, fin: debut + m[0].length, ouverture: m[1], contenu: m[2], fermeture: m[3] };
+  }
+
+  /** Vrai si l'élément n'a que des attributs de la liste (sinon il est conservé tel quel). */
+  const attributsSimples = (el, permis) => [...el.attributes].every((a) => permis.includes(a.name));
+
   function analyserIndex(html) {
-    const resultat = { titre: "", corps: "", libs: new Set(), module: false, extraTete: [], extraCorps: [] };
-    const reconnaitre = (balise) =>
-      Object.entries(LIBS).find(([, lib]) => lib.detecter.test(balise))?.[0];
+    const resultat = { titre: "", corps: "", ressources: [], module: false, extraTete: [], extraCorps: [] };
 
     const titre = html.match(/<title[^>]*>([\s\S]*?)<\/title>/i);
     resultat.titre = titre ? titre[1].trim() : "";
 
-    // <head> : on conserve ce qui n'est ni généré par le studio, ni une bibliothèque connue
+    // <head> : feuilles de style, scripts et importmap deviennent des ressources ;
+    // le reste (hors éléments générés par le studio) est conservé tel quel.
     const doc = new DOMParser().parseFromString(html, "text/html");
+    const tete = [];
+    const modules = [];
     [...doc.head.children].forEach((el) => {
-      const balise = el.outerHTML;
       if (el.matches('meta[charset], meta[name="viewport"], title, link[href$="style.css"]')) return;
-      if (el.matches('script[type="importmap"]') && /three/.test(el.textContent)) { resultat.libs.add("three"); return; }
-      const lib = reconnaitre(balise);
-      if (lib) resultat.libs.add(lib);
-      else resultat.extraTete.push(balise);
+      if (el.matches('link[rel="stylesheet"][href]') && attributsSimples(el, ["rel", "href"])) {
+        tete.push({ type: "css", url: el.getAttribute("href") });
+      } else if (el.matches("script[src]") && attributsSimples(el, ["src"])) {
+        tete.push({ type: "js", url: el.getAttribute("src"), tete: true });
+      } else if (el.matches('script[type="importmap"]')) {
+        try {
+          Object.entries(JSON.parse(el.textContent).imports || {}).forEach(([cle, url]) =>
+            modules.push({ type: "module", cle, url }));
+        } catch (e) {
+          resultat.extraTete.push(el.outerHTML);
+        }
+      } else {
+        resultat.extraTete.push(el.outerHTML);
+      }
     });
 
     // <body> : contenu tel quel (formatage conservé), sans les <script src>
-    const corps = html.match(/<body[^>]*>([\s\S]*?)<\/body>/i);
-    let contenu = corps ? corps[1] : "";
+    const corps = trouverCorps(html);
+    let contenu = corps ? corps.contenu : "";
     contenu = contenu.replace(/^[ \t]*<!--\s*Code injected by live-server\s*-->[\s\S]*?<\/script>[ \t]*\r?\n?/im, "");
+    const scriptsCorps = [];
     contenu = contenu.replace(/^[ \t]*(<script\b[^>]*\bsrc=[^>]*>\s*<\/script>)[ \t]*\r?\n?/gim, (m, balise) => {
-      if (/src=["']?(\.\/)?script\.js/i.test(balise)) {
-        if (/type=["']?module/i.test(balise)) resultat.module = true;
+      const el = new DOMParser().parseFromString(balise, "text/html").querySelector("script");
+      const src = el?.getAttribute("src") || "";
+      if (/^(\.\/)?script\.js$/i.test(src)) {
+        if (el.getAttribute("type") === "module") resultat.module = true;
+      } else if (el && attributsSimples(el, ["src"])) {
+        scriptsCorps.push({ type: "js", url: src });
       } else {
-        const lib = reconnaitre(balise);
-        if (lib) resultat.libs.add(lib);
-        else resultat.extraCorps.push(balise);
+        resultat.extraCorps.push(balise.trim());
       }
       return "";
     });
     resultat.corps = desindenter(contenu);
+    resultat.ressources = [...tete, ...modules, ...scriptsCorps];
     return resultat;
   }
 
   // ---------- Génération des fichiers ----------
 
+  function importmap(modules) {
+    const imports = Object.fromEntries(modules.map((r) => [r.cle, r.url]));
+    const json = JSON.stringify({ imports }, null, 2).split("\n").map((l) => "    " + l).join("\n");
+    return `<script type="importmap">\n${json}\n  </script>`;
+  }
+
   function genererIndex() {
     const titre = $("titre").value.trim() || $("nom").value.trim() || "Exemple";
-    const tete = [];
-    const corps = [];
-    Object.entries(LIBS).forEach(([cle, lib]) => {
-      if (!etat.libs.has(cle)) return;
-      tete.push(...(lib.tete || []));
-      corps.push(...(lib.corps || []));
-    });
-    tete.push(...etat.extraTete);
-    corps.push(...etat.extraCorps);
+    const r = etat.ressources;
+    const modules = r.filter((x) => x.type === "module");
 
-    const module = etat.module || [...etat.libs].some((c) => LIBS[c].module);
+    const tete = [
+      ...r.filter((x) => x.type === "css").map((x) => `<link rel="stylesheet" href="${x.url}">`),
+      ...r.filter((x) => x.type === "js" && x.tete).map((x) => `<script src="${x.url}"></script>`),
+      ...(modules.length ? [importmap(modules)] : []),
+      ...etat.extraTete,
+    ];
+    const corps = [
+      ...r.filter((x) => x.type === "js" && !x.tete).map((x) => `<script src="${x.url}"></script>`),
+      ...etat.extraCorps,
+    ];
+
+    const module = etat.module || modules.length > 0;
     corps.push(`<script${module ? ' type="module"' : ""} src="script.js"></script>`);
 
     const lignesTete = [
@@ -294,38 +300,65 @@ ${corps.map((l) => "  " + l).join("\n")}
   }
 
   function creerBibliotheques() {
-    const zone = $("bibliotheques");
-    Object.entries(LIBS).forEach(([cle, lib]) => {
-      const label = document.createElement("label");
-      label.className = "puce";
-      label.innerHTML = `<input type="checkbox" value="${cle}"> ${lib.nom}`;
-      zone.append(label);
-    });
-    const extra = document.createElement("span");
-    extra.className = "extra";
-    extra.id = "extra";
-    zone.append(extra);
-
-    zone.addEventListener("change", (e) => {
-      const cle = e.target.value;
-      if (e.target.checked) {
-        etat.libs.add(cle);
-        if (LIBS[cle].requiert) etat.libs.add(LIBS[cle].requiert);
-      } else {
-        etat.libs.delete(cle);
-        // Retirer une bibliothèque retire aussi celles qui en dépendent
-        Object.entries(LIBS).forEach(([c, l]) => { if (l.requiert === cle) etat.libs.delete(c); });
-      }
-      afficherBibliotheques();
-      marquerModifie();
+    CDN.monter($("recherche-cdn"), {
+      statut,
+      ajouter(liste) {
+        liste.forEach((nouvelle) => {
+          // Pas de doublon : même adresse, ou même clé d'importmap
+          const doublon = etat.ressources.some((x) =>
+            x.url === nouvelle.url || (nouvelle.type === "module" && x.type === "module" && x.cle === nouvelle.cle));
+          if (!doublon) etat.ressources.push(nouvelle);
+        });
+        afficherBibliotheques();
+        marquerModifie();
+      },
     });
   }
 
+  const TYPES = { css: "CSS", js: "JS", module: "ES" };
+
   function afficherBibliotheques() {
-    $("bibliotheques").querySelectorAll("input").forEach((i) => { i.checked = etat.libs.has(i.value); });
+    const liste = $("ressources");
+    liste.innerHTML = "";
+
+    etat.ressources.forEach((r, i) => {
+      const puce = document.createElement("li");
+      puce.className = `puce puce-${r.type}`;
+      puce.draggable = true;
+      puce.title = r.type === "module" ? `import … from "${r.cle}"\n${r.url}` : r.url;
+      puce.innerHTML = `<span class="type"></span><span class="nom"></span><button type="button" class="retirer" title="Retirer">×</button>`;
+      puce.querySelector(".type").textContent = TYPES[r.type] + (r.tete ? " · head" : "");
+      puce.querySelector(".nom").textContent = r.type === "module" ? r.cle : CDN.libelle(r);
+      puce.querySelector(".retirer").addEventListener("click", () => {
+        etat.ressources.splice(i, 1);
+        afficherBibliotheques();
+        marquerModifie();
+      });
+
+      // Glisser-déposer pour changer l'ordre de chargement
+      puce.addEventListener("dragstart", (e) => {
+        e.dataTransfer.setData("text/plain", String(i));
+        puce.classList.add("glisse");
+      });
+      puce.addEventListener("dragend", () => puce.classList.remove("glisse"));
+      puce.addEventListener("dragover", (e) => { e.preventDefault(); puce.classList.add("cible"); });
+      puce.addEventListener("dragleave", () => puce.classList.remove("cible"));
+      puce.addEventListener("drop", (e) => {
+        e.preventDefault();
+        const de = parseInt(e.dataTransfer.getData("text/plain"), 10);
+        if (Number.isNaN(de) || de === i) return afficherBibliotheques();
+        const [deplacee] = etat.ressources.splice(de, 1);
+        etat.ressources.splice(i, 0, deplacee);
+        afficherBibliotheques();
+        marquerModifie();
+      });
+      liste.append(puce);
+    });
+
     const n = etat.extraTete.length + etat.extraCorps.length;
     $("extra").textContent = n ? `+ ${n} autre${n > 1 ? "s" : ""} balise${n > 1 ? "s" : ""} conservée${n > 1 ? "s" : ""}` : "";
     $("extra").title = [...etat.extraTete, ...etat.extraCorps].join("\n");
+    $("aucune").hidden = etat.ressources.length > 0;
   }
 
   // ---------- Liste des exemples ----------
@@ -369,7 +402,7 @@ ${corps.map((l) => "  " + l).join("\n")}
 
   function remplir({ ex, cours, nom, titre, html, css, js, analyse }) {
     etat.ex = ex;
-    etat.libs = analyse ? analyse.libs : new Set();
+    etat.ressources = analyse ? analyse.ressources : [];
     etat.module = analyse ? analyse.module : false;
     etat.extraTete = analyse ? analyse.extraTete : [];
     etat.extraCorps = analyse ? analyse.extraCorps : [];

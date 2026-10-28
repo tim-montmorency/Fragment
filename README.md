@@ -112,7 +112,13 @@ Interface pour créer ou modifier un exemple avec aperçu en direct, puis l'enre
 
 - **Exemple** : « Nouvel exemple » part du `_gabarit/`. Les exemples existants sont listés à partir du répertoire GitHub.
 - **Cours / Nom du dossier / Titre** : l'exemple est enregistré dans `<cours>/<nom>/`. Changer le nom d'un exemple ouvert crée une copie.
-- **Bibliothèques** : GSAP, ScrollTrigger, Tailwind et Three.js s'ajoutent en un clic. Les autres balises déjà présentes dans un exemple sont conservées.
+- **Bibliothèques** : recherche dans npm, servie par jsDelivr (version exacte, fichier principal choisi automatiquement).
+  - **Entrée** ou clic : ajoute le fichier principal du paquet (et sa feuille de style s'il en a une).
+  - **Fichiers ▸** (ou flèche droite) : choisir un autre fichier du paquet, par exemple `ScrollTrigger.min.js` dans `gsap`.
+  - Une adresse collée (`https://…`) s'ajoute telle quelle.
+  - Les fichiers `.css` vont dans `<head>`, les `.js` à la fin du body, les modules ES (`three`, etc.) dans une importmap ; `script.js` passe alors en `type="module"`.
+  - Glisser les pastilles pour changer l'ordre de chargement ; × pour retirer.
+  - Les autres balises déjà présentes dans un exemple sont conservées.
 - **Onglet HTML** : seulement le contenu de `<body>`. Le reste de `index.html` est généré.
 - **Enregistrer** (ou Cmd/Ctrl + S) : un seul commit avec `index.html`, `style.css` et `script.js`. GitHub Pages republie le site en moins d'une minute environ.
 
