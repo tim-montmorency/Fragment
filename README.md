@@ -1,4 +1,4 @@
-# Aperçu
+# Fragment
 
 Exemples interactifs (HTML / CSS / JS) à intégrer dans les notes de cours par une simple `<iframe>`.
 Remplace les embeds CodePen.
@@ -10,8 +10,9 @@ Remplace les embeds CodePen.
 ## Structure
 
 ```
-apercu/
+Fragment/
 ├── index.html            Constructeur d'intégration (génère le code de l'iframe)
+├── studio/               Création et modification d'exemples (enregistre sur GitHub)
 ├── v/                    Visionneuse
 │   ├── index.html
 │   ├── visionneuse.js
@@ -27,6 +28,11 @@ apercu/
 ```
 
 ## Ajouter un exemple
+
+Deux façons de faire :
+
+- **Avec le studio** (`studio/`), directement sur le site publié. Voir plus bas.
+- **À la main**, dans la copie locale du répertoire :
 
 1. Copier `_gabarit/` vers `<cours>/<nom-exemple>/` (lettres, chiffres, `-` et `_` seulement).
 2. Écrire l'exemple. Les bibliothèques se chargent directement dans `index.html`.
@@ -98,6 +104,28 @@ npm install
 npm run build
 ```
 
+## Studio
+
+`https://tim-montmorency.github.io/Fragment/studio/`
+
+Interface pour créer ou modifier un exemple avec aperçu en direct, puis l'enregistrer dans le répertoire GitHub.
+
+- **Exemple** : « Nouvel exemple » part du `_gabarit/`. Les exemples existants sont listés à partir du répertoire GitHub.
+- **Cours / Nom du dossier / Titre** : l'exemple est enregistré dans `<cours>/<nom>/`. Changer le nom d'un exemple ouvert crée une copie.
+- **Bibliothèques** : GSAP, ScrollTrigger, Tailwind et Three.js s'ajoutent en un clic. Les autres balises déjà présentes dans un exemple sont conservées.
+- **Onglet HTML** : seulement le contenu de `<body>`. Le reste de `index.html` est généré.
+- **Enregistrer** (ou Cmd/Ctrl + S) : un seul commit avec `index.html`, `style.css` et `script.js`. GitHub Pages republie le site en moins d'une minute environ.
+
+### Jeton GitHub (une seule fois par navigateur)
+
+1. GitHub → *Settings → Developer settings → Personal access tokens → Fine-grained tokens → Generate new token*.
+2. *Resource owner* : `tim-montmorency`. *Repository access* : **Only select repositories** → `Fragment`.
+3. *Permissions → Repository permissions → Contents* : **Read and write**.
+4. Copier le jeton dans les réglages du studio (⚙), puis **Tester**.
+
+Le jeton reste dans le navigateur seulement (localStorage). Sur un ordinateur partagé, utiliser **Oublier le jeton** à la fin.
+Après un enregistrement par le studio, faire un `git pull` dans la copie locale.
+
 ## Tester en local
 
 La visionneuse lit les fichiers avec `fetch()`, ce qui ne fonctionne pas en ouvrant les fichiers directement (`file://`).
@@ -108,7 +136,7 @@ npx serve .
 # ou : python3 -m http.server
 ```
 
-Live Server (Go Live) dans VS Code fonctionne aussi, en ouvrant le dossier `apercu` lui-même.
+Live Server (Go Live) dans VS Code fonctionne aussi, en ouvrant le dossier `Fragment` lui-même.
 Le script qu'il injecte dans les pages est retiré automatiquement de l'onglet HTML.
 
 ## Publication avec GitHub Pages

@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <title>Fragment — Studio</title>
+  <link rel="stylesheet" href="studio.css">
+</head>
+<body>
+  <header class="entete">
+    <a class="logo" href="../">Fragment</a>
+    <span class="separateur">/</span>
+    <span class="sous-titre">Studio</span>
+
+    <div class="champ">
+      <label for="ouvrir">Exemple</label>
+      <select id="ouvrir">
+        <option value="">+ Nouvel exemple</option>
+      </select>
+    </div>
+
+    <div class="champ">
+      <label for="cours">Cours</label>
+      <input id="cours" list="liste-cours" placeholder="web3" spellcheck="false" autocomplete="off">
+      <datalist id="liste-cours"></datalist>
+    </div>
+
+    <div class="champ">
+      <label for="nom">Nom du dossier</label>
+      <input id="nom" placeholder="gsap-from" spellcheck="false" autocomplete="off">
+    </div>
+
+    <div class="champ champ-large">
+      <label for="titre">Titre</label>
+      <input id="titre" placeholder="GSAP - from()">
+    </div>
+
+    <div class="actions">
+      <button type="button" id="btn-reglages" class="secondaire" title="Réglages GitHub">⚙</button>
+      <button type="button" id="btn-enregistrer" class="principal">Enregistrer</button>
+    </div>
+  </header>
+
+  <div class="bibliotheques" id="bibliotheques">
+    <span class="etiquette">Bibliothèques</span>
+  </div>
+
+  <main class="espace">
+    <section class="groupe">
+      <div class="barre" role="tablist" id="onglets"></div>
+      <div class="panneaux" id="editeurs"></div>
+    </section>
+    <section class="groupe">
+      <div class="barre">
+        <span class="onglet actif">Résultat <span class="direct" title="Aperçu en direct"></span></span>
+      </div>
+      <div class="panneaux">
+        <iframe id="resultat" title="Aperçu de l'exemple"></iframe>
+      </div>
+    </section>
+  </main>
+
+  <footer class="statut" id="statut" aria-live="polite"></footer>
+
+  <!-- Réglages -->
+  <dialog id="reglages">
+    <form method="dialog" id="form-reglages">
+      <h2>Réglages GitHub</h2>
+      <p class="aide">
+        L'enregistrement fait un commit dans le répertoire GitHub. Il faut un
+        <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">jeton « fine-grained »</a>
+        limité à ce répertoire, avec la permission <strong>Contents : Read and write</strong>.
+        Le jeton reste dans ce navigateur seulement.
+      </p>
+      <div class="grille-reglages">
+        <label>Compte ou organisation<input name="proprietaire" spellcheck="false"></label>
+        <label>Répertoire<input name="repertoire" spellcheck="false"></label>
+        <label>Branche<input name="branche" spellcheck="false"></label>
+      </div>
+      <label>Jeton<input name="jeton" type="password" autocomplete="off" spellcheck="false" placeholder="github_pat_…"></label>
+      <p class="aide" id="etat-jeton"></p>
+      <div class="pied-dialogue">
+        <button type="button" id="btn-oublier" class="secondaire">Oublier le jeton</button>
+        <span class="espaceur"></span>
+        <button type="button" id="btn-tester" class="secondaire">Tester</button>
+        <button value="ok" class="principal">Fermer</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- Après l'enregistrement -->
+  <dialog id="succes">
+    <form method="dialog">
+      <h2>Exemple enregistré</h2>
+      <p class="aide">GitHub Pages republie le site, habituellement en moins d'une minute. Penser à faire un <code>git pull</code> dans la copie locale.</p>
+      <label>Code de l'iframe</label>
+      <pre class="extrait" id="extrait"></pre>
+      <div class="pied-dialogue">
+        <a id="lien-constructeur" class="bouton secondaire" target="_blank" rel="noopener">Ouvrir dans le constructeur</a>
+        <span class="espaceur"></span>
+        <button type="button" id="btn-copier" class="secondaire">Copier</button>
+        <button value="ok" class="principal">Fermer</button>
+      </div>
+    </form>
+  </dialog>
+
+  <script src="../v/vendor/codemirror.js"></script>
+  <script src="github.js"></script>
+  <script src="studio.js"></script>
+</body>
+</html>
