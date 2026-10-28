@@ -1,3 +1,5 @@
+![](https://github.com/user-attachments/assets/caf26dec-8334-4822-9610-423c2ac298ee)
+
 # Fragment
 
 Exemples interactifs (HTML / CSS / JS) à intégrer dans les notes de cours par une simple `<iframe>`.
