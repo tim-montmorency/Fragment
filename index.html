@@ -1,0 +1,228 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <title>Aperçu — constructeur d'intégration</title>
+  <style>
+    :root {
+      --fond: #f6f8fa;
+      --carte: #fff;
+      --texte: #24292f;
+      --attenue: #57606a;
+      --bordure: #d0d7de;
+      --accent: #e63946;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      padding: 24px 16px 48px;
+      background: var(--fond);
+      color: var(--texte);
+      font: 15px/1.5 system-ui, sans-serif;
+    }
+    main { max-width: 1100px; margin: 0 auto; }
+    h1 { font-size: 1.5rem; margin: 0 0 4px; }
+    p.intro { color: var(--attenue); margin: 0 0 24px; }
+    .grille { display: grid; grid-template-columns: 320px 1fr; gap: 24px; align-items: start; }
+    @media (max-width: 800px) { .grille { grid-template-columns: 1fr; } }
+    form, .sortie {
+      background: var(--carte);
+      border: 1px solid var(--bordure);
+      border-radius: 8px;
+      padding: 16px;
+    }
+    fieldset { border: 0; margin: 0 0 14px; padding: 0; }
+    legend, label.titre { display: block; font-weight: 600; font-size: 13px; margin-bottom: 4px; }
+    input[type="text"], select {
+      width: 100%;
+      padding: 6px 8px;
+      font: inherit;
+      border: 1px solid var(--bordure);
+      border-radius: 6px;
+    }
+    .options { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 14px; }
+    .apercu {
+      width: 100%;
+      border: 1px solid var(--bordure);
+      border-radius: 4px;
+      background: #fff;
+      display: block;
+    }
+    .aspect-1-1 { aspect-ratio: 1 / 1; }
+    .aspect-4-3 { aspect-ratio: 4 / 3; }
+    .aspect-3-2 { aspect-ratio: 3 / 2; }
+    .aspect-16-9 { aspect-ratio: 16 / 9; }
+    .aspect-2-1 { aspect-ratio: 2 / 1; }
+    .aspect-3-1 { aspect-ratio: 3 / 1; }
+    .code {
+      position: relative;
+      margin: 16px 0 0;
+      padding: 12px 90px 12px 12px;
+      background: #0d1117;
+      color: #c9d1d9;
+      border-radius: 6px;
+      font: 13px/1.5 ui-monospace, Menlo, Consolas, monospace;
+      white-space: pre-wrap;
+      word-break: break-all;
+    }
+    .code button {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      font: 12px system-ui, sans-serif;
+      padding: 4px 10px;
+      border: 0;
+      border-radius: 4px;
+      background: var(--accent);
+      color: #fff;
+      cursor: pointer;
+    }
+    h2 { font-size: 13px; margin: 16px 0 0; color: var(--attenue); }
+  </style>
+</head>
+<body>
+<main>
+  <h1>Aperçu</h1>
+  <p class="intro">Constructeur d'intégration : choisir l'exemple et les options, puis copier le code de l'iframe dans les notes.</p>
+
+  <div class="grille">
+    <form id="formulaire">
+      <fieldset>
+        <label class="titre" for="ex">Exemple (dossier)</label>
+        <input type="text" id="ex" name="ex" value="web3/gsap-to" spellcheck="false">
+      </fieldset>
+
+      <fieldset>
+        <legend>Onglets visibles</legend>
+        <div class="options">
+          <label><input type="checkbox" name="onglets" value="html" checked> HTML</label>
+          <label><input type="checkbox" name="onglets" value="css" checked> CSS</label>
+          <label><input type="checkbox" name="onglets" value="js" checked> JS</label>
+          <label><input type="checkbox" name="onglets" value="resultat" checked> Résultat</label>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <label class="titre" for="actif">Onglet ouvert au départ</label>
+        <select id="actif" name="actif"></select>
+      </fieldset>
+
+      <fieldset>
+        <label class="titre" for="disposition">Disposition</label>
+        <select id="disposition" name="disposition">
+          <option value="">(par défaut)</option>
+          <option value="onglets">Onglets</option>
+          <option value="cote">Code à côté du résultat</option>
+          <option value="pile">Code au-dessus du résultat</option>
+        </select>
+      </fieldset>
+
+      <fieldset>
+        <label class="titre" for="theme">Thème du code</label>
+        <select id="theme" name="theme">
+          <option value="sombre">Sombre</option>
+          <option value="clair">Clair</option>
+        </select>
+      </fieldset>
+
+      <fieldset>
+        <legend>Options</legend>
+        <div class="options">
+          <label><input type="checkbox" name="modifiable"> Modifiable (aperçu en direct)</label>
+          <label><input type="checkbox" name="numeros"> Numéros de ligne</label>
+          <label><input type="checkbox" name="html-complet"> HTML complet</label>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Boutons</legend>
+        <div class="options">
+          <label><input type="checkbox" name="boutons" value="rejouer" checked> Rejouer</label>
+          <label><input type="checkbox" name="boutons" value="ouvrir" checked> Ouvrir</label>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <label class="titre" for="aspect">Proportions (classe du compendium)</label>
+        <select id="aspect" name="aspect">
+          <option value="aspect-3-2">3:2</option>
+          <option value="aspect-16-9">16:9</option>
+          <option value="aspect-4-3">4:3</option>
+          <option value="aspect-1-1">1:1</option>
+          <option value="aspect-2-1">2:1</option>
+          <option value="aspect-3-1">3:1</option>
+        </select>
+      </fieldset>
+    </form>
+
+    <section class="sortie">
+      <iframe id="apercu" class="apercu aspect-3-2" title="Aperçu de l'intégration"></iframe>
+      <h2>Code à coller dans le Markdown</h2>
+      <div class="code"><button type="button" id="copier">Copier</button><span id="extrait"></span></div>
+    </section>
+  </div>
+</main>
+
+<script>
+  const formulaire = document.getElementById("formulaire");
+  const apercu = document.getElementById("apercu");
+  const extrait = document.getElementById("extrait");
+  const BASE = new URL("v/", location.href).href;
+  let dernierSrc = "";
+
+  const LIBELLES = { html: "HTML", css: "CSS", js: "JS", resultat: "Résultat" };
+  const actif = document.getElementById("actif");
+
+  /** La liste « Onglet ouvert au départ » suit les onglets cochés. */
+  function majOnglets() {
+    const choix = actif.value;
+    const coches = [...formulaire.querySelectorAll('input[name="onglets"]:checked')].map((c) => c.value);
+    actif.innerHTML = '<option value="">(le premier)</option>' +
+      coches.map((c) => `<option value="${c}">${LIBELLES[c]}</option>`).join("");
+    actif.value = coches.includes(choix) ? choix : "";
+  }
+
+  function construire() {
+    const f = new FormData(formulaire);
+    const p = new URLSearchParams();
+    p.set("ex", f.get("ex").trim());
+
+    const onglets = f.getAll("onglets");
+    if (onglets.join(",") !== "html,css,js,resultat") p.set("onglets", onglets.join(","));
+    if (f.get("actif")) p.set("actif", f.get("actif"));
+    if (f.get("modifiable")) p.set("modifiable", "1");
+    if (f.get("disposition")) p.set("disposition", f.get("disposition"));
+    if (f.get("theme") !== "sombre") p.set("theme", f.get("theme"));
+    if (f.get("numeros")) p.set("numeros", "1");
+    if (f.get("html-complet")) p.set("html", "complet");
+
+    // Boutons : paramètre omis quand les deux sont cochés
+    const boutons = f.getAll("boutons");
+    if (boutons.length < 2) p.set("boutons", boutons.join(","));
+
+    const src = BASE + "?" + p.toString().replace(/%2F/g, "/").replace(/%2C/g, ",");
+    const aspect = f.get("aspect");
+
+    apercu.className = `apercu ${aspect}`;
+    if (src !== dernierSrc) { apercu.src = src; dernierSrc = src; }
+    extrait.textContent = `<iframe src="${src}" class="${aspect}" style="width:100%;border:0" loading="lazy"></iframe>`;
+  }
+
+  formulaire.addEventListener("input", (e) => {
+    if (e.target.name === "onglets") majOnglets();
+    construire();
+  });
+  document.getElementById("copier").addEventListener("click", async (e) => {
+    try {
+      await navigator.clipboard.writeText(extrait.textContent);
+      e.target.textContent = "Copié !";
+      setTimeout(() => (e.target.textContent = "Copier"), 1500);
+    } catch (err) { /* presse-papiers indisponible */ }
+  });
+  majOnglets();
+  construire();
+</script>
+</body>
+</html>

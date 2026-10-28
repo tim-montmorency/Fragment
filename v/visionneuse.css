@@ -1,0 +1,273 @@
+/* Visionneuse d'exemples — voir README.md pour les paramètres */
+
+:root {
+  --fond: #0d1117;
+  --fond-barre: #161b22;
+  --texte: #c9d1d9;
+  --texte-attenue: #8b949e;
+  --bordure: #30363d;
+  --accent: #e63946;
+  --resultat: #ffffff;
+  --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+}
+
+body.theme-clair {
+  --fond: #ffffff;
+  --fond-barre: #f6f8fa;
+  --texte: #24292f;
+  --texte-attenue: #57606a;
+  --bordure: #d0d7de;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  background: var(--fond);
+  color: var(--texte);
+  font-family: system-ui, sans-serif;
+  font-size: 14px;
+  overflow: hidden;
+}
+
+#app {
+  display: flex;
+  height: 100%;
+}
+
+/* ---------- Dispositions ---------- */
+
+.disposition-onglets,
+.disposition-pile {
+  flex-direction: column;
+}
+
+.disposition-cote {
+  flex-direction: row;
+}
+
+.groupe {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 0;
+  min-width: 0;
+  min-height: 0;
+}
+
+.disposition-cote .groupe + .groupe {
+  border-left: 1px solid var(--bordure);
+}
+
+.disposition-pile .groupe + .groupe {
+  border-top: 1px solid var(--bordure);
+}
+
+@media (max-width: 600px) {
+  .disposition-cote {
+    flex-direction: column;
+  }
+
+  .disposition-cote .groupe + .groupe {
+    border-left: 0;
+    border-top: 1px solid var(--bordure);
+  }
+}
+
+/* ---------- Barre d'onglets ---------- */
+
+.barre {
+  display: flex;
+  align-items: stretch;
+  flex: none;
+  background: var(--fond-barre);
+  border-bottom: 1px solid var(--bordure);
+}
+
+.onglets {
+  display: flex;
+  flex: 1;
+  overflow-x: auto;
+}
+
+.barre button,
+.barre a {
+  font: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--texte-attenue);
+  background: none;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  padding: 8px 14px;
+  cursor: pointer;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.barre button:hover,
+.barre a:hover {
+  color: var(--texte);
+}
+
+.barre .onglet[aria-selected="true"] {
+  color: var(--texte);
+  border-bottom-color: var(--accent);
+}
+
+.outils {
+  display: flex;
+  flex: none;
+}
+
+.outils button,
+.outils a {
+  font-weight: 400;
+}
+
+/* ---------- Panneaux ---------- */
+
+.panneaux {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+}
+
+.panneau {
+  position: absolute;
+  inset: 0;
+  overflow: auto;
+}
+
+.panneau[hidden] {
+  display: none;
+}
+
+/* ---------- Code ---------- */
+
+pre {
+  margin: 0;
+  padding: 12px 0;
+  min-height: 100%;
+  font-family: var(--mono);
+  font-size: 13px;
+  line-height: 1.55;
+  tab-size: 2;
+}
+
+pre code.hljs {
+  display: block;
+  padding: 0;
+  background: none;
+  overflow: visible;
+}
+
+.ligne {
+  display: block;
+  padding: 0 16px;
+  min-height: 1.55em;
+}
+
+.numeros .ligne {
+  counter-increment: ligne;
+  padding-left: 0;
+}
+
+.numeros .ligne::before {
+  content: counter(ligne);
+  display: inline-block;
+  width: 3em;
+  margin-right: 1em;
+  padding-right: 0.5em;
+  text-align: right;
+  color: var(--texte-attenue);
+  opacity: 0.6;
+  user-select: none;
+}
+
+/* ---------- Résultat ---------- */
+
+.panneau-resultat {
+  overflow: hidden;
+  background: var(--resultat);
+}
+
+.panneau-resultat iframe {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+/* ---------- Message d'erreur (discret) ---------- */
+
+.message {
+  margin: auto;
+  padding: 1rem;
+  text-align: center;
+  color: var(--texte-attenue);
+  font-size: 13px;
+}
+
+/* ---------- Éditeur (mode modifiable) ---------- */
+
+.panneau:has(> .editeur) {
+  overflow: hidden;
+}
+
+.editeur,
+.editeur .cm-editor {
+  height: 100%;
+}
+
+.editeur .cm-editor {
+  background: var(--fond);
+}
+
+.editeur .cm-editor.cm-focused {
+  outline: none;
+}
+
+.editeur .cm-scroller {
+  font-family: var(--mono);
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+.editeur .cm-gutters {
+  background: var(--fond);
+  border-right: 1px solid var(--bordure);
+}
+
+.editeur .cm-line {
+  padding: 0 16px;
+}
+
+/* Pastille « en direct » à côté de Résultat (mode modifiable) */
+.direct {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  margin-left: 6px;
+  vertical-align: 1px;
+  border-radius: 50%;
+  background: var(--accent);
+  animation: direct 1.6s ease-in-out infinite;
+}
+
+@keyframes direct {
+  0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(230, 57, 70, 0.6); }
+  50% { opacity: 0.45; box-shadow: 0 0 0 4px rgba(230, 57, 70, 0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .direct { animation: none; }
+}
