@@ -1,8 +1,17 @@
 {
   "fragments": [
     {
-      "nom": "gsap-to",
-      "titre": "GSAP - to()",
+      "nom": "gsap-from",
+      "titre": "GSAP - from()",
+      "tags": [
+        "web3",
+        "gsap"
+      ],
+      "modifie": "2026-10-28"
+    },
+    {
+      "nom": "gsap-fromto",
+      "titre": "GSAP - fromTo()",
       "tags": [
         "web3",
         "gsap"
@@ -11,7 +20,7 @@
     },
     {
       "nom": "gsap-to-copie",
-      "titre": "GSAP | to()",
+      "titre": "GSAP - to()",
       "tags": [
         "web3",
         "gsap"
