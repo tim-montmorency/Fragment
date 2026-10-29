@@ -1,22 +1,22 @@
-.dot {
+.pill {
   margin: 1vw;
-  width: 3vw;
+  width: 8vw;
   height: 3vw;
   background-color: var(--color-base-content);
   position: absolute;
   top: 10vh;
   left: 10vw;
-  border-radius: 100%;
+  border-radius: 100px;
 }
 
 .depart {
-  width: 5vw;
+  width: 10vw;
   height: 5vw;
   border: 2px dashed var(--color-primary);
   position: absolute;
   top: 10vh;
   left: 10vw;
-  border-radius: 100%;
+  border-radius: 100px;
 }
 
 .depart:before {
@@ -37,7 +37,7 @@
   position: absolute;
   top: 85vh;
   left: 85vw;
-  border-radius: 100%;
+  border-radius: 0;
 }
 
 .arrivee:before {
