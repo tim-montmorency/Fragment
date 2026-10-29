@@ -39,7 +39,7 @@
   left: 85vw;
   border-radius: 0;
   
-  :before {
+  &:before {
     content: "Arrivé";
     position: absolute;
     text-align: center;
