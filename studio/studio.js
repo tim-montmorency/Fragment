@@ -30,6 +30,7 @@
 
   const etat = {
     ex: null,               // nom du fragment ouvert (null = nouveau)
+    copieDe: null,          // nom d'origine quand le fragment est une copie (Dupliquer)
     meta: {},               // contenu de fragment.json du fragment ouvert
     fragments: [],          // index : [{ nom, titre, tags, modifie }]
     ressources: [],         // bibliothèques : { type: "css" | "js" | "module", url, cle?, tete? } (voir cdn.js)
@@ -205,7 +206,7 @@
   }
 
   function genererIndex() {
-    const titre = $("titre").value.trim() || $("nom").value.trim() || "Exemple";
+    const titre = $("titre").value.trim() || "Fragment";
     const r = etat.ressources;
     const modules = r.filter((x) => x.type === "module");
 
@@ -262,7 +263,7 @@ ${corps.map((l) => "  " + l).join("\n")}
   /** Page complète avec CSS et JS en ligne, pour l'aperçu. */
   function genererApercu() {
     const f = genererFichiers();
-    const chemin = `f/${etat.ex || $("nom").value.trim() || "_"}`;
+    const chemin = `f/${nomCourant()}`;
     let doc = f["index.html"]
       .replace(/<link rel="stylesheet" href="style\.css">/, () => `<style>\n${f["style.css"]}</style>`)
       .replace(/<script( type="module")? src="script\.js"><\/script>/, (m, type) =>
@@ -440,11 +441,15 @@ ${corps.map((l) => "  " + l).join("\n")}
     return noms;
   }
 
+  /** Adresse de la page : studio/?ex=<nom> pour un fragment enregistré (rechargement, partage). */
+  function majAdresse() {
+    const url = new URL(location.href);
+    if (etat.ex) url.searchParams.set("ex", etat.ex);
+    else url.searchParams.delete("ex");
+    history.replaceState(null, "", url);
+  }
+
   function afficherListe() {
-    const select = $("ouvrir");
-    select.length = 1;
-    etat.fragments.forEach((f) => select.add(new Option(f.titre && f.titre !== f.nom ? `${f.nom} — ${f.titre}` : f.nom, f.nom)));
-    select.value = etat.ex || "";
     const tags = [...new Set(etat.fragments.flatMap((f) => f.tags || []))].sort();
     $("tags").placeholder = tags.length ? `ex. ${tags.slice(0, 3).join(", ")}` : "ex. web3, gsap";
     $("tags").title = tags.length ? `Tags existants : ${tags.join(", ")}` : "";
@@ -481,18 +486,41 @@ ${corps.map((l) => "  " + l).join("\n")}
 
   const aujourdhui = () => new Date().toLocaleDateString("sv"); // AAAA-MM-JJ
 
+  /** « GSAP - to() » → « gsap-to » ; « Dégradé linéaire » → « degrade-lineaire » */
+  function slug(texte) {
+    const s = texte
+      .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-+|-+$/g, "")
+      .slice(0, 50)
+      .replace(/-+$/, "");
+    return s || "fragment";
+  }
+
+  /** Premier nom libre : « gsap-to », sinon « gsap-to-2 », « gsap-to-3 »… */
+  function nomDisponible(base, liste = etat.fragments) {
+    const pris = new Set(liste.map((f) => f.nom));
+    if (!pris.has(base)) return base;
+    let n = 2;
+    while (pris.has(`${base}-${n}`)) n++;
+    return `${base}-${n}`;
+  }
+
+  /** Nom du fragment : fixe une fois créé, sinon généré à partir du titre. */
+  const nomCourant = () => etat.ex || nomDisponible(slug($("titre").value));
+
   /** « Web3, GSAP ,, web3 » → ["web3", "gsap"] */
   const lireTags = (texte) =>
     [...new Set(texte.split(",").map((t) => t.trim().toLowerCase().replace(/\s+/g, "-")).filter(Boolean))];
 
-  function remplir({ ex, nom, titre, tags, html, css, js, analyse, meta }) {
+  function remplir({ ex, titre, tags, html, css, js, analyse, meta }) {
     etat.ex = ex;
     etat.meta = meta || {};
     etat.ressources = analyse ? analyse.ressources : [];
     etat.module = analyse ? analyse.module : false;
     etat.extraTete = analyse ? analyse.extraTete : [];
     etat.extraCorps = analyse ? analyse.extraCorps : [];
-    $("nom").value = nom;
     $("titre").value = titre;
     $("tags").value = (tags || []).join(", ");
     $("attrs-html").value = analyse?.attrsHtml || "";
@@ -502,7 +530,7 @@ ${corps.map((l) => "  " + l).join("\n")}
     remplacerEditeur("css", css);
     remplacerEditeur("js", js);
     afficherBibliotheques();
-    $("ouvrir").value = ex || "";
+    majAdresse();
     etat.modifie = false;
     clearTimeout(minuterie);
     apercu.charger({ srcdoc: genererApercu() });
@@ -515,7 +543,6 @@ ${corps.map((l) => "  " + l).join("\n")}
     const analyse = html ? analyserIndex(html) : null;
     remplir({
       ex: null,
-      nom: "",
       titre: "",
       tags: [],
       html: analyse?.corps || DEFAUTS.html,
@@ -527,18 +554,17 @@ ${corps.map((l) => "  " + l).join("\n")}
   }
 
   async function ouvrirExemple(nom) {
-    statut(`Ouverture de ${nom}…`);
+    statut("Ouverture…");
     const [html, css, js, meta] = await Promise.all([
       lireTexte(`f/${nom}/index.html`),
       lireTexte(`f/${nom}/style.css`),
       lireTexte(`f/${nom}/script.js`),
       lireJson(`f/${nom}/fragment.json`),
     ]);
-    if (html === null) return statut(`Impossible d'ouvrir ${nom}.`, "erreur");
+    if (html === null) return statut("Impossible d'ouvrir ce fragment.", "erreur");
     const analyse = analyserIndex(html);
     remplir({
       ex: nom,
-      nom,
       titre: meta?.titre || analyse.titre,
       tags: meta?.tags || [],
       html: analyse.corps,
@@ -547,7 +573,7 @@ ${corps.map((l) => "  " + l).join("\n")}
       analyse,
       meta,
     });
-    statut(`${nom} ouvert.`);
+    statut(`« ${meta?.titre || analyse.titre || nom} » ouvert.`);
   }
 
   // ---------- Enregistrement ----------
@@ -567,36 +593,38 @@ ${corps.map((l) => "  " + l).join("\n")}
     [...liste].sort((a, b) => (b.modifie || "").localeCompare(a.modifie || "") || a.nom.localeCompare(b.nom));
 
   async function enregistrer() {
-    const nom = $("nom").value.trim();
-    if (!SLUG.test(nom)) {
-      return statut("Nom du dossier : lettres, chiffres, « - » et « _ » seulement.", "erreur");
+    if (!$("titre").value.trim()) {
+      $("titre").focus();
+      return statut("Un titre est nécessaire pour enregistrer.", "erreur");
     }
     if (!reglages.jeton) {
       statut("Un jeton GitHub est nécessaire pour enregistrer.", "erreur");
       return ouvrirReglages();
     }
 
-    const existe = etat.fragments.some((f) => f.nom === nom);
-    if (existe && nom !== etat.ex && !confirm(`Le fragment ${nom} existe déjà. Le remplacer ?`)) return;
-
-    const titre = $("titre").value.trim() || nom;
+    const titre = $("titre").value.trim();
     const tags = lireTags($("tags").value);
     const date = aujourdhui();
-    const meta = {
-      titre,
-      tags,
-      cree: (nom === etat.ex && etat.meta?.cree) || date,
-      modifie: date,
-    };
 
     const bouton = $("btn-enregistrer");
     bouton.disabled = true;
     statut("Enregistrement…");
     try {
-      // Index à jour (lu juste avant l'écriture) + entrée de ce fragment
+      // Index à jour, lu juste avant l'écriture
       const index = await lireJson("fragments.json");
-      const liste = (index && Array.isArray(index.fragments) ? index.fragments : etat.fragments)
-        .filter((f) => f.nom !== nom);
+      const actuels = index && Array.isArray(index.fragments) ? index.fragments : etat.fragments;
+
+      // Fragment existant : nom fixe. Nouveau : tiré du titre, incrémenté s'il est déjà pris.
+      const existe = Boolean(etat.ex);
+      const nom = etat.ex || nomDisponible(slug(titre), actuels);
+      const meta = {
+        titre,
+        tags,
+        cree: (existe && etat.meta?.cree) || date,
+        modifie: date,
+      };
+
+      const liste = actuels.filter((f) => f.nom !== nom);
       liste.push({ nom, titre, tags, modifie: date });
 
       const fichiers = {};
@@ -605,16 +633,18 @@ ${corps.map((l) => "  " + l).join("\n")}
       fichiers["fragments.json"] = json({ fragments: trierIndex(liste) });
 
       let message = existe ? `Studio : mise à jour de ${nom}` : `Studio : ajout de ${nom}`;
-      if (etat.ex && etat.ex !== nom) message += ` (copie de ${etat.ex})`;
+      if (etat.copieDe) message += ` (copie de ${etat.copieDe})`;
 
       await github().enregistrer(fichiers, message);
 
       etat.fragments = trierIndex(liste);
       etat.ex = nom;
+      etat.copieDe = null;
       etat.meta = meta;
       etat.modifie = false;
+      majAdresse();
       afficherListe();
-      statut(`${nom} enregistré.`, "succes");
+      statut(`« ${titre} » enregistré.`, "succes");
       afficherSucces(nom);
     } catch (e) {
       statut(`Échec de l'enregistrement : ${MESSAGES_ERREUR[e.status] || e.message}.`, "erreur");
@@ -653,10 +683,23 @@ ${corps.map((l) => "  " + l).join("\n")}
     $("succes").showModal();
   }
 
+  /** Le fragment ouvert devient un nouveau fragment (nouveau dossier à l'enregistrement). */
+  function dupliquer() {
+    if (!etat.ex) return statut("Ce fragment n'est pas encore enregistré : rien à dupliquer.");
+    etat.copieDe = etat.ex;
+    etat.ex = null;
+    etat.meta = {};
+    $("titre").value = `${$("titre").value.trim()} (copie)`;
+    majAdresse();
+    $("config-exemple").close();
+    marquerModifie();
+    statut("Copie : un nouveau fragment sera créé à l'enregistrement.");
+  }
+
   function integrer() {
     if (!etat.ex) return statut("Enregistrer le fragment avant de l'intégrer.", "erreur");
     if (etat.modifie) statut("Attention : l'intégration montre la dernière version enregistrée.");
-    Integrer.ouvrir(etat.ex, { racine: SITE.href });
+    Integrer.ouvrir(etat.ex, { racine: SITE.href, titre: $("titre").value.trim() });
   }
 
   // ---------- Réglages ----------
@@ -694,18 +737,15 @@ ${corps.map((l) => "  " + l).join("\n")}
   // ---------- Démarrage ----------
 
   function brancherEvenements() {
-    ["nom", "titre", "tags", "attrs-html", "attrs-body"].forEach((id) => $(id).addEventListener("input", marquerModifie));
+    ["titre", "tags", "attrs-html", "attrs-body"].forEach((id) => $(id).addEventListener("input", marquerModifie));
+    $("btn-dupliquer").addEventListener("click", dupliquer);
     ["attrs-html", "attrs-body"].forEach((id) => $(id).addEventListener("input", indiquerAttributs));
     $("btn-exemple").addEventListener("click", () => $("config-exemple").showModal());
 
-    $("ouvrir").addEventListener("change", async (e) => {
-      const choix = e.target.value;
-      if (etat.modifie && !confirm("Les modifications non enregistrées seront perdues. Continuer ?")) {
-        e.target.value = etat.ex || "";
-        return;
-      }
-      if (choix) await ouvrirExemple(choix);
-      else await nouvelExemple();
+    $("btn-nouveau").addEventListener("click", async () => {
+      if (etat.modifie && !confirm("Les modifications non enregistrées seront perdues. Continuer ?")) return;
+      await nouvelExemple();
+      $("titre").focus();
     });
 
     $("btn-enregistrer").addEventListener("click", enregistrer);

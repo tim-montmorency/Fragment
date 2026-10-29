@@ -33,8 +33,12 @@ Fragment/
 └── _gabarit/             Point de départ d'un nouveau fragment
 ```
 
-Les fragments ne sont pas classés en sous-dossiers : le **nom du dossier** est unique et sert d'identifiant
-(`?ex=gsap-to`). Le classement se fait avec les **tags** (`web3`, `gsap`…), et un fragment peut en avoir plusieurs.
+Les fragments ne sont pas classés en sous-dossiers : le classement se fait avec les **tags** (`web3`, `gsap`…),
+et un fragment peut en avoir plusieurs.
+
+Le dossier d'un fragment est nommé automatiquement à partir de son titre, à la création
+(« GSAP - to() » → `gsap-to`, puis `gsap-to-2` si le nom est déjà pris). Il ne change plus ensuite,
+même si le titre change, parce que les iframes des notes en dépendent (`?ex=gsap-to`).
 
 ### fragment.json
 
@@ -52,7 +56,7 @@ Les fragments ne sont pas classés en sous-dossiers : le **nom du dossier** est 
 La page d'accueil lit `fragments.json` et affiche une carte par fragment, avec une miniature vivante
 (chargée quand la carte devient visible).
 
-- **Recherche** dans le nom, le titre et les tags (accents ignorés).
+- **Recherche** dans le titre et les tags (accents ignorés).
 - **Tags** : un clic filtre la galerie ; un deuxième clic retire le filtre.
 - Les filtres sont dans l'adresse, donc partageables : `…/Fragment/?tag=web3`, `…/Fragment/?q=scroll`.
 - **Voir** ouvre la visionneuse, **Modifier** ouvre le fragment dans le studio, **Intégrer** ouvre la fenêtre d'intégration.
@@ -139,13 +143,13 @@ npm run build
 
 ## Studio
 
-`https://tim-montmorency.com/Fragment/studio/` — ou `studio/?ex=<nom>` pour ouvrir directement un fragment.
+`https://tim-montmorency.com/Fragment/studio/` — ou `studio/?ex=<nom>` pour ouvrir directement un fragment (lien **Modifier** de la galerie).
 
 Interface pour créer ou modifier un fragment avec aperçu en direct, puis l'enregistrer dans le répertoire GitHub.
 
-- **Fragment** : « Nouveau fragment » part du `_gabarit/`. Les fragments existants viennent de `fragments.json`.
-- **Nom du dossier / Titre / Tags** : le fragment est enregistré dans `f/<nom>/`. Changer le nom d'un fragment ouvert crée une copie.
-  Les tags sont séparés par des virgules, mis en minuscules et dédoublonnés.
+- **Ouvrir un fragment** : bouton **Modifier** dans la galerie (adresse `studio/?ex=<nom>`). **+ Nouveau** repart du `_gabarit/`.
+- **Titre / Tags** : le dossier du nouveau fragment est tiré du titre (voir *Structure*). Les tags sont séparés par des virgules,
+  mis en minuscules et dédoublonnés.
 - **Bibliothèques** : recherche dans npm, servie par jsDelivr (version exacte, fichier principal choisi automatiquement).
   - **Entrée** ou clic : ajoute le fichier principal du paquet (et sa feuille de style s'il en a une).
   - **Fichiers ▸** (ou flèche droite) : choisir un autre fichier du paquet, par exemple `ScrollTrigger.min.js` dans `gsap`.
@@ -154,7 +158,7 @@ Interface pour créer ou modifier un fragment avec aperçu en direct, puis l'enr
   - Les fichiers `.css` vont dans `<head>`, les `.js` à la fin du body, les modules ES (`three`, etc.) dans une importmap ; `script.js` passe alors en `type="module"`.
   - Glisser les pastilles pour changer l'ordre de chargement ; × pour retirer.
   - Les autres balises déjà présentes dans un fragment sont conservées.
-- **⚙** — attributs de `<html>` et `<body>` : par exemple `data-theme="dark"` pour daisyUI, ou `class="…"` sur le body. `lang="fr"` est ajouté automatiquement, sauf si un autre `lang` est indiqué.
+- **⚙** — **Dupliquer ce fragment** (crée un nouveau fragment à partir de celui-ci), et attributs de `<html>` et `<body>` : par exemple `data-theme="dark"` pour daisyUI, ou `class="…"` sur le body. `lang="fr"` est ajouté automatiquement, sauf si un autre `lang` est indiqué.
 - **Intégrer** : fenêtre d'intégration du fragment enregistré.
 - **Onglet HTML** : seulement le contenu de `<body>`. Le reste de `index.html` est généré.
 - **Enregistrer** (ou Cmd/Ctrl + S) : un seul commit avec les fichiers du fragment, son `fragment.json` et l'index `fragments.json`.

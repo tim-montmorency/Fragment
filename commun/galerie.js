@@ -67,7 +67,7 @@
       </a>
       <div class="infos">
         <h2><a class="titre"></a></h2>
-        <p class="meta"><code class="nom"></code><span class="date"></span></p>
+        <p class="meta"><span class="date"></span></p>
         <ul class="tags-carte"></ul>
         <div class="actions">
           <a class="action voir">Voir</a>
@@ -82,12 +82,11 @@
     const titre = li.querySelector(".titre");
     titre.href = voir;
     titre.textContent = f.titre || f.nom;
-    li.querySelector(".nom").textContent = f.nom;
     li.querySelector(".date").textContent = dateLisible(f.modifie);
     li.querySelector(".voir").href = voir;
     li.querySelector(".modifier").href = `studio/?ex=${encodeURIComponent(f.nom)}`;
     li.querySelector(".bouton-integrer").addEventListener("click", () =>
-      Integrer.ouvrir(f.nom, { racine: new URL("./", location.href).href }));
+      Integrer.ouvrir(f.nom, { racine: new URL("./", location.href).href, titre: f.titre }));
 
     const ul = li.querySelector(".tags-carte");
     (f.tags || []).forEach((t) => {
@@ -129,7 +128,7 @@
     const visibles = fragments.filter((f) => {
       if (tagActif && !(f.tags || []).includes(tagActif)) return false;
       if (!q) return true;
-      return normaliser([f.nom, f.titre, ...(f.tags || [])].join(" ")).includes(q);
+      return normaliser([f.titre || f.nom, ...(f.tags || [])].join(" ")).includes(q);
     });
 
     const grille = $("grille");

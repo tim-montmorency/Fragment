@@ -14,18 +14,6 @@
     <span class="separateur">/</span>
     <span class="sous-titre">Studio</span>
 
-    <div class="champ">
-      <label for="ouvrir">Fragment</label>
-      <select id="ouvrir">
-        <option value="">+ Nouveau fragment</option>
-      </select>
-    </div>
-
-    <div class="champ">
-      <label for="nom">Nom du dossier</label>
-      <input id="nom" placeholder="gsap-from" spellcheck="false" autocomplete="off">
-    </div>
-
     <div class="champ champ-large">
       <label for="titre">Titre</label>
       <input id="titre" placeholder="GSAP - from()">
@@ -37,6 +25,7 @@
     </div>
 
     <div class="actions">
+      <button type="button" id="btn-nouveau" class="secondaire" title="Nouveau fragment">+ Nouveau</button>
       <button type="button" id="btn-exemple" class="secondaire" title="Réglages du fragment">⚙</button>
       <button type="button" id="btn-integrer" class="secondaire" title="Code d'intégration (iframe)">Intégrer</button>
       <button type="button" id="btn-reglages" class="secondaire" title="Connexion GitHub (jeton)">GitHub</button>
@@ -83,6 +72,10 @@
       <label>Attributs de &lt;body&gt;
         <input id="attrs-body" class="mono" placeholder='class="bg-base-200"' spellcheck="false" autocomplete="off">
       </label>
+      <p class="aide">
+        <button type="button" id="btn-dupliquer" class="lien">Dupliquer ce fragment</button>
+        — crée un nouveau fragment à partir de celui-ci.
+      </p>
       <div class="pied-dialogue">
         <span class="espaceur"></span>
         <button value="ok" class="principal">Fermer</button>

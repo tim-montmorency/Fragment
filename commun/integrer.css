@@ -57,9 +57,13 @@
 }
 
 .integrer-nom {
-  font: 600 14px var(--i-mono);
-  color: var(--i-accent);
+  font-weight: 400;
+  color: var(--i-attenue);
   margin-left: 6px;
+}
+
+.integrer-nom::before {
+  content: "— ";
 }
 
 .integrer-fermer {

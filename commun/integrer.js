@@ -4,7 +4,7 @@
  * Choisir les options de la visionneuse, voir l'aperçu, copier le code de l'iframe.
  * Utilisée par la galerie (accueil) et le studio.
  *
- *   Integrer.ouvrir("gsap-to", { racine: "https://…/Fragment/" });
+ *   Integrer.ouvrir("gsap-to", { racine: "https://…/Fragment/", titre: "GSAP - to()" });
  */
 const Integrer = (() => {
   "use strict";
@@ -155,11 +155,11 @@ const Integrer = (() => {
       `<iframe src="${src}" class="${aspect}" style="width:100%;border:0" loading="lazy"></iframe>`;
   }
 
-  function ouvrir(nom, { racine } = {}) {
+  function ouvrir(nom, { racine, titre } = {}) {
     if (!dialogue) creer();
     nomCourant = nom;
     racineCourante = racine || new URL("./", location.href).href;
-    dialogue.querySelector(".integrer-nom").textContent = nom;
+    dialogue.querySelector(".integrer-nom").textContent = titre || nom;
     dialogue.showModal();
     construire();
   }

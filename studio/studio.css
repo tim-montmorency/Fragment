@@ -76,7 +76,6 @@ a {
   width: 100%;
 }
 
-.champ:has(#nom) { flex: 0 1 160px; }
 .champ-tags { flex: 0 1 180px; }
 
 .champ-large {
@@ -609,3 +608,4 @@ button.lien {
   font-size: inherit;
   cursor: pointer;
 }
+
