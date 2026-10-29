@@ -65,6 +65,8 @@ La page d'accueil lit `fragments.json` et affiche une carte par fragment, avec u
 
 Le lien **Intégrer**, dans le pied de page du studio, ouvre une fenêtre pour choisir les options de la visionneuse,
 voir l'aperçu et copier le code de l'iframe à coller dans le Markdown.
+Les dernières options choisies sont mémorisées dans le navigateur et réappliquées à la prochaine ouverture,
+pour n'importe quel fragment. **Options par défaut** les réinitialise.
 
 ## Ajouter un fragment à la main
 

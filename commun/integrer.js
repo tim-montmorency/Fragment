@@ -2,6 +2,7 @@
  * Fenêtre « Intégrer »
  * --------------------
  * Choisir les options de la visionneuse, voir l'aperçu, copier le code de l'iframe.
+ * Les dernières options choisies sont mémorisées dans le navigateur (localStorage).
  * Utilisée par la galerie (accueil) et le studio.
  *
  *   Integrer.ouvrir("gsap-to", { racine: "https://…/Fragment/", titre: "GSAP - to()" });
@@ -19,6 +20,40 @@ const Integrer = (() => {
   let nomCourant = "";
   let racineCourante = "";
   let dernierSrc = "";
+
+  const CLE_OPTIONS = "fragment.integrer.options";
+
+  // ---------- Mémoire des options ----------
+
+  /** État du formulaire : { nom: [valeurs cochées] } pour les cases, { nom: valeur } pour les listes. */
+  function lireFormulaire(form) {
+    const options = {};
+    form.querySelectorAll("input[type=checkbox]").forEach((c) => {
+      options[c.name] = options[c.name] || [];
+      if (c.checked) options[c.name].push(c.value);
+    });
+    form.querySelectorAll("select").forEach((s) => { options[s.name] = s.value; });
+    return options;
+  }
+
+  function memoriser(form) {
+    try { localStorage.setItem(CLE_OPTIONS, JSON.stringify(lireFormulaire(form))); } catch (e) { /* stockage indisponible */ }
+  }
+
+  function restaurer(form) {
+    let options;
+    try { options = JSON.parse(localStorage.getItem(CLE_OPTIONS) || "null"); } catch (e) { options = null; }
+    if (!options) return;
+    form.querySelectorAll("input[type=checkbox]").forEach((c) => {
+      if (Array.isArray(options[c.name])) c.checked = options[c.name].includes(c.value);
+    });
+    majOnglets(); // la liste « Onglet ouvert au départ » dépend des onglets cochés
+    form.querySelectorAll("select").forEach((s) => {
+      if (typeof options[s.name] === "string" && [...s.options].some((o) => o.value === options[s.name])) {
+        s.value = options[s.name];
+      }
+    });
+  }
 
   const html = String.raw;
 
@@ -91,6 +126,7 @@ const Integrer = (() => {
             <code class="integrer-extrait"></code>
             <div class="integrer-actions">
               <a class="integrer-lien" target="_blank" rel="noopener">Ouvrir la visionneuse ↗</a>
+              <button type="button" class="integrer-defaut" title="Revenir aux options par défaut">Options par défaut</button>
               <button type="button" class="integrer-copier">Copier</button>
             </div>
           </div>
@@ -99,8 +135,17 @@ const Integrer = (() => {
     document.body.append(dialogue);
 
     const form = dialogue.querySelector("form");
+    const defauts = lireFormulaire(form); // état initial du gabarit = options par défaut
     form.addEventListener("input", (e) => {
       if (e.target.name === "onglets") majOnglets();
+      memoriser(form);
+      construire();
+    });
+    dialogue.querySelector(".integrer-defaut").addEventListener("click", () => {
+      try { localStorage.removeItem(CLE_OPTIONS); } catch (e) { /* stockage indisponible */ }
+      form.querySelectorAll("input[type=checkbox]").forEach((c) => { c.checked = defauts[c.name].includes(c.value); });
+      majOnglets();
+      form.querySelectorAll("select").forEach((s) => { s.value = defauts[s.name]; });
       construire();
     });
     dialogue.querySelector(".integrer-copier").addEventListener("click", async (e) => {
@@ -116,6 +161,7 @@ const Integrer = (() => {
       dernierSrc = "";
     });
     majOnglets();
+    restaurer(form);
   }
 
   /** La liste « Onglet ouvert au départ » suit les onglets cochés. */

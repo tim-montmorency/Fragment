@@ -183,6 +183,22 @@
   color: var(--i-attenue);
 }
 
+.integrer-defaut {
+  margin-left: auto;
+  font: inherit;
+  font-size: 12px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--i-attenue);
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.integrer-defaut:hover {
+  color: var(--i-texte);
+}
+
 .integrer-copier {
   font: inherit;
   font-size: 12px;
