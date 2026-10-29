@@ -1,5 +1,9 @@
-gsap.to(".boite", {
-  x: 200,
-  rotation: 90,
-  duration: 1.5
-})
+const largeurFenetre = window.innerWidth;
+
+gsap.to(".dot", {
+  x: largeurFenetre - 100 - 10,
+  duration: 4,
+  ease: "linear",
+  repeat: -1
+});
+
