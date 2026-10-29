@@ -3,7 +3,19 @@
     {
       "nom": "gsap-to",
       "titre": "GSAP - to()",
-      "tags": ["web3", "gsap"],
+      "tags": [
+        "web3",
+        "gsap"
+      ],
+      "modifie": "2026-10-28"
+    },
+    {
+      "nom": "gsap-to-copie",
+      "titre": "GSAP - to() (copie)",
+      "tags": [
+        "web3",
+        "gsap"
+      ],
       "modifie": "2026-10-28"
     }
   ]
