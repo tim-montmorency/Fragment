@@ -1,4 +1,13 @@
-gsap.fromTo(".pill", {
-  { x: "10vh", y: "10vh", opacity: 0, rotation: 0 },                
-  { x: 300, rotation: 90, duration: 2 }
-});
+gsap.fromTo(".pill", 
+  { 
+    borderRadius: "1.5vw" 
+  },
+  { 
+    x: "75vw", 
+    y: "75vh", 
+    width: "3vw", 
+    borderRadius: 0, 
+    rotation: 180, 
+    duration: 5 
+  }
+);
