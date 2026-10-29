@@ -22,14 +22,14 @@
   content: "Position initiale";
   position: absolute;
   bottom: calc(100% + 0.5rem);
-  color: #2fb170;
+  color: var(--color-primary);
 }
 
 .arrivee {
   text-align: right;
   width: 10px;
   height: 10px;
-  border: 1px dashed #2fb170;
+  border: 1px dashed var(--color-primary);
   position: absolute;
   top: 50%;
   right: 50px;
@@ -41,5 +41,5 @@
   position: absolute;
   bottom: calc(100% + 0.5rem);
   right: 0;
-  color: #2fb170;
+  color: var(--color-primary);
 }
