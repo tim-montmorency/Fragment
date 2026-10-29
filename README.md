@@ -2,56 +2,87 @@
 
 # Fragment
 
-Exemples interactifs (HTML / CSS / JS) à intégrer dans les notes de cours par une simple `<iframe>`.
+Petits exemples interactifs (HTML / CSS / JS), appelés **fragments**, à intégrer dans les notes de cours par une simple `<iframe>`.
 Remplace les embeds CodePen.
 
-- Chaque exemple est une page web autonome : n'importe quelle technologie peut y être utilisée (GSAP, Tailwind, Three.js…).
+Site : `https://tim-montmorency.com/Fragment/`
+
+- **Galerie** (page d'accueil) : tous les fragments, avec recherche et filtre par tag.
+- **Studio** (`studio/`) : création et modification des fragments, enregistrement direct dans GitHub.
+- Chaque fragment est une page web autonome : n'importe quelle technologie peut y être utilisée (GSAP, Tailwind, Three.js…).
 - Une **visionneuse** (`v/`) affiche le code et/ou le résultat selon des paramètres d'URL.
-- Le site des notes ne contient qu'une iframe : si un exemple brise, seul le cadre reste vide.
+- Le site des notes ne contient qu'une iframe : si un fragment brise, seul le cadre reste vide.
 
 ## Structure
 
 ```
 Fragment/
-├── index.html            Constructeur d'intégration (génère le code de l'iframe)
-├── studio/               Création et modification d'exemples (enregistre sur GitHub)
-├── v/                    Visionneuse
-│   ├── index.html
-│   ├── visionneuse.js
-│   ├── visionneuse.css
+├── index.html            Galerie des fragments
+├── fragments.json        Index de la galerie (titre, tags, date de chaque fragment)
+├── f/                    Les fragments, un dossier chacun
+│   └── gsap-to/
+│       ├── index.html    obligatoire
+│       ├── style.css     facultatif
+│       ├── script.js     facultatif
+│       └── fragment.json titre, tags, dates
+├── studio/               Création et modification des fragments
+├── v/                    Visionneuse (code + résultat, utilisée dans les iframes)
 │   └── vendor/           highlight.js et CodeMirror (auto-hébergés)
+├── commun/               Galerie et fenêtre « Intégrer » (partagée galerie / studio)
 ├── outils/codemirror/    Source du paquet CodeMirror
-├── _gabarit/             Point de départ d'un nouvel exemple
-└── web3/
-    └── gsap-to/          Un exemple = un dossier
-        ├── index.html    obligatoire
-        ├── style.css     facultatif
-        └── script.js     facultatif
+└── _gabarit/             Point de départ d'un nouveau fragment
 ```
 
-## Ajouter un exemple
+Les fragments ne sont pas classés en sous-dossiers : le **nom du dossier** est unique et sert d'identifiant
+(`?ex=gsap-to`). Le classement se fait avec les **tags** (`web3`, `gsap`…), et un fragment peut en avoir plusieurs.
 
-Deux façons de faire :
+### fragment.json
 
-- **Avec le studio** (`studio/`), directement sur le site publié. Voir plus bas.
-- **À la main**, dans la copie locale du répertoire :
+```json
+{
+  "titre": "GSAP - to()",
+  "tags": ["web3", "gsap"],
+  "cree": "2026-10-28",
+  "modifie": "2026-10-28"
+}
+```
 
-1. Copier `_gabarit/` vers `<cours>/<nom-exemple>/` (lettres, chiffres, `-` et `_` seulement).
-2. Écrire l'exemple. Les bibliothèques se chargent directement dans `index.html`.
-3. Ouvrir `index.html` à la racine du site pour générer le code de l'iframe.
+## Galerie
 
-L'onglet **HTML** n'affiche que le contenu de `<body>`, sans les balises `<script src="…">`.
+La page d'accueil lit `fragments.json` et affiche une carte par fragment, avec une miniature vivante
+(chargée quand la carte devient visible).
+
+- **Recherche** dans le nom, le titre et les tags (accents ignorés).
+- **Tags** : un clic filtre la galerie ; un deuxième clic retire le filtre.
+- Les filtres sont dans l'adresse, donc partageables : `…/Fragment/?tag=web3`, `…/Fragment/?q=scroll`.
+- **Voir** ouvre la visionneuse, **Modifier** ouvre le fragment dans le studio, **Intégrer** ouvre la fenêtre d'intégration.
+
+## Intégrer un fragment
+
+Le bouton **Intégrer** (galerie ou studio) ouvre une fenêtre pour choisir les options de la visionneuse,
+voir l'aperçu et copier le code de l'iframe à coller dans le Markdown.
+
+## Ajouter un fragment à la main
+
+Le studio s'en occupe normalement. À la main, dans la copie locale du répertoire :
+
+1. Copier `_gabarit/` vers `f/<nom>/` (lettres, chiffres, `-` et `_` seulement).
+2. Écrire le fragment. Les bibliothèques se chargent directement dans `index.html`.
+3. Ajouter `f/<nom>/fragment.json` (titre et tags).
+4. Pousser, puis dans le studio : bouton **GitHub** → **Reconstruire l'index**, pour que la galerie le liste.
+
+L'onglet **HTML** de la visionneuse n'affiche que le contenu de `<body>`, sans les balises `<script src="…">`.
 Le paramètre `html=complet` affiche le fichier entier.
 
 ## Paramètres de la visionneuse
 
 ```
-https://<site>/v/?ex=web3/gsap-to&onglets=js,resultat&actif=js
+https://<site>/v/?ex=gsap-to&onglets=js,resultat&actif=js
 ```
 
 | Paramètre | Valeurs | Défaut | Effet |
 | :--- | :--- | :--- | :--- |
-| `ex` | `web3/gsap-to` | — | Dossier de l'exemple (obligatoire) |
+| `ex` | `gsap-to` | — | Nom du fragment (dossier `f/<nom>/`, obligatoire) |
 | `onglets` | `html,css,js,resultat` | les quatre | Onglets visibles, dans l'ordre indiqué |
 | `actif` | `html`, `css`, `js`, `resultat` | le premier | Onglet ouvert au chargement |
 | `disposition` | `onglets`, `cote`, `pile` | `onglets` | Tout en onglets, code à côté du résultat, ou code au-dessus |
@@ -67,17 +98,17 @@ Par défaut, la disposition est `onglets`, ou `cote` en mode modifiable.
 
 ```html
 <!-- Résultat seulement -->
-<iframe src="https://<site>/v/?ex=web3/gsap-to&onglets=resultat" class="aspect-3-2" style="width:100%;border:0" loading="lazy"></iframe>
+<iframe src="https://<site>/v/?ex=gsap-to&onglets=resultat" class="aspect-3-2" style="width:100%;border:0" loading="lazy"></iframe>
 
 <!-- CSS seulement -->
-<iframe src="https://<site>/v/?ex=web3/gsap-to&onglets=css" class="aspect-3-2" style="width:100%;border:0" loading="lazy"></iframe>
+<iframe src="https://<site>/v/?ex=gsap-to&onglets=css" class="aspect-3-2" style="width:100%;border:0" loading="lazy"></iframe>
 
 <!-- JS à côté du résultat, seulement le bouton Rejouer -->
-<iframe src="https://<site>/v/?ex=web3/gsap-to&onglets=js,resultat&disposition=cote&boutons=rejouer" class="aspect-3-2" style="width:100%;border:0" loading="lazy"></iframe>
+<iframe src="https://<site>/v/?ex=gsap-to&onglets=js,resultat&disposition=cote&boutons=rejouer" class="aspect-3-2" style="width:100%;border:0" loading="lazy"></iframe>
 ```
 
 Le résultat démarre seulement quand il devient visible à l'écran (pratique pour les animations).
-Le bouton **Rejouer** le relance, **Ouvrir** affiche l'exemple seul dans un nouvel onglet
+Le bouton **Rejouer** le relance, **Ouvrir** affiche le fragment seul dans un nouvel onglet
 (boutons configurables avec `boutons`).
 
 ## Mode modifiable (aperçu en direct)
@@ -86,7 +117,7 @@ Avec `modifiable=1`, les onglets de code deviennent des éditeurs (CodeMirror) e
 une demi-seconde après la dernière frappe.
 
 ```html
-<iframe src="https://<site>/v/?ex=web3/gsap-to&onglets=js,resultat&modifiable=1" class="aspect-3-2" style="width:100%;border:0" loading="lazy"></iframe>
+<iframe src="https://<site>/v/?ex=gsap-to&onglets=js,resultat&modifiable=1" class="aspect-3-2" style="width:100%;border:0" loading="lazy"></iframe>
 ```
 
 - Une pastille rouge animée à côté de **Résultat** indique que l'aperçu est en direct.
@@ -94,7 +125,7 @@ une demi-seconde après la dernière frappe.
 - **Ouvrir** affiche la version modifiée dans un nouvel onglet.
 - Les bibliothèques chargées par CDN dans `index.html` continuent de fonctionner. Les chemins relatifs (images, etc.) aussi.
 - `numeros=1` affiche aussi les numéros de ligne dans les éditeurs.
-- L'éditeur (≈ 560 Ko) n'est chargé qu'en mode modifiable. S'il ne se charge pas, l'exemple s'affiche en lecture seule.
+- L'éditeur (≈ 560 Ko) n'est chargé qu'en mode modifiable. S'il ne se charge pas, le fragment s'affiche en lecture seule.
 
 ### Mettre à jour CodeMirror
 
@@ -108,12 +139,13 @@ npm run build
 
 ## Studio
 
-`https://tim-montmorency.github.io/Fragment/studio/`
+`https://tim-montmorency.com/Fragment/studio/` — ou `studio/?ex=<nom>` pour ouvrir directement un fragment.
 
-Interface pour créer ou modifier un exemple avec aperçu en direct, puis l'enregistrer dans le répertoire GitHub.
+Interface pour créer ou modifier un fragment avec aperçu en direct, puis l'enregistrer dans le répertoire GitHub.
 
-- **Exemple** : « Nouvel exemple » part du `_gabarit/`. Les exemples existants sont listés à partir du répertoire GitHub.
-- **Cours / Nom du dossier / Titre** : l'exemple est enregistré dans `<cours>/<nom>/`. Changer le nom d'un exemple ouvert crée une copie.
+- **Fragment** : « Nouveau fragment » part du `_gabarit/`. Les fragments existants viennent de `fragments.json`.
+- **Nom du dossier / Titre / Tags** : le fragment est enregistré dans `f/<nom>/`. Changer le nom d'un fragment ouvert crée une copie.
+  Les tags sont séparés par des virgules, mis en minuscules et dédoublonnés.
 - **Bibliothèques** : recherche dans npm, servie par jsDelivr (version exacte, fichier principal choisi automatiquement).
   - **Entrée** ou clic : ajoute le fichier principal du paquet (et sa feuille de style s'il en a une).
   - **Fichiers ▸** (ou flèche droite) : choisir un autre fichier du paquet, par exemple `ScrollTrigger.min.js` dans `gsap`.
@@ -121,10 +153,13 @@ Interface pour créer ou modifier un exemple avec aperçu en direct, puis l'enre
   - Une adresse collée (`https://…`) s'ajoute telle quelle.
   - Les fichiers `.css` vont dans `<head>`, les `.js` à la fin du body, les modules ES (`three`, etc.) dans une importmap ; `script.js` passe alors en `type="module"`.
   - Glisser les pastilles pour changer l'ordre de chargement ; × pour retirer.
-  - Les autres balises déjà présentes dans un exemple sont conservées.
-- **⚙ Exemple** — attributs de `<html>` et `<body>` : par exemple `data-theme="dark"` pour daisyUI, ou `class="…"` sur le body. `lang="fr"` est ajouté automatiquement, sauf si un autre `lang` est indiqué.
+  - Les autres balises déjà présentes dans un fragment sont conservées.
+- **⚙** — attributs de `<html>` et `<body>` : par exemple `data-theme="dark"` pour daisyUI, ou `class="…"` sur le body. `lang="fr"` est ajouté automatiquement, sauf si un autre `lang` est indiqué.
+- **Intégrer** : fenêtre d'intégration du fragment enregistré.
 - **Onglet HTML** : seulement le contenu de `<body>`. Le reste de `index.html` est généré.
-- **Enregistrer** (ou Cmd/Ctrl + S) : un seul commit avec `index.html`, `style.css` et `script.js`. GitHub Pages republie le site en moins d'une minute environ.
+- **Enregistrer** (ou Cmd/Ctrl + S) : un seul commit avec les fichiers du fragment, son `fragment.json` et l'index `fragments.json`.
+  GitHub Pages republie le site en moins d'une minute environ.
+- **GitHub → Reconstruire l'index** : recrée `fragments.json` à partir des dossiers `f/`, après des ajouts ou suppressions faits à la main.
 
 ### Jeton GitHub (une seule fois par navigateur)
 

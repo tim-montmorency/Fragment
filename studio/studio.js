@@ -4,8 +4,9 @@
  * Création et modification d'exemples, avec aperçu en direct.
  * L'enregistrement fait un commit dans le répertoire GitHub (voir github.js).
  *
- * Chaque exemple est généré dans la structure habituelle :
- *   <cours>/<nom>/index.html, style.css, script.js
+ * Chaque fragment est généré dans f/<nom>/ :
+ *   index.html, style.css, script.js et fragment.json (titre, tags, dates)
+ * L'index central fragments.json (galerie) est mis à jour dans le même commit.
  */
 (() => {
   "use strict";
@@ -13,7 +14,6 @@
   // ---------- Constantes ----------
 
   const SITE = new URL("../", location.href);           // racine du site Fragment
-  const RESERVES = ["v", "studio", "outils", "_gabarit", "node_modules"];
   const SLUG = /^[a-z0-9_-]+$/i;
   const DELAI_APERCU = 400;
   const CLE_REGLAGES = "fragment.studio.reglages";
@@ -29,13 +29,14 @@
   // ---------- État ----------
 
   const etat = {
-    ex: null,               // chemin de l'exemple ouvert (null = nouveau)
+    ex: null,               // nom du fragment ouvert (null = nouveau)
+    meta: {},               // contenu de fragment.json du fragment ouvert
+    fragments: [],          // index : [{ nom, titre, tags, modifie }]
     ressources: [],         // bibliothèques : { type: "css" | "js" | "module", url, cle?, tete? } (voir cdn.js)
     module: false,          // script.js chargé en type="module"
     extraTete: [],          // balises de <head> non reconnues, conservées telles quelles
     extraCorps: [],         // <script> non reconnus, conservés tels quels
     modifie: false,
-    exemples: [],           // chemins des exemples existants
     avertissement: "",      // problème de lecture de la liste, réaffiché après le chargement
   };
 
@@ -183,15 +184,15 @@
 
   // ---------- Génération des fichiers ----------
 
-  /** Signale sur le bouton « ⚙ Exemple » que des attributs sont définis. */
+  /** Signale sur le bouton « ⚙ » que des attributs sont définis. */
   function indiquerAttributs() {
     const html = nettoyerAttributs($("attrs-html").value);
     const body = nettoyerAttributs($("attrs-body").value);
     const b = $("btn-exemple");
     b.classList.toggle("defini", Boolean(html || body));
     b.title = html || body
-      ? `Réglages de l'exemple\n<html ${html}>\n<body ${body}>`
-      : "Réglages de l'exemple";
+      ? `Réglages du fragment\n<html ${html}>\n<body ${body}>`
+      : "Réglages du fragment";
   }
 
   /** Attributs saisis à la main : sans « < » ni « > », espaces superflus retirés. */
@@ -261,7 +262,7 @@ ${corps.map((l) => "  " + l).join("\n")}
   /** Page complète avec CSS et JS en ligne, pour l'aperçu. */
   function genererApercu() {
     const f = genererFichiers();
-    const chemin = etat.ex || `${$("cours").value.trim() || "_"}/${$("nom").value.trim() || "_"}`;
+    const chemin = `f/${etat.ex || $("nom").value.trim() || "_"}`;
     let doc = f["index.html"]
       .replace(/<link rel="stylesheet" href="style\.css">/, () => `<style>\n${f["style.css"]}</style>`)
       .replace(/<script( type="module")? src="script\.js"><\/script>/, (m, type) =>
@@ -406,64 +407,94 @@ ${corps.map((l) => "  " + l).join("\n")}
     $("aucune").hidden = etat.ressources.length > 0;
   }
 
-  // ---------- Liste des exemples ----------
+  // ---------- Liste des fragments (index central fragments.json) ----------
 
-  async function chargerListe() {
+  /** Texte d'un fichier du répertoire : API GitHub d'abord (à jour), puis le site publié. */
+  async function lireTexte(chemin) {
     try {
-      const chemins = await github().fichiers();
-      etat.exemples = chemins
-        .filter((c) => c.endsWith("/index.html"))
-        .map((c) => c.slice(0, -"/index.html".length))
-        .filter((c) => c.includes("/") && !RESERVES.includes(c.split("/")[0]))
-        .sort();
-      etat.avertissement = chemins.jetonRefuse
-        ? "Le jeton GitHub enregistré est refusé (invalide, expiré ou sans accès) : vérifier les réglages GitHub."
-        : "";
-    } catch (e) {
-      etat.exemples = [];
-      const raison =
-        e.limite || e.status === 429 ? "limite de requêtes GitHub atteinte pour ce réseau ; un jeton valide la lève" :
-        e.status === 404 ? `répertoire ${reglages.proprietaire}/${reglages.repertoire} ou branche « ${reglages.branche} » introuvable` :
-        e.status ? `erreur ${e.status} : ${e.message}` :
-        "GitHub injoignable";
-      etat.avertissement = `Liste des exemples indisponible (${raison}). La création reste possible.`;
-    }
-
-    if (etat.avertissement) statut(etat.avertissement, "erreur");
-
-    const select = $("ouvrir");
-    select.length = 1;
-    etat.exemples.forEach((c) => select.add(new Option(c, c)));
-    select.value = etat.ex || "";
-
-    const cours = [...new Set(etat.exemples.map((c) => c.split("/")[0]))];
-    $("liste-cours").innerHTML = cours.map((c) => `<option value="${c}">`).join("");
-  }
-
-  // ---------- Ouvrir / nouveau ----------
-
-  async function lireFichierExemple(chemin, fichier) {
-    try {
-      const texte = await github().lire(`${chemin}/${fichier}`);
+      const texte = await github().lire(chemin);
       if (texte !== null) return texte;
     } catch (e) { /* API indisponible : on essaie le site */ }
     try {
-      const r = await fetch(new URL(`${chemin}/${fichier}`, SITE), { cache: "no-store" });
+      const r = await fetch(new URL(chemin, SITE), { cache: "no-store" });
       return r.ok ? await r.text() : null;
     } catch (e) {
       return null;
     }
   }
 
-  function remplir({ ex, cours, nom, titre, html, css, js, analyse }) {
+  const lireJson = async (chemin) => {
+    const texte = await lireTexte(chemin);
+    if (texte === null) return null;
+    try { return JSON.parse(texte); } catch (e) { return null; }
+  };
+
+  /** Liste des fragments à partir de l'arbre du répertoire (dossiers f/<nom>/index.html). */
+  async function nomsDepuisArbre() {
+    const chemins = await github().fichiers();
+    const noms = chemins
+      .map((c) => c.match(/^f\/([^/]+)\/index\.html$/)?.[1])
+      .filter(Boolean)
+      .sort();
+    noms.jetonRefuse = chemins.jetonRefuse;
+    return noms;
+  }
+
+  function afficherListe() {
+    const select = $("ouvrir");
+    select.length = 1;
+    etat.fragments.forEach((f) => select.add(new Option(f.titre && f.titre !== f.nom ? `${f.nom} — ${f.titre}` : f.nom, f.nom)));
+    select.value = etat.ex || "";
+    const tags = [...new Set(etat.fragments.flatMap((f) => f.tags || []))].sort();
+    $("tags").placeholder = tags.length ? `ex. ${tags.slice(0, 3).join(", ")}` : "ex. web3, gsap";
+    $("tags").title = tags.length ? `Tags existants : ${tags.join(", ")}` : "";
+  }
+
+  async function chargerListe() {
+    etat.avertissement = "";
+    const index = await lireJson("fragments.json");
+    if (index && Array.isArray(index.fragments)) {
+      etat.fragments = index.fragments;
+    } else {
+      // Pas d'index : on se rabat sur l'arbre du répertoire
+      try {
+        const noms = await nomsDepuisArbre();
+        etat.fragments = noms.map((nom) => ({ nom, titre: nom, tags: [] }));
+        etat.avertissement = noms.jetonRefuse
+          ? "Le jeton GitHub enregistré est refusé (invalide, expiré ou sans accès) : vérifier les réglages GitHub."
+          : "Index fragments.json introuvable : la liste vient du répertoire. « Reconstruire l'index » (bouton GitHub) le recrée.";
+      } catch (e) {
+        etat.fragments = [];
+        const raison =
+          e.limite || e.status === 429 ? "limite de requêtes GitHub atteinte pour ce réseau ; un jeton valide la lève" :
+          e.status === 404 ? `répertoire ${reglages.proprietaire}/${reglages.repertoire} ou branche « ${reglages.branche} » introuvable` :
+          e.status ? `erreur ${e.status} : ${e.message}` :
+          "GitHub injoignable";
+        etat.avertissement = `Liste des fragments indisponible (${raison}). La création reste possible.`;
+      }
+    }
+    if (etat.avertissement) statut(etat.avertissement, "erreur");
+    afficherListe();
+  }
+
+  // ---------- Ouvrir / nouveau ----------
+
+  const aujourdhui = () => new Date().toLocaleDateString("sv"); // AAAA-MM-JJ
+
+  /** « Web3, GSAP ,, web3 » → ["web3", "gsap"] */
+  const lireTags = (texte) =>
+    [...new Set(texte.split(",").map((t) => t.trim().toLowerCase().replace(/\s+/g, "-")).filter(Boolean))];
+
+  function remplir({ ex, nom, titre, tags, html, css, js, analyse, meta }) {
     etat.ex = ex;
+    etat.meta = meta || {};
     etat.ressources = analyse ? analyse.ressources : [];
     etat.module = analyse ? analyse.module : false;
     etat.extraTete = analyse ? analyse.extraTete : [];
     etat.extraCorps = analyse ? analyse.extraCorps : [];
-    $("cours").value = cours;
     $("nom").value = nom;
     $("titre").value = titre;
+    $("tags").value = (tags || []).join(", ");
     $("attrs-html").value = analyse?.attrsHtml || "";
     $("attrs-body").value = analyse?.attrsBody || "";
     indiquerAttributs();
@@ -479,105 +510,153 @@ ${corps.map((l) => "  " + l).join("\n")}
 
   async function nouvelExemple() {
     const [html, css, js] = await Promise.all(
-      ["index.html", "style.css", "script.js"].map((f) => lireFichierExemple("_gabarit", f))
+      ["index.html", "style.css", "script.js"].map((f) => lireTexte(`_gabarit/${f}`))
     );
     const analyse = html ? analyserIndex(html) : null;
     remplir({
       ex: null,
-      cours: $("cours").value.trim(),
       nom: "",
       titre: "",
+      tags: [],
       html: analyse?.corps || DEFAUTS.html,
       css: (css ?? DEFAUTS.css).replace(/\s+$/, ""),
       js: (js ?? DEFAUTS.js).replace(/\s+$/, ""),
       analyse,
     });
-    statut("Nouvel exemple.");
+    statut("Nouveau fragment.");
   }
 
-  async function ouvrirExemple(chemin) {
-    statut(`Ouverture de ${chemin}…`);
-    const [html, css, js] = await Promise.all(
-      ["index.html", "style.css", "script.js"].map((f) => lireFichierExemple(chemin, f))
-    );
-    if (html === null) return statut(`Impossible d'ouvrir ${chemin}.`, "erreur");
+  async function ouvrirExemple(nom) {
+    statut(`Ouverture de ${nom}…`);
+    const [html, css, js, meta] = await Promise.all([
+      lireTexte(`f/${nom}/index.html`),
+      lireTexte(`f/${nom}/style.css`),
+      lireTexte(`f/${nom}/script.js`),
+      lireJson(`f/${nom}/fragment.json`),
+    ]);
+    if (html === null) return statut(`Impossible d'ouvrir ${nom}.`, "erreur");
     const analyse = analyserIndex(html);
-    const [cours, ...reste] = chemin.split("/");
     remplir({
-      ex: chemin,
-      cours,
-      nom: reste.join("/"),
-      titre: analyse.titre,
+      ex: nom,
+      nom,
+      titre: meta?.titre || analyse.titre,
+      tags: meta?.tags || [],
       html: analyse.corps,
       css: (css || "").replace(/\s+$/, ""),
       js: (js || "").replace(/\s+$/, ""),
       analyse,
+      meta,
     });
-    statut(`${chemin} ouvert.`);
+    statut(`${nom} ouvert.`);
   }
 
   // ---------- Enregistrement ----------
 
-  async function enregistrer() {
-    const cours = $("cours").value.trim();
-    const nom = $("nom").value.trim();
+  const MESSAGES_ERREUR = {
+    401: "jeton invalide ou expiré",
+    403: "le jeton n'a pas la permission d'écrire dans ce répertoire",
+    404: "répertoire ou branche introuvable (ou jeton sans accès)",
+    409: "conflit avec un autre enregistrement, réessayer",
+    422: "conflit avec un autre enregistrement, réessayer",
+  };
 
-    if (!SLUG.test(cours) || !SLUG.test(nom)) {
-      return statut("Cours et nom du dossier : lettres, chiffres, « - » et « _ » seulement.", "erreur");
+  const json = (objet) => JSON.stringify(objet, null, 2) + "\n";
+
+  /** Index trié : les plus récents d'abord, puis par nom. */
+  const trierIndex = (liste) =>
+    [...liste].sort((a, b) => (b.modifie || "").localeCompare(a.modifie || "") || a.nom.localeCompare(b.nom));
+
+  async function enregistrer() {
+    const nom = $("nom").value.trim();
+    if (!SLUG.test(nom)) {
+      return statut("Nom du dossier : lettres, chiffres, « - » et « _ » seulement.", "erreur");
     }
-    if (RESERVES.includes(cours)) return statut(`« ${cours} » est un nom réservé.`, "erreur");
     if (!reglages.jeton) {
       statut("Un jeton GitHub est nécessaire pour enregistrer.", "erreur");
       return ouvrirReglages();
     }
 
-    const chemin = `${cours}/${nom}`;
-    const existe = etat.exemples.includes(chemin);
-    if (existe && chemin !== etat.ex && !confirm(`L'exemple ${chemin} existe déjà. Le remplacer ?`)) return;
+    const existe = etat.fragments.some((f) => f.nom === nom);
+    if (existe && nom !== etat.ex && !confirm(`Le fragment ${nom} existe déjà. Le remplacer ?`)) return;
 
-    const fichiers = {};
-    Object.entries(genererFichiers()).forEach(([f, contenu]) => { fichiers[`${chemin}/${f}`] = contenu; });
-
-    let message = existe ? `Studio : mise à jour de ${chemin}` : `Studio : ajout de ${chemin}`;
-    if (etat.ex && etat.ex !== chemin) message += ` (copie de ${etat.ex})`;
+    const titre = $("titre").value.trim() || nom;
+    const tags = lireTags($("tags").value);
+    const date = aujourdhui();
+    const meta = {
+      titre,
+      tags,
+      cree: (nom === etat.ex && etat.meta?.cree) || date,
+      modifie: date,
+    };
 
     const bouton = $("btn-enregistrer");
     bouton.disabled = true;
     statut("Enregistrement…");
     try {
+      // Index à jour (lu juste avant l'écriture) + entrée de ce fragment
+      const index = await lireJson("fragments.json");
+      const liste = (index && Array.isArray(index.fragments) ? index.fragments : etat.fragments)
+        .filter((f) => f.nom !== nom);
+      liste.push({ nom, titre, tags, modifie: date });
+
+      const fichiers = {};
+      Object.entries(genererFichiers()).forEach(([f, contenu]) => { fichiers[`f/${nom}/${f}`] = contenu; });
+      fichiers[`f/${nom}/fragment.json`] = json(meta);
+      fichiers["fragments.json"] = json({ fragments: trierIndex(liste) });
+
+      let message = existe ? `Studio : mise à jour de ${nom}` : `Studio : ajout de ${nom}`;
+      if (etat.ex && etat.ex !== nom) message += ` (copie de ${etat.ex})`;
+
       await github().enregistrer(fichiers, message);
-      etat.ex = chemin;
+
+      etat.fragments = trierIndex(liste);
+      etat.ex = nom;
+      etat.meta = meta;
       etat.modifie = false;
-      if (!etat.exemples.includes(chemin)) {
-        etat.exemples.push(chemin);
-        etat.exemples.sort();
-        const select = $("ouvrir");
-        select.length = 1;
-        etat.exemples.forEach((c) => select.add(new Option(c, c)));
-      }
-      $("ouvrir").value = chemin;
-      statut(`${chemin} enregistré.`, "succes");
-      afficherSucces(chemin);
+      afficherListe();
+      statut(`${nom} enregistré.`, "succes");
+      afficherSucces(nom);
     } catch (e) {
-      const raisons = {
-        401: "jeton invalide ou expiré",
-        403: "le jeton n'a pas la permission d'écrire dans ce répertoire",
-        404: "répertoire ou branche introuvable (ou jeton sans accès)",
-        409: "conflit avec un autre enregistrement, réessayer",
-        422: "conflit avec un autre enregistrement, réessayer",
-      };
-      statut(`Échec de l'enregistrement : ${raisons[e.status] || e.message}.`, "erreur");
+      statut(`Échec de l'enregistrement : ${MESSAGES_ERREUR[e.status] || e.message}.`, "erreur");
     } finally {
       bouton.disabled = false;
     }
   }
 
-  function afficherSucces(chemin) {
-    const src = `${new URL("v/", SITE).href}?ex=${chemin}`;
+  /** Recrée fragments.json à partir des dossiers f/<nom>/ (utile après des ajouts faits à la main). */
+  async function reconstruireIndex() {
+    if (!reglages.jeton) return statut("Un jeton GitHub est nécessaire pour reconstruire l'index.", "erreur");
+    statut("Reconstruction de l'index…");
+    try {
+      const noms = await nomsDepuisArbre();
+      const liste = await Promise.all(noms.map(async (nom) => {
+        const meta = await lireJson(`f/${nom}/fragment.json`);
+        if (meta) return { nom, titre: meta.titre || nom, tags: meta.tags || [], modifie: meta.modifie || "" };
+        // Sans fragment.json : titre tiré de <title>
+        const html = await lireTexte(`f/${nom}/index.html`);
+        const titre = html?.match(/<title[^>]*>([\s\S]*?)<\/title>/i)?.[1].trim();
+        return { nom, titre: titre || nom, tags: [], modifie: "" };
+      }));
+      await github().enregistrer({ "fragments.json": json({ fragments: trierIndex(liste) }) }, "Studio : reconstruction de l'index");
+      etat.fragments = trierIndex(liste);
+      afficherListe();
+      statut(`Index reconstruit : ${liste.length} fragment${liste.length > 1 ? "s" : ""}.`, "succes");
+    } catch (e) {
+      statut(`Échec de la reconstruction : ${MESSAGES_ERREUR[e.status] || e.message}.`, "erreur");
+    }
+  }
+
+  function afficherSucces(nom) {
+    const src = `${new URL("v/", SITE).href}?ex=${nom}`;
     $("extrait").textContent =
       `<iframe src="${src}" class="aspect-3-2" style="width:100%;border:0" loading="lazy"></iframe>`;
-    $("lien-constructeur").href = `${SITE.href}?ex=${encodeURIComponent(chemin).replace(/%2F/g, "/")}`;
     $("succes").showModal();
+  }
+
+  function integrer() {
+    if (!etat.ex) return statut("Enregistrer le fragment avant de l'intégrer.", "erreur");
+    if (etat.modifie) statut("Attention : l'intégration montre la dernière version enregistrée.");
+    Integrer.ouvrir(etat.ex, { racine: SITE.href });
   }
 
   // ---------- Réglages ----------
@@ -615,7 +694,7 @@ ${corps.map((l) => "  " + l).join("\n")}
   // ---------- Démarrage ----------
 
   function brancherEvenements() {
-    ["cours", "nom", "titre", "attrs-html", "attrs-body"].forEach((id) => $(id).addEventListener("input", marquerModifie));
+    ["nom", "titre", "tags", "attrs-html", "attrs-body"].forEach((id) => $(id).addEventListener("input", marquerModifie));
     ["attrs-html", "attrs-body"].forEach((id) => $(id).addEventListener("input", indiquerAttributs));
     $("btn-exemple").addEventListener("click", () => $("config-exemple").showModal());
 
@@ -630,6 +709,9 @@ ${corps.map((l) => "  " + l).join("\n")}
     });
 
     $("btn-enregistrer").addEventListener("click", enregistrer);
+    $("btn-integrer").addEventListener("click", integrer);
+    $("btn-integrer-succes").addEventListener("click", () => { $("succes").close(); integrer(); });
+    $("btn-reconstruire").addEventListener("click", () => { $("reglages").close(); reconstruireIndex(); });
     $("btn-reglages").addEventListener("click", ouvrirReglages);
     $("form-reglages").addEventListener("change", sauverReglages);
     $("reglages").addEventListener("close", sauverReglages);
@@ -661,18 +743,18 @@ ${corps.map((l) => "  " + l).join("\n")}
   }
 
   async function demarrer() {
-    if (!window.CM || typeof GitHub === "undefined" || typeof CadreDouble === "undefined") {
+    if (!window.CM || typeof GitHub === "undefined" || typeof CadreDouble === "undefined" || typeof Integrer === "undefined") {
       document.body.innerHTML = '<p class="message">Le studio n\'a pas pu se charger.</p>';
       return;
     }
-    apercu = CadreDouble.creer($("resultat"), { titre: "Aperçu de l'exemple" });
+    apercu = CadreDouble.creer($("resultat"), { titre: "Aperçu du fragment" });
     creerEditeurs();
     creerBibliotheques();
     brancherEvenements();
 
     const demande = new URLSearchParams(location.search).get("ex");
     await chargerListe();
-    if (demande && /^[a-z0-9_-]+(\/[a-z0-9_-]+)+$/i.test(demande)) await ouvrirExemple(demande);
+    if (demande && SLUG.test(demande)) await ouvrirExemple(demande);
     else await nouvelExemple();
     if (etat.avertissement) statut(etat.avertissement, "erreur");
     else if (!reglages.jeton) statut("Aucun jeton GitHub : l'aperçu fonctionne, mais l'enregistrement demandera un jeton (bouton GitHub).");

@@ -3,11 +3,11 @@
  * ----------------------
  * Affiche le code et/ou le résultat d'un exemple selon les paramètres d'URL.
  *
- *   v/?ex=web3/gsap-to&onglets=js,resultat&actif=js
- *   v/?ex=web3/gsap-to&modifiable=1          ← éditeurs + aperçu en direct
- *   v/?ex=web3/gsap-to&boutons=rejouer       ← seulement le bouton Rejouer
+ *   v/?ex=gsap-to&onglets=js,resultat&actif=js
+ *   v/?ex=gsap-to&modifiable=1          ← éditeurs + aperçu en direct
+ *   v/?ex=gsap-to&boutons=rejouer       ← seulement le bouton Rejouer
  *
- * Chaque exemple est un dossier contenant index.html (obligatoire),
+ * Chaque fragment est un dossier f/<nom>/ contenant index.html (obligatoire),
  * style.css et script.js (facultatifs). Le résultat est index.html chargé
  * dans une iframe : l'exemple peut utiliser n'importe quelle technologie
  * sans que la visionneuse ait à la connaître.
@@ -28,7 +28,7 @@
   // ---------- Lecture des paramètres ----------
 
   const ex = (P.get("ex") || "").trim().replace(/^\/+|\/+$/g, "");
-  const exValide = /^[a-z0-9_-]+(\/[a-z0-9_-]+)*$/i.test(ex);
+  const exValide = /^[a-z0-9_-]+$/i.test(ex); // nom du fragment (dossier f/<nom>/)
 
   const ongletsDemandes = (P.get("onglets") || "html,css,js,resultat")
     .split(",")
@@ -364,9 +364,9 @@
     document.getElementById("hljs-sombre").disabled = theme !== "sombre";
     document.getElementById("hljs-clair").disabled = theme !== "clair";
 
-    if (!exValide) return message("Exemple introuvable.");
+    if (!exValide) return message("Fragment introuvable.");
 
-    const base = new URL(`../${ex}/`, location.href);
+    const base = new URL(`../f/${ex}/`, location.href);
     etat.url = base.href;
 
     const [fichiers, editeurPret] = await Promise.all([
@@ -382,7 +382,7 @@
         /[ \t]*<!--\s*Code injected by live-server\s*-->[\s\S]*?<\/script>[ \t]*\r?\n?/i, "");
     }
 
-    if (etat.brut.html === null) return message(`Exemple introuvable : ${ex}`);
+    if (etat.brut.html === null) return message(`Fragment introuvable : ${ex}`);
 
     etat.original = { ...etat.brut };
     if (!htmlComplet) {

@@ -6,24 +6,19 @@
   <meta name="robots" content="noindex">
   <title>Fragment — Studio</title>
   <link rel="stylesheet" href="studio.css">
+  <link rel="stylesheet" href="../commun/integrer.css">
 </head>
 <body>
   <header class="entete">
-    <a class="logo" href="../">Fragment</a>
+    <a class="logo" href="../" title="Galerie des fragments">Fragment</a>
     <span class="separateur">/</span>
     <span class="sous-titre">Studio</span>
 
     <div class="champ">
-      <label for="ouvrir">Exemple</label>
+      <label for="ouvrir">Fragment</label>
       <select id="ouvrir">
-        <option value="">+ Nouvel exemple</option>
+        <option value="">+ Nouveau fragment</option>
       </select>
-    </div>
-
-    <div class="champ">
-      <label for="cours">Cours</label>
-      <input id="cours" list="liste-cours" placeholder="web3" spellcheck="false" autocomplete="off">
-      <datalist id="liste-cours"></datalist>
     </div>
 
     <div class="champ">
@@ -36,8 +31,14 @@
       <input id="titre" placeholder="GSAP - from()">
     </div>
 
+    <div class="champ champ-tags">
+      <label for="tags">Tags (séparés par des virgules)</label>
+      <input id="tags" placeholder="ex. web3, gsap" spellcheck="false" autocomplete="off">
+    </div>
+
     <div class="actions">
-      <button type="button" id="btn-exemple" class="secondaire" title="Réglages de l'exemple">⚙ Exemple</button>
+      <button type="button" id="btn-exemple" class="secondaire" title="Réglages du fragment">⚙</button>
+      <button type="button" id="btn-integrer" class="secondaire" title="Code d'intégration (iframe)">Intégrer</button>
       <button type="button" id="btn-reglages" class="secondaire" title="Connexion GitHub (jeton)">GitHub</button>
       <button type="button" id="btn-enregistrer" class="principal">Enregistrer</button>
     </div>
@@ -71,7 +72,7 @@
   <!-- Réglages de l'exemple -->
   <dialog id="config-exemple">
     <form method="dialog">
-      <h2>Réglages de l'exemple</h2>
+      <h2>Réglages du fragment</h2>
       <p class="aide">
         Attributs ajoutés aux balises de la page, par exemple <code>data-theme="dark"</code> pour daisyUI.
         <code>lang="fr"</code> est ajouté automatiquement, sauf si un autre <code>lang</code> est indiqué.
@@ -106,6 +107,11 @@
       </div>
       <label>Jeton<input name="jeton" type="password" autocomplete="off" spellcheck="false" placeholder="github_pat_…"></label>
       <p class="aide" id="etat-jeton"></p>
+      <p class="aide">
+        <strong>Index de la galerie</strong> — <code>fragments.json</code> est mis à jour à chaque enregistrement.
+        Après des ajouts ou suppressions faits à la main dans <code>f/</code>, il peut être recréé :
+        <button type="button" id="btn-reconstruire" class="lien">Reconstruire l'index</button>
+      </p>
       <div class="pied-dialogue">
         <button type="button" id="btn-oublier" class="secondaire">Oublier le jeton</button>
         <span class="espaceur"></span>
@@ -118,12 +124,12 @@
   <!-- Après l'enregistrement -->
   <dialog id="succes">
     <form method="dialog">
-      <h2>Exemple enregistré</h2>
+      <h2>Fragment enregistré</h2>
       <p class="aide">GitHub Pages republie le site, habituellement en moins d'une minute. Penser à faire un <code>git pull</code> dans la copie locale.</p>
       <label>Code de l'iframe</label>
       <pre class="extrait" id="extrait"></pre>
       <div class="pied-dialogue">
-        <a id="lien-constructeur" class="bouton secondaire" target="_blank" rel="noopener">Ouvrir dans le constructeur</a>
+        <button type="button" id="btn-integrer-succes" class="secondaire">Options d'intégration…</button>
         <span class="espaceur"></span>
         <button type="button" id="btn-copier" class="secondaire">Copier</button>
         <button value="ok" class="principal">Fermer</button>
@@ -135,6 +141,7 @@
   <script src="../v/cadre-double.js"></script>
   <script src="github.js"></script>
   <script src="cdn.js"></script>
+  <script src="../commun/integrer.js"></script>
   <script src="studio.js"></script>
 </body>
 </html>

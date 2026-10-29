@@ -76,8 +76,8 @@ a {
   width: 100%;
 }
 
-.champ:has(#cours) { flex: 0 1 110px; }
-.champ:has(#nom) { flex: 0 1 170px; }
+.champ:has(#nom) { flex: 0 1 160px; }
+.champ-tags { flex: 0 1 180px; }
 
 .champ-large {
   flex: 1 1 160px;
@@ -597,4 +597,15 @@ dialog input {
 .message {
   margin: auto;
   color: var(--texte-attenue);
+}
+
+/* Bouton au style de lien (dans un texte d'aide) */
+button.lien {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--accent);
+  text-decoration: underline;
+  font-size: inherit;
+  cursor: pointer;
 }

@@ -1,0 +1,260 @@
+/* Galerie des fragments (page d'accueil) */
+
+:root {
+  --fond: #0d1117;
+  --fond-carte: #161b22;
+  --texte: #c9d1d9;
+  --texte-attenue: #8b949e;
+  --bordure: #30363d;
+  --accent: #e63946;
+  --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 0 16px 64px;
+  background: var(--fond);
+  color: var(--texte);
+  font: 15px/1.5 system-ui, sans-serif;
+}
+
+a {
+  color: inherit;
+}
+
+/* ---------- En-tête ---------- */
+
+.entete {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 32px 0 20px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px 24px;
+}
+
+.marque {
+  flex: 1 1 260px;
+}
+
+.marque h1 {
+  margin: 0;
+  font-size: 28px;
+  letter-spacing: -0.02em;
+}
+
+.marque h1::after {
+  content: ".";
+  color: var(--accent);
+}
+
+.marque p {
+  margin: 2px 0 0;
+  color: var(--texte-attenue);
+  font-size: 14px;
+}
+
+#recherche {
+  flex: 0 1 320px;
+  min-width: 0;
+  font: inherit;
+  font-size: 14px;
+  padding: 8px 12px;
+  color: var(--texte);
+  background: var(--fond-carte);
+  border: 1px solid var(--bordure);
+  border-radius: 8px;
+}
+
+#recherche:focus {
+  outline: 2px solid var(--accent);
+  outline-offset: -1px;
+}
+
+.lien-studio {
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  color: var(--accent);
+}
+
+/* ---------- Tags ---------- */
+
+.tags {
+  max-width: 1280px;
+  margin: 0 auto 8px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.tag {
+  font: inherit;
+  font-size: 12px;
+  padding: 3px 10px;
+  color: var(--texte);
+  background: transparent;
+  border: 1px solid var(--bordure);
+  border-radius: 999px;
+  cursor: pointer;
+}
+
+.tag small {
+  color: var(--texte-attenue);
+}
+
+.tag:hover {
+  border-color: var(--texte-attenue);
+}
+
+.tag[aria-pressed="true"] {
+  border-color: var(--accent);
+  background: rgba(230, 57, 70, 0.15);
+}
+
+/* ---------- Grille ---------- */
+
+main {
+  max-width: 1280px;
+  margin: 0 auto;
+}
+
+.compte {
+  margin: 12px 0;
+  font-size: 13px;
+  color: var(--texte-attenue);
+}
+
+.grille {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+.carte {
+  display: flex;
+  flex-direction: column;
+  background: var(--fond-carte);
+  border: 1px solid var(--bordure);
+  border-radius: 10px;
+  overflow: hidden;
+  transition: border-color 0.15s;
+}
+
+.carte:hover {
+  border-color: var(--texte-attenue);
+}
+
+/* Miniature vivante : rendu à 1280×800, réduit par --echelle */
+.miniature {
+  --echelle: 0.25;
+  position: relative;
+  display: block;
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+  background: #fff;
+  border-bottom: 1px solid var(--bordure);
+}
+
+.miniature iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  border: 0;
+  transform: scale(var(--echelle));
+  transform-origin: 0 0;
+  pointer-events: none;
+}
+
+.infos {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 12px 14px 14px;
+  flex: 1;
+}
+
+.infos h2 {
+  margin: 0;
+  font-size: 16px;
+}
+
+.titre {
+  text-decoration: none;
+}
+
+.titre:hover {
+  text-decoration: underline;
+}
+
+.meta {
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 12px;
+  font-size: 12px;
+  color: var(--texte-attenue);
+}
+
+.meta code {
+  font-family: var(--mono);
+}
+
+.tags-carte {
+  list-style: none;
+  margin: 2px 0 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.tags-carte .tag {
+  font-size: 11px;
+  padding: 1px 8px;
+}
+
+.actions {
+  margin-top: auto;
+  padding-top: 8px;
+  display: flex;
+  gap: 6px;
+}
+
+.action {
+  font: inherit;
+  font-size: 12px;
+  padding: 4px 10px;
+  color: var(--texte);
+  background: transparent;
+  border: 1px solid var(--bordure);
+  border-radius: 6px;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.action:hover {
+  border-color: var(--texte-attenue);
+}
+
+.action.voir {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+
+.vide {
+  padding: 48px 0;
+  text-align: center;
+  color: var(--texte-attenue);
+}
