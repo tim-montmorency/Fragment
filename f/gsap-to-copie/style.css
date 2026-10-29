@@ -19,7 +19,7 @@
 }
 
 .depart:before {
-  content: "From";
+  content: "Départ";
   position: absolute;
   text-align: center;
   transform: translateX(-50%);
@@ -40,7 +40,7 @@
 }
 
 .arrivee:before {
-  content: "To";
+  content: "Arrivé";
   position: absolute;
   text-align: center;
   transform: translateX(-50%);
