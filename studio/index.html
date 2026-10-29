@@ -25,10 +25,7 @@
     </div>
 
     <div class="actions">
-      <button type="button" id="btn-nouveau" class="secondaire" title="Nouveau fragment">+ Nouveau</button>
       <button type="button" id="btn-exemple" class="secondaire" title="Réglages du fragment">⚙</button>
-      <button type="button" id="btn-integrer" class="secondaire" title="Code d'intégration (iframe)">Intégrer</button>
-      <button type="button" id="btn-reglages" class="secondaire" title="Connexion GitHub (jeton)">GitHub</button>
       <button type="button" id="btn-enregistrer" class="principal">Enregistrer</button>
     </div>
   </header>
@@ -56,7 +53,13 @@
     </section>
   </main>
 
-  <footer class="statut" id="statut" aria-live="polite"></footer>
+  <footer class="pied">
+    <span class="statut" id="statut" aria-live="polite"></span>
+    <nav class="pied-liens" id="pied-liens" hidden>
+      <a id="lien-voir" target="_blank" rel="noopener" title="Ouvrir le fragment dans la visionneuse">Voir ↗</a>
+      <button type="button" id="btn-integrer" title="Code d'intégration (iframe)">Intégrer</button>
+    </nav>
+  </footer>
 
   <!-- Réglages de l'exemple -->
   <dialog id="config-exemple">
@@ -72,11 +75,12 @@
       <label>Attributs de &lt;body&gt;
         <input id="attrs-body" class="mono" placeholder='class="bg-base-200"' spellcheck="false" autocomplete="off">
       </label>
-      <p class="aide">
-        <button type="button" id="btn-dupliquer" class="lien">Dupliquer ce fragment</button>
-        — crée un nouveau fragment à partir de celui-ci.
-      </p>
+      <div class="actions-fragment" id="actions-fragment">
+        <button type="button" id="btn-dupliquer" class="secondaire" title="Crée un nouveau fragment à partir de celui-ci">Dupliquer</button>
+        <button type="button" id="btn-supprimer" class="danger" title="Retire le fragment du site">Supprimer…</button>
+      </div>
       <div class="pied-dialogue">
+        <button type="button" id="btn-github" class="lien" title="Jeton GitHub nécessaire pour enregistrer">Connexion GitHub…</button>
         <span class="espaceur"></span>
         <button value="ok" class="principal">Fermer</button>
       </div>

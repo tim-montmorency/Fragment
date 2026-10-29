@@ -6,7 +6,6 @@
   <title>Fragment</title>
   <meta name="description" content="Fragments : petits exemples interactifs HTML, CSS et JavaScript.">
   <link rel="stylesheet" href="commun/galerie.css">
-  <link rel="stylesheet" href="commun/integrer.css">
 </head>
 <body>
   <header class="entete">
@@ -15,18 +14,18 @@
       <p>Petits exemples interactifs HTML, CSS et JavaScript</p>
     </div>
     <input type="search" id="recherche" placeholder="Rechercher un fragment…" aria-label="Rechercher un fragment" autocomplete="off" spellcheck="false">
-    <a class="lien-studio" href="studio/">Studio →</a>
+    <a class="bouton-nouveau" href="studio/">+ Nouveau fragment</a>
   </header>
 
   <nav class="tags" id="tags" aria-label="Filtrer par tag"></nav>
 
   <main>
+    <p class="avis" id="avis" hidden></p>
     <p class="compte" id="compte" aria-live="polite"></p>
     <ul class="grille" id="grille"></ul>
     <p class="vide" id="vide" hidden></p>
   </main>
 
-  <script src="commun/integrer.js"></script>
   <script src="commun/galerie.js"></script>
 </body>
 </html>

@@ -447,6 +447,11 @@ ${corps.map((l) => "  " + l).join("\n")}
     if (etat.ex) url.searchParams.set("ex", etat.ex);
     else url.searchParams.delete("ex");
     history.replaceState(null, "", url);
+
+    // Voir / Intégrer (pied de page) et Dupliquer / Supprimer (⚙) : fragment enregistré seulement
+    $("pied-liens").hidden = !etat.ex;
+    $("actions-fragment").hidden = !etat.ex;
+    if (etat.ex) $("lien-voir").href = `${new URL("v/", SITE).href}?ex=${etat.ex}`;
   }
 
   function afficherListe() {
@@ -467,7 +472,7 @@ ${corps.map((l) => "  " + l).join("\n")}
         etat.fragments = noms.map((nom) => ({ nom, titre: nom, tags: [] }));
         etat.avertissement = noms.jetonRefuse
           ? "Le jeton GitHub enregistré est refusé (invalide, expiré ou sans accès) : vérifier les réglages GitHub."
-          : "Index fragments.json introuvable : la liste vient du répertoire. « Reconstruire l'index » (bouton GitHub) le recrée.";
+          : "Index fragments.json introuvable : la liste vient du répertoire. « Reconstruire l'index » (⚙ → Connexion GitHub) le recrée.";
       } catch (e) {
         etat.fragments = [];
         const raison =
@@ -683,6 +688,40 @@ ${corps.map((l) => "  " + l).join("\n")}
     $("succes").showModal();
   }
 
+  /** Retire le fragment du site : un commit supprime f/<nom>/ et son entrée de fragments.json. */
+  async function supprimer() {
+    if (!etat.ex) return;
+    const titre = $("titre").value.trim() || etat.ex;
+    if (!confirm(`Supprimer « ${titre} » ?\n\nLe fragment sera retiré du site, et les iframes qui l'intègrent afficheront « Fragment introuvable ». Il restera récupérable dans l'historique Git.`)) return;
+    if (!reglages.jeton) {
+      $("config-exemple").close();
+      statut("Un jeton GitHub est nécessaire pour supprimer.", "erreur");
+      return ouvrirReglages();
+    }
+
+    const nom = etat.ex;
+    const bouton = $("btn-supprimer");
+    bouton.disabled = true;
+    statut("Suppression…");
+    try {
+      const chemins = (await github().fichiers()).filter((c) => c.startsWith(`f/${nom}/`));
+      const index = await lireJson("fragments.json");
+      const actuels = index && Array.isArray(index.fragments) ? index.fragments : etat.fragments;
+
+      const fichiers = {};
+      chemins.forEach((c) => { fichiers[c] = null; }); // null = suppression
+      fichiers["fragments.json"] = json({ fragments: trierIndex(actuels.filter((f) => f.nom !== nom)) });
+
+      await github().enregistrer(fichiers, `Studio : suppression de ${nom}`);
+
+      etat.modifie = false;
+      location.href = `${SITE.href}?supprime=${encodeURIComponent(nom)}`;
+    } catch (e) {
+      bouton.disabled = false;
+      statut(`Échec de la suppression : ${MESSAGES_ERREUR[e.status] || e.message}.`, "erreur");
+    }
+  }
+
   /** Le fragment ouvert devient un nouveau fragment (nouveau dossier à l'enregistrement). */
   function dupliquer() {
     if (!etat.ex) return statut("Ce fragment n'est pas encore enregistré : rien à dupliquer.");
@@ -742,17 +781,12 @@ ${corps.map((l) => "  " + l).join("\n")}
     ["attrs-html", "attrs-body"].forEach((id) => $(id).addEventListener("input", indiquerAttributs));
     $("btn-exemple").addEventListener("click", () => $("config-exemple").showModal());
 
-    $("btn-nouveau").addEventListener("click", async () => {
-      if (etat.modifie && !confirm("Les modifications non enregistrées seront perdues. Continuer ?")) return;
-      await nouvelExemple();
-      $("titre").focus();
-    });
-
     $("btn-enregistrer").addEventListener("click", enregistrer);
     $("btn-integrer").addEventListener("click", integrer);
     $("btn-integrer-succes").addEventListener("click", () => { $("succes").close(); integrer(); });
     $("btn-reconstruire").addEventListener("click", () => { $("reglages").close(); reconstruireIndex(); });
-    $("btn-reglages").addEventListener("click", ouvrirReglages);
+    $("btn-github").addEventListener("click", () => { $("config-exemple").close(); ouvrirReglages(); });
+    $("btn-supprimer").addEventListener("click", supprimer);
     $("form-reglages").addEventListener("change", sauverReglages);
     $("reglages").addEventListener("close", sauverReglages);
     $("btn-tester").addEventListener("click", testerJeton);
@@ -797,7 +831,7 @@ ${corps.map((l) => "  " + l).join("\n")}
     if (demande && SLUG.test(demande)) await ouvrirExemple(demande);
     else await nouvelExemple();
     if (etat.avertissement) statut(etat.avertissement, "erreur");
-    else if (!reglages.jeton) statut("Aucun jeton GitHub : l'aperçu fonctionne, mais l'enregistrement demandera un jeton (bouton GitHub).");
+    else if (!reglages.jeton) statut("Aucun jeton GitHub : l'aperçu fonctionne, mais l'enregistrement demandera un jeton (⚙ → Connexion GitHub).");
   }
 
   demarrer();

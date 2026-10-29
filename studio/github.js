@@ -72,8 +72,9 @@ const GitHub = (() => {
       },
 
       /**
-       * Écrit plusieurs fichiers en un seul commit.
-       * fichiers : { "web3/exemple/index.html": "contenu", … }
+       * Écrit (ou supprime) plusieurs fichiers en un seul commit.
+       * fichiers : { "f/exemple/index.html": "contenu", "f/ancien/style.css": null, … }
+       * Une valeur null supprime le fichier.
        */
       async enregistrer(fichiers, message) {
         const ref = await requete(`/git/ref/heads/${encodeURIComponent(branche)}`);
@@ -82,9 +83,10 @@ const GitHub = (() => {
           methode: "POST",
           corps: {
             base_tree: parent.tree.sha,
-            tree: Object.entries(fichiers).map(([path, content]) => ({
-              path, mode: "100644", type: "blob", content,
-            })),
+            tree: Object.entries(fichiers).map(([path, content]) =>
+              content === null
+                ? { path, mode: "100644", type: "blob", sha: null }
+                : { path, mode: "100644", type: "blob", content }),
           },
         });
         const commit = await requete("/git/commits", {

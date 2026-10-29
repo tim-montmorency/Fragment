@@ -3,6 +3,7 @@
  * --------------------------------------
  * Lit l'index fragments.json, affiche une carte par fragment avec une
  * miniature vivante, une recherche et un filtre par tag.
+ * Un clic sur une carte ouvre le fragment dans le studio.
  * Filtres partageables dans l'URL : ?tag=web3&q=scroll
  */
 (() => {
@@ -59,34 +60,24 @@
   function carte(f) {
     const li = document.createElement("li");
     li.className = "carte";
-    const voir = `v/?ex=${encodeURIComponent(f.nom)}`;
+    // Toute la carte mène au studio (lien étiré sur la carte, voir galerie.css)
     li.innerHTML = `
-      <a class="miniature" tabindex="-1" aria-hidden="true">
+      <div class="miniature" aria-hidden="true">
         <iframe loading="lazy" tabindex="-1" scrolling="no"
                 style="width:${LARGEUR_RENDU}px;height:${HAUTEUR_RENDU}px"></iframe>
-      </a>
+      </div>
       <div class="infos">
         <h2><a class="titre"></a></h2>
         <p class="meta"><span class="date"></span></p>
         <ul class="tags-carte"></ul>
-        <div class="actions">
-          <a class="action voir">Voir</a>
-          <a class="action modifier">Modifier</a>
-          <button type="button" class="action bouton-integrer">Intégrer</button>
-        </div>
       </div>`;
 
-    li.querySelector(".miniature").href = voir;
     li.querySelector("iframe").dataset.src = `f/${encodeURIComponent(f.nom)}/`;
     li.querySelector("iframe").title = `Aperçu de ${f.titre || f.nom}`;
     const titre = li.querySelector(".titre");
-    titre.href = voir;
+    titre.href = `studio/?ex=${encodeURIComponent(f.nom)}`;
     titre.textContent = f.titre || f.nom;
     li.querySelector(".date").textContent = dateLisible(f.modifie);
-    li.querySelector(".voir").href = voir;
-    li.querySelector(".modifier").href = `studio/?ex=${encodeURIComponent(f.nom)}`;
-    li.querySelector(".bouton-integrer").addEventListener("click", () =>
-      Integrer.ouvrir(f.nom, { racine: new URL("./", location.href).href, titre: f.titre }));
 
     const ul = li.querySelector(".tags-carte");
     (f.tags || []).forEach((t) => {
@@ -171,6 +162,17 @@
       $("vide").hidden = false;
       $("vide").textContent = "Index des fragments introuvable (fragments.json).";
       return;
+    }
+
+    // Retour du studio après une suppression : GitHub Pages met environ une minute
+    // à republier fragments.json, on masque donc le fragment tout de suite.
+    const supprime = params.get("supprime");
+    if (supprime) {
+      fragments = fragments.filter((f) => f.nom !== supprime);
+      $("avis").hidden = false;
+      $("avis").textContent = "Fragment supprimé. La galerie publiée sera à jour d'ici une minute environ.";
+      params.delete("supprime");
+      majUrl();
     }
 
     if (tagActif && !fragments.some((f) => (f.tags || []).includes(tagActif))) tagActif = "";

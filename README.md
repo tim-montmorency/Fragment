@@ -59,11 +59,11 @@ La page d'accueil lit `fragments.json` et affiche une carte par fragment, avec u
 - **Recherche** dans le titre et les tags (accents ignorés).
 - **Tags** : un clic filtre la galerie ; un deuxième clic retire le filtre.
 - Les filtres sont dans l'adresse, donc partageables : `…/Fragment/?tag=web3`, `…/Fragment/?q=scroll`.
-- **Voir** ouvre la visionneuse, **Modifier** ouvre le fragment dans le studio, **Intégrer** ouvre la fenêtre d'intégration.
+- Un **clic sur une carte** ouvre le fragment dans le studio ; **+ Nouveau fragment** en crée un.
 
 ## Intégrer un fragment
 
-Le bouton **Intégrer** (galerie ou studio) ouvre une fenêtre pour choisir les options de la visionneuse,
+Le lien **Intégrer**, dans le pied de page du studio, ouvre une fenêtre pour choisir les options de la visionneuse,
 voir l'aperçu et copier le code de l'iframe à coller dans le Markdown.
 
 ## Ajouter un fragment à la main
@@ -73,7 +73,7 @@ Le studio s'en occupe normalement. À la main, dans la copie locale du répertoi
 1. Copier `_gabarit/` vers `f/<nom>/` (lettres, chiffres, `-` et `_` seulement).
 2. Écrire le fragment. Les bibliothèques se chargent directement dans `index.html`.
 3. Ajouter `f/<nom>/fragment.json` (titre et tags).
-4. Pousser, puis dans le studio : bouton **GitHub** → **Reconstruire l'index**, pour que la galerie le liste.
+4. Pousser, puis dans le studio : **⚙ → Connexion GitHub… → Reconstruire l'index**, pour que la galerie le liste.
 
 L'onglet **HTML** de la visionneuse n'affiche que le contenu de `<body>`, sans les balises `<script src="…">`.
 Le paramètre `html=complet` affiche le fichier entier.
@@ -143,11 +143,11 @@ npm run build
 
 ## Studio
 
-`https://tim-montmorency.com/Fragment/studio/` — ou `studio/?ex=<nom>` pour ouvrir directement un fragment (lien **Modifier** de la galerie).
+`https://tim-montmorency.com/Fragment/studio/` — ou `studio/?ex=<nom>` pour ouvrir directement un fragment.
 
 Interface pour créer ou modifier un fragment avec aperçu en direct, puis l'enregistrer dans le répertoire GitHub.
 
-- **Ouvrir un fragment** : bouton **Modifier** dans la galerie (adresse `studio/?ex=<nom>`). **+ Nouveau** repart du `_gabarit/`.
+- **Ouvrir un fragment** : clic sur sa carte dans la galerie (adresse `studio/?ex=<nom>`). **+ Nouveau fragment**, dans la galerie, repart du `_gabarit/`.
 - **Titre / Tags** : le dossier du nouveau fragment est tiré du titre (voir *Structure*). Les tags sont séparés par des virgules,
   mis en minuscules et dédoublonnés.
 - **Bibliothèques** : recherche dans npm, servie par jsDelivr (version exacte, fichier principal choisi automatiquement).
@@ -158,19 +158,24 @@ Interface pour créer ou modifier un fragment avec aperçu en direct, puis l'enr
   - Les fichiers `.css` vont dans `<head>`, les `.js` à la fin du body, les modules ES (`three`, etc.) dans une importmap ; `script.js` passe alors en `type="module"`.
   - Glisser les pastilles pour changer l'ordre de chargement ; × pour retirer.
   - Les autres balises déjà présentes dans un fragment sont conservées.
-- **⚙** — **Dupliquer ce fragment** (crée un nouveau fragment à partir de celui-ci), et attributs de `<html>` et `<body>` : par exemple `data-theme="dark"` pour daisyUI, ou `class="…"` sur le body. `lang="fr"` est ajouté automatiquement, sauf si un autre `lang` est indiqué.
-- **Intégrer** : fenêtre d'intégration du fragment enregistré.
+- **⚙ Réglages du fragment** :
+  - **Dupliquer** : crée un nouveau fragment à partir de celui-ci.
+  - **Supprimer…** : un commit retire le dossier du fragment et son entrée de l'index. Les iframes qui l'intègrent
+    affichent alors « Fragment introuvable ». Le fragment reste récupérable dans l'historique Git.
+  - **Connexion GitHub…** : jeton, test, reconstruction de l'index.
+  - Attributs de `<html>` et `<body>` : par exemple `data-theme="dark"` pour daisyUI, ou `class="…"` sur le body. `lang="fr"` est ajouté automatiquement, sauf si un autre `lang` est indiqué.
+- **Pied de page** (fragment enregistré) : **Voir ↗** ouvre la visionneuse, **Intégrer** ouvre la fenêtre d'intégration.
 - **Onglet HTML** : seulement le contenu de `<body>`. Le reste de `index.html` est généré.
 - **Enregistrer** (ou Cmd/Ctrl + S) : un seul commit avec les fichiers du fragment, son `fragment.json` et l'index `fragments.json`.
   GitHub Pages republie le site en moins d'une minute environ.
-- **GitHub → Reconstruire l'index** : recrée `fragments.json` à partir des dossiers `f/`, après des ajouts ou suppressions faits à la main.
+- **⚙ → Connexion GitHub… → Reconstruire l'index** : recrée `fragments.json` à partir des dossiers `f/`, après des ajouts ou suppressions faits à la main.
 
 ### Jeton GitHub (une seule fois par navigateur)
 
 1. GitHub → *Settings → Developer settings → Personal access tokens → Fine-grained tokens → Generate new token*.
 2. *Resource owner* : `tim-montmorency`. *Repository access* : **Only select repositories** → `Fragment`.
 3. *Permissions → Repository permissions → Contents* : **Read and write**.
-4. Copier le jeton dans le studio (bouton **GitHub**), puis **Tester**.
+4. Copier le jeton dans le studio (**⚙ → Connexion GitHub…**), puis **Tester**.
 
 Le jeton reste dans le navigateur seulement (localStorage). Sur un ordinateur partagé, utiliser **Oublier le jeton** à la fin.
 Après un enregistrement par le studio, faire un `git pull` dans la copie locale.
