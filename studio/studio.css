@@ -670,3 +670,19 @@ button.lien {
   opacity: 0.6;
   cursor: wait;
 }
+
+/* Bouton « Rejouer » dans la barre du résultat */
+.barre .outil {
+  margin-left: auto;
+  font-size: 12px;
+  padding: 0 14px;
+  color: var(--texte-attenue);
+  background: none;
+  border: 0;
+  border-radius: 0;
+  cursor: pointer;
+}
+
+.barre .outil:hover {
+  color: var(--texte);
+}

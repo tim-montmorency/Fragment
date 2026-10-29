@@ -782,6 +782,10 @@ ${corps.map((l) => "  " + l).join("\n")}
     $("btn-exemple").addEventListener("click", () => $("config-exemple").showModal());
 
     $("btn-enregistrer").addEventListener("click", enregistrer);
+    $("btn-rejouer").addEventListener("click", () => {
+      clearTimeout(minuterie);
+      apercu.charger({ srcdoc: genererApercu() });
+    });
     $("btn-integrer").addEventListener("click", integrer);
     $("btn-integrer-succes").addEventListener("click", () => { $("succes").close(); integrer(); });
     $("btn-reconstruire").addEventListener("click", () => { $("reglages").close(); reconstruireIndex(); });

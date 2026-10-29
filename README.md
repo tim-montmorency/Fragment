@@ -164,6 +164,7 @@ Interface pour créer ou modifier un fragment avec aperçu en direct, puis l'enr
     affichent alors « Fragment introuvable ». Le fragment reste récupérable dans l'historique Git.
   - **Connexion GitHub…** : jeton, test, reconstruction de l'index.
   - Attributs de `<html>` et `<body>` : par exemple `data-theme="dark"` pour daisyUI, ou `class="…"` sur le body. `lang="fr"` est ajouté automatiquement, sauf si un autre `lang` est indiqué.
+- **↻ Rejouer**, dans la barre du résultat : relance le fragment (animations, scripts) sans attendre une modification.
 - **Pied de page** (fragment enregistré) : **Voir ↗** ouvre la visionneuse, **Intégrer** ouvre la fenêtre d'intégration.
 - **Onglet HTML** : seulement le contenu de `<body>`. Le reste de `index.html` est généré.
 - **Enregistrer** (ou Cmd/Ctrl + S) : un seul commit avec les fichiers du fragment, son `fragment.json` et l'index `fragments.json`.
