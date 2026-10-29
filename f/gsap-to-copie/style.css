@@ -37,7 +37,7 @@
 }
 
 .arrivee:before {
-  content: "Position cible";
+  content: "Cible";
   position: absolute;
   bottom: calc(100% + 0.5rem);
   right: 0;
