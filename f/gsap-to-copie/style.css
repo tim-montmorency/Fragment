@@ -14,7 +14,7 @@
   border: 1px dashed var(--color-primary);
   position: absolute;
   top: 50%;
-  left: 50px;
+  left: 10vw;
   border-radius: 100%;
 }
 
@@ -32,7 +32,7 @@
   border: 1px dashed var(--color-primary);
   position: absolute;
   top: 50%;
-  right: 50px;
+  right: 10vw;
   border-radius: 100%;
 }
 
