@@ -21,6 +21,9 @@
 .depart:before {
   content: "Paramètres initiaux";
   position: absolute;
+  text-align: center;
+  transform: translateX(-50%);
+  left: 50%;
   bottom: calc(100% + 0.5rem);
   color: var(--color-primary);
 }
@@ -39,6 +42,9 @@
 .arrivee:before {
   content: "Cible";
   position: absolute;
+  text-align: center;
+  transform: translateX(-50%);
+  left: 50%;
   bottom: calc(100% + 0.5rem);
   right: 0;
   color: var(--color-primary);
