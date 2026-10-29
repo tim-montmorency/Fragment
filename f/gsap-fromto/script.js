@@ -1,4 +1,4 @@
 gsap.fromTo(".pill", 
-  { x: "10vh", y: "10vh", opacity: 0, rotation: 0 },                
-  { x: 300, rotation: 90, duration: 2 }
+  { rotation: 0 },                
+  { x: "75vw", y: "75vh", width: "3vw", rotation: 90, duration: 2 }
 );
