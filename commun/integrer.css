@@ -135,6 +135,19 @@
   min-width: 0;
 }
 
+.integrer-avis {
+  margin: 0;
+  padding: 8px 12px;
+  font-size: 13px;
+  border: 1px solid rgba(227, 179, 65, 0.45);
+  background: rgba(227, 179, 65, 0.1);
+  border-radius: 6px;
+}
+
+.integrer-avis[hidden] {
+  display: none;
+}
+
 .integrer-apercu {
   display: block;
   width: 100%;

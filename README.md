@@ -170,7 +170,10 @@ Interface pour créer ou modifier un fragment avec aperçu en direct, puis l'enr
 - **Pied de page** (fragment enregistré) : **Voir ↗** ouvre la visionneuse, **Intégrer** ouvre la fenêtre d'intégration.
 - **Onglet HTML** : seulement le contenu de `<body>`. Le reste de `index.html` est généré.
 - **Enregistrer** (ou Cmd/Ctrl + S) : un seul commit avec les fichiers du fragment, son `fragment.json` et l'index `fragments.json`.
-  La confirmation s'affiche dans le pied de page. GitHub Pages republie le site en moins d'une minute environ.
+  La confirmation s'affiche dans le pied de page. GitHub Pages republie ensuite le site (environ une minute) :
+  le studio vérifie la publication et affiche **en ligne ✓** quand elle est terminée. Pendant ce temps, la fenêtre
+  **Intégrer** le signale et son aperçu se recharge tout seul une fois le fragment en ligne.
+  En local (Go Live), ce suivi est désactivé : faire un `git pull` pour voir le fragment.
 - **⚙ → Connexion GitHub… → Reconstruire l'index** : recrée `fragments.json` à partir des dossiers `f/`, après des ajouts ou suppressions faits à la main.
 
 ### Jeton GitHub (une seule fois par navigateur)

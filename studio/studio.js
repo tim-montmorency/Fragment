@@ -649,8 +649,7 @@ ${corps.map((l) => "  " + l).join("\n")}
       etat.modifie = false;
       majAdresse();
       afficherListe();
-      const heure = new Date().toLocaleTimeString("fr-CA", { hour: "2-digit", minute: "2-digit" });
-      statut(`« ${titre} » enregistré à ${heure}. En ligne d'ici une minute environ.`, "succes");
+      suivrePublication(nom, titre, fichiers);
     } catch (e) {
       statut(`Échec de l'enregistrement : ${MESSAGES_ERREUR[e.status] || e.message}.`, "erreur");
     } finally {
@@ -731,7 +730,69 @@ ${corps.map((l) => "  " + l).join("\n")}
   function integrer() {
     if (!etat.ex) return statut("Enregistrer le fragment avant de l'intégrer.", "erreur");
     if (etat.modifie) statut("Attention : l'intégration montre la dernière version enregistrée.");
-    Integrer.ouvrir(etat.ex, { racine: SITE.href, titre: $("titre").value.trim() });
+    const enAttente = publication && publication.nom === etat.ex && publication.enCours;
+    Integrer.ouvrir(etat.ex, {
+      racine: SITE.href,
+      titre: $("titre").value.trim(),
+      publication: enAttente ? publication.promesse : null,
+    });
+  }
+
+  // ---------- Suivi de la publication (GitHub Pages) ----------
+
+  let publication = null; // { nom, promesse, enCours }
+
+  const heureCourte = () => new Date().toLocaleTimeString("fr-CA", { hour: "2-digit", minute: "2-digit" });
+
+  // En local (Go Live, serveur de test), le site ne reflète pas GitHub : rien à suivre.
+  const siteLocal = () => ["localhost", "127.0.0.1", "[::1]"].includes(location.hostname);
+
+  /**
+   * Après un enregistrement, GitHub Pages met environ une minute à republier le site.
+   * On vérifie toutes les 5 s que les fichiers publiés sont identiques à ceux enregistrés.
+   */
+  function suivrePublication(nom, titre, fichiers) {
+    if (siteLocal()) {
+      publication = null;
+      return statut(`« ${titre} » enregistré sur GitHub à ${heureCourte()}. Copie locale : faire un git pull pour le voir ici.`, "succes");
+    }
+
+    statut(`« ${titre} » enregistré à ${heureCourte()}. Publication en cours…`, "succes");
+    const attendus = ["index.html", "style.css", "script.js"].map((f) => [f, fichiers[`f/${nom}/${f}`]]);
+    const DELAI_MAX = 5 * 60 * 1000;
+    const debut = Date.now();
+
+    const suivi = { nom, enCours: true };
+    suivi.promesse = new Promise((resoudre, rejeter) => {
+      const verifier = async () => {
+        if (publication !== suivi) return rejeter(new Error("remplacé"));
+        try {
+          const resultats = await Promise.all(attendus.map(async ([f, contenu]) => {
+            // Paramètre unique : contourne le cache du CDN de GitHub Pages
+            const r = await fetch(new URL(`f/${nom}/${f}?t=${Date.now()}`, SITE), { cache: "no-store" });
+            return r.ok && (await r.text()) === contenu;
+          }));
+          if (resultats.every(Boolean)) return resoudre();
+        } catch (e) { /* réseau : on réessaie */ }
+        if (Date.now() - debut > DELAI_MAX) return rejeter(new Error("délai"));
+        setTimeout(verifier, 5000);
+      };
+      setTimeout(verifier, 3000);
+    });
+    publication = suivi;
+
+    suivi.promesse.then(
+      () => {
+        suivi.enCours = false;
+        if (etat.ex === nom) statut(`« ${titre} » en ligne ✓ (${heureCourte()})`, "succes");
+      },
+      (e) => {
+        suivi.enCours = false;
+        if (e.message === "délai" && etat.ex === nom) {
+          statut("La publication prend plus de temps que prévu : voir l'onglet Actions du répertoire GitHub.", "erreur");
+        }
+      }
+    );
   }
 
   // ---------- Réglages ----------

@@ -121,6 +121,7 @@ const Integrer = (() => {
         </div>
 
         <div class="integrer-sortie">
+          <p class="integrer-avis" hidden></p>
           <iframe class="integrer-apercu aspect-3-2" title="Aperçu de l'intégration"></iframe>
           <div class="integrer-code">
             <code class="integrer-extrait"></code>
@@ -201,11 +202,35 @@ const Integrer = (() => {
       `<iframe src="${src}" class="${aspect}" style="width:100%;border:0" loading="lazy"></iframe>`;
   }
 
-  function ouvrir(nom, { racine, titre } = {}) {
+  /**
+   * publication (facultatif) : promesse résolue quand le fragment est en ligne.
+   * En attendant, un avis est affiché ; l'aperçu se recharge ensuite tout seul.
+   */
+  function ouvrir(nom, { racine, titre, publication } = {}) {
     if (!dialogue) creer();
     nomCourant = nom;
     racineCourante = racine || new URL("./", location.href).href;
     dialogue.querySelector(".integrer-nom").textContent = titre || nom;
+
+    const avis = dialogue.querySelector(".integrer-avis");
+    avis.hidden = !publication;
+    if (publication) {
+      avis.textContent = "Publication en cours sur GitHub Pages (environ une minute) : l'aperçu se mettra à jour tout seul. " +
+        "Le code de l'iframe est déjà bon et peut être copié.";
+      publication.then(
+        () => {
+          if (nomCourant !== nom) return;
+          avis.hidden = true;
+          dernierSrc = "";
+          if (dialogue.open) construire();
+        },
+        () => {
+          if (nomCourant !== nom) return;
+          avis.textContent = "La publication tarde : l'aperçu pourra être vérifié plus tard. Le code de l'iframe reste valide.";
+        }
+      );
+    }
+
     dialogue.showModal();
     construire();
   }
