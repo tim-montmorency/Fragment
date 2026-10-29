@@ -36,6 +36,7 @@
     extraCorps: [],         // <script> non reconnus, conservés tels quels
     modifie: false,
     exemples: [],           // chemins des exemples existants
+    avertissement: "",      // problème de lecture de la liste, réaffiché après le chargement
   };
 
   const editeurs = {};      // html, css, js → EditorView
@@ -415,10 +416,20 @@ ${corps.map((l) => "  " + l).join("\n")}
         .map((c) => c.slice(0, -"/index.html".length))
         .filter((c) => c.includes("/") && !RESERVES.includes(c.split("/")[0]))
         .sort();
+      etat.avertissement = chemins.jetonRefuse
+        ? "Le jeton GitHub enregistré est refusé (invalide, expiré ou sans accès) : vérifier les réglages GitHub."
+        : "";
     } catch (e) {
       etat.exemples = [];
-      statut(`Liste des exemples indisponible (${e.message}). La création reste possible.`, "erreur");
+      const raison =
+        e.limite || e.status === 429 ? "limite de requêtes GitHub atteinte pour ce réseau ; un jeton valide la lève" :
+        e.status === 404 ? `répertoire ${reglages.proprietaire}/${reglages.repertoire} ou branche « ${reglages.branche} » introuvable` :
+        e.status ? `erreur ${e.status} : ${e.message}` :
+        "GitHub injoignable";
+      etat.avertissement = `Liste des exemples indisponible (${raison}). La création reste possible.`;
     }
+
+    if (etat.avertissement) statut(etat.avertissement, "erreur");
 
     const select = $("ouvrir");
     select.length = 1;
@@ -663,7 +674,8 @@ ${corps.map((l) => "  " + l).join("\n")}
     await chargerListe();
     if (demande && /^[a-z0-9_-]+(\/[a-z0-9_-]+)+$/i.test(demande)) await ouvrirExemple(demande);
     else await nouvelExemple();
-    if (!reglages.jeton) statut("Aucun jeton GitHub : l'aperçu fonctionne, mais l'enregistrement demandera un jeton (bouton GitHub).");
+    if (etat.avertissement) statut(etat.avertissement, "erreur");
+    else if (!reglages.jeton) statut("Aucun jeton GitHub : l'aperçu fonctionne, mais l'enregistrement demandera un jeton (bouton GitHub).");
   }
 
   demarrer();

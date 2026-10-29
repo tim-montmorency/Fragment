@@ -11,14 +11,18 @@ const GitHub = (() => {
   function client({ proprietaire, repertoire, branche, jeton }) {
     const base = `${API}/repos/${encodeURIComponent(proprietaire)}/${encodeURIComponent(repertoire)}`;
 
-    function entetes(accept = "application/vnd.github+json") {
+    function entetes(accept = "application/vnd.github+json", anonyme = false) {
       const h = { Accept: accept, "X-GitHub-Api-Version": "2022-11-28" };
-      if (jeton) h.Authorization = `Bearer ${jeton}`;
+      if (jeton && !anonyme) h.Authorization = `Bearer ${jeton}`;
       return h;
     }
 
-    async function requete(chemin, { methode = "GET", corps } = {}) {
-      const options = { method: methode, headers: entetes(), cache: "no-store" };
+    // Un jeton refusé (invalide, expiré, sans accès ou en attente d'approbation)
+    // ne doit pas empêcher la lecture d'un répertoire public : on réessaie sans jeton.
+    const REFUS = [401, 403, 404];
+
+    async function requete(chemin, { methode = "GET", corps, anonyme = false } = {}) {
+      const options = { method: methode, headers: entetes(undefined, anonyme), cache: "no-store" };
       if (corps) {
         options.headers["Content-Type"] = "application/json";
         options.body = JSON.stringify(corps);
@@ -29,6 +33,7 @@ const GitHub = (() => {
         try { detail = (await r.json()).message || ""; } catch (e) { /* aucun détail */ }
         const erreur = new Error(detail || `Erreur ${r.status}`);
         erreur.status = r.status;
+        erreur.limite = r.headers.get("x-ratelimit-remaining") === "0";
         throw erreur;
       }
       return r.status === 204 ? null : r.json();
@@ -40,14 +45,27 @@ const GitHub = (() => {
 
       /** Tous les chemins de fichiers de la branche. */
       async fichiers() {
-        const arbre = await requete(`/git/trees/${encodeURIComponent(branche)}?recursive=1`);
-        return arbre.tree.filter((n) => n.type === "blob").map((n) => n.path);
+        const chemin = `/git/trees/${encodeURIComponent(branche)}?recursive=1`;
+        let arbre;
+        try {
+          arbre = await requete(chemin);
+        } catch (e) {
+          if (!jeton || !REFUS.includes(e.status)) throw e;
+          arbre = await requete(chemin, { anonyme: true });
+          arbre.jetonRefuse = true;
+        }
+        const liste = arbre.tree.filter((n) => n.type === "blob").map((n) => n.path);
+        liste.jetonRefuse = Boolean(arbre.jetonRefuse);
+        return liste;
       },
 
       /** Contenu texte d'un fichier, ou null s'il n'existe pas. */
       async lire(chemin) {
         const url = `${base}/contents/${chemin.split("/").map(encodeURIComponent).join("/")}?ref=${encodeURIComponent(branche)}`;
-        const r = await fetch(url, { headers: entetes("application/vnd.github.raw+json"), cache: "no-store" });
+        let r = await fetch(url, { headers: entetes("application/vnd.github.raw+json"), cache: "no-store" });
+        if (jeton && REFUS.includes(r.status)) {
+          r = await fetch(url, { headers: entetes("application/vnd.github.raw+json", true), cache: "no-store" });
+        }
         if (r.status === 404) return null;
         if (!r.ok) throw new Error(`Lecture impossible : ${chemin} (${r.status})`);
         return r.text();
