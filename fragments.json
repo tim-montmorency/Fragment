@@ -10,6 +10,15 @@
       "modifie": "2026-10-29"
     },
     {
+      "nom": "gsap-set",
+      "titre": "GSAP - set()",
+      "tags": [
+        "web3",
+        "gsap"
+      ],
+      "modifie": "2026-10-29"
+    },
+    {
       "nom": "gsap-from",
       "titre": "GSAP - from()",
       "tags": [
