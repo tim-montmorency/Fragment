@@ -10,6 +10,15 @@
       "modifie": "2026-10-28"
     },
     {
+      "nom": "gsap-fromto",
+      "titre": "GSAP - fromTo()",
+      "tags": [
+        "web3",
+        "gsap"
+      ],
+      "modifie": "2026-10-28"
+    },
+    {
       "nom": "gsap-to-copie",
       "titre": "GSAP - to()",
       "tags": [
