@@ -1,6 +1,6 @@
 .dot {
-  width: 1vw;
-  height: 1vw;
+  width: 5vw;
+  height: 5vw;
   background-color: white;
   position: absolute;
   top: 50%;
@@ -9,8 +9,8 @@
 }
 
 .depart {
-  width: 10px;
-  height: 10px;
+  width: 5vw;
+  height: 5vw;
   border: 1px dashed var(--color-primary);
   position: absolute;
   top: 50%;
@@ -19,7 +19,7 @@
 }
 
 .depart:before {
-  content: "Position initiale";
+  content: "Paramètres initiaux";
   position: absolute;
   bottom: calc(100% + 0.5rem);
   color: var(--color-primary);
@@ -27,12 +27,12 @@
 
 .arrivee {
   text-align: right;
-  width: 10px;
-  height: 10px;
+  width: 5vw;
+  height: 5vw;
   border: 1px dashed var(--color-primary);
   position: absolute;
   top: 50%;
-  left: 90vw;
+  left: 85vw;
   border-radius: 100%;
 }
 
