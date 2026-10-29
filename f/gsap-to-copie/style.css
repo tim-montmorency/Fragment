@@ -32,7 +32,7 @@
   border: 1px dashed var(--color-primary);
   position: absolute;
   top: 50%;
-  right: 10vw;
+  left: 90vw;
   border-radius: 100%;
 }
 
