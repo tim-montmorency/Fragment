@@ -17,16 +17,16 @@
   top: 10vh;
   left: 10vw;
   border-radius: 100px;
-}
 
-.depart:before {
-  content: "Départ";
-  position: absolute;
-  text-align: center;
-  transform: translateX(-50%);
-  left: 50%;
-  bottom: calc(100% + 0.5rem);
-  color: var(--color-primary);
+  :before {
+    content: "Départ";
+    position: absolute;
+    text-align: center;
+    transform: translateX(-50%);
+    left: 50%;
+    bottom: calc(100% + 0.5rem);
+    color: var(--color-primary);
+  }
 }
 
 .arrivee {
@@ -38,14 +38,15 @@
   top: 85vh;
   left: 85vw;
   border-radius: 0;
+  
+  :before {
+    content: "Arrivé";
+    position: absolute;
+    text-align: center;
+    transform: translateX(-50%);
+    left: 50%;
+    bottom: calc(100% + 0.5rem);
+    color: var(--color-primary);
+  }
 }
 
-.arrivee:before {
-  content: "Arrivé";
-  position: absolute;
-  text-align: center;
-  transform: translateX(-50%);
-  left: 50%;
-  bottom: calc(100% + 0.5rem);
-  color: var(--color-primary);
-}
