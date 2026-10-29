@@ -11,7 +11,7 @@
 .depart {
   width: 5vw;
   height: 5vw;
-  border: 1px dashed var(--color-primary);
+  border: 2px dashed var(--color-primary);
   position: absolute;
   top: 50%;
   left: 10vw;
