@@ -1,15 +1,45 @@
-body {
-  margin: 0;
-  display: flex;
-  align-items: center;
-  height: 100vh;
-  padding-left: 2rem;
-  background: #1e1e2e;
+.dot {
+  width: 10px;
+  height: 10px;
+  background-color: white;
+  position: absolute;
+  top: 50%;
+  left: 50px;
+  border-radius: 100%;
 }
 
-.boite {
-  width: 80px;
-  height: 80px;
-  border-radius: 8px;
-  background: #e63946;
+.depart {
+  width: 10px;
+  height: 10px;
+  border: 1px dashed var(--color-primary);
+  position: absolute;
+  top: 50%;
+  left: 50px;
+  border-radius: 100%;
+}
+
+.depart:before {
+  content: "Position initiale";
+  position: absolute;
+  bottom: calc(100% + 0.5rem);
+  color: #2fb170;
+}
+
+.arrivee {
+  text-align: right;
+  width: 10px;
+  height: 10px;
+  border: 1px dashed #2fb170;
+  position: absolute;
+  top: 50%;
+  right: 50px;
+  border-radius: 100%;
+}
+
+.arrivee:before {
+  content: "Position cible";
+  position: absolute;
+  bottom: calc(100% + 0.5rem);
+  right: 0;
+  color: #2fb170;
 }
