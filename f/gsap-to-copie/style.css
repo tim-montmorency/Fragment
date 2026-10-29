@@ -1,6 +1,7 @@
 .dot {
-  width: 5vw;
-  height: 5vw;
+  margin: 0.5vw;
+  width: 4vw;
+  height: 4vw;
   background-color: var(--color-base-content);
   position: absolute;
   top: 50%;
@@ -32,7 +33,7 @@
   text-align: right;
   width: 5vw;
   height: 5vw;
-  border: 1px dashed var(--color-primary);
+  border: 2px dashed var(--color-primary);
   position: absolute;
   top: 50%;
   left: 85vw;
