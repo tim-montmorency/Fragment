@@ -649,8 +649,8 @@ ${corps.map((l) => "  " + l).join("\n")}
       etat.modifie = false;
       majAdresse();
       afficherListe();
-      statut(`« ${titre} » enregistré.`, "succes");
-      afficherSucces(nom);
+      const heure = new Date().toLocaleTimeString("fr-CA", { hour: "2-digit", minute: "2-digit" });
+      statut(`« ${titre} » enregistré à ${heure}. En ligne d'ici une minute environ.`, "succes");
     } catch (e) {
       statut(`Échec de l'enregistrement : ${MESSAGES_ERREUR[e.status] || e.message}.`, "erreur");
     } finally {
@@ -679,13 +679,6 @@ ${corps.map((l) => "  " + l).join("\n")}
     } catch (e) {
       statut(`Échec de la reconstruction : ${MESSAGES_ERREUR[e.status] || e.message}.`, "erreur");
     }
-  }
-
-  function afficherSucces(nom) {
-    const src = `${new URL("v/", SITE).href}?ex=${nom}`;
-    $("extrait").textContent =
-      `<iframe src="${src}" class="aspect-3-2" style="width:100%;border:0" loading="lazy"></iframe>`;
-    $("succes").showModal();
   }
 
   /** Retire le fragment du site : un commit supprime f/<nom>/ et son entrée de fragments.json. */
@@ -750,11 +743,20 @@ ${corps.map((l) => "  " + l).join("\n")}
     $("reglages").showModal();
   }
 
+  /** « Connexion GitHub ✓ » dans ⚙ quand un jeton est enregistré dans ce navigateur. */
+  function indiquerJeton() {
+    $("btn-github").textContent = reglages.jeton ? "Connexion GitHub ✓" : "Connexion GitHub…";
+    $("btn-github").title = reglages.jeton
+      ? "Un jeton est enregistré dans ce navigateur"
+      : "Jeton GitHub nécessaire pour enregistrer";
+  }
+
   function sauverReglages() {
     const f = $("form-reglages");
     const anciens = { ...reglages };
     ["proprietaire", "repertoire", "branche", "jeton"].forEach((k) => { reglages[k] = f.elements[k].value.trim(); });
     ecrireReglages(reglages);
+    indiquerJeton();
     const repoChange = ["proprietaire", "repertoire", "branche"].some((k) => anciens[k] !== reglages[k]);
     if (repoChange || anciens.jeton !== reglages.jeton) chargerListe();
   }
@@ -787,7 +789,6 @@ ${corps.map((l) => "  " + l).join("\n")}
       apercu.charger({ srcdoc: genererApercu() });
     });
     $("btn-integrer").addEventListener("click", integrer);
-    $("btn-integrer-succes").addEventListener("click", () => { $("succes").close(); integrer(); });
     $("btn-reconstruire").addEventListener("click", () => { $("reglages").close(); reconstruireIndex(); });
     $("btn-github").addEventListener("click", () => { $("config-exemple").close(); ouvrirReglages(); });
     $("btn-supprimer").addEventListener("click", supprimer);
@@ -798,13 +799,6 @@ ${corps.map((l) => "  " + l).join("\n")}
       $("form-reglages").elements.jeton.value = "";
       sauverReglages();
       $("etat-jeton").textContent = "Jeton effacé de ce navigateur.";
-    });
-    $("btn-copier").addEventListener("click", async (e) => {
-      try {
-        await navigator.clipboard.writeText($("extrait").textContent);
-        e.target.textContent = "Copié !";
-        setTimeout(() => (e.target.textContent = "Copier"), 1500);
-      } catch (err) { /* presse-papiers indisponible */ }
     });
 
     // Cmd/Ctrl + S
@@ -829,6 +823,7 @@ ${corps.map((l) => "  " + l).join("\n")}
     creerEditeurs();
     creerBibliotheques();
     brancherEvenements();
+    indiquerJeton();
 
     const demande = new URLSearchParams(location.search).get("ex");
     await chargerListe();

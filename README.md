@@ -168,7 +168,7 @@ Interface pour créer ou modifier un fragment avec aperçu en direct, puis l'enr
 - **Pied de page** (fragment enregistré) : **Voir ↗** ouvre la visionneuse, **Intégrer** ouvre la fenêtre d'intégration.
 - **Onglet HTML** : seulement le contenu de `<body>`. Le reste de `index.html` est généré.
 - **Enregistrer** (ou Cmd/Ctrl + S) : un seul commit avec les fichiers du fragment, son `fragment.json` et l'index `fragments.json`.
-  GitHub Pages republie le site en moins d'une minute environ.
+  La confirmation s'affiche dans le pied de page. GitHub Pages republie le site en moins d'une minute environ.
 - **⚙ → Connexion GitHub… → Reconstruire l'index** : recrée `fragments.json` à partir des dossiers `f/`, après des ajouts ou suppressions faits à la main.
 
 ### Jeton GitHub (une seule fois par navigateur)
@@ -178,7 +178,10 @@ Interface pour créer ou modifier un fragment avec aperçu en direct, puis l'enr
 3. *Permissions → Repository permissions → Contents* : **Read and write**.
 4. Copier le jeton dans le studio (**⚙ → Connexion GitHub…**), puis **Tester**.
 
-Le jeton reste dans le navigateur seulement (localStorage). Sur un ordinateur partagé, utiliser **Oublier le jeton** à la fin.
+Le jeton est conservé dans le navigateur (localStorage) : pas besoin de le saisir à nouveau. Chaque adresse a sa propre mémoire
+(le site publié et une copie locale avec Go Live, par exemple), et une fenêtre de navigation privée ne le garde pas.
+Dans ⚙, le lien devient **Connexion GitHub ✓** quand un jeton est enregistré.
+Sur un ordinateur partagé, utiliser **Oublier le jeton** à la fin.
 Après un enregistrement par le studio, faire un `git pull` dans la copie locale.
 
 ## Tester en local

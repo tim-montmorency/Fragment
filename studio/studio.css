@@ -615,16 +615,6 @@ dialog input {
   flex: 1;
 }
 
-.extrait {
-  margin: 0 0 12px;
-  padding: 10px 12px;
-  background: var(--fond);
-  border: 1px solid var(--bordure);
-  border-radius: 6px;
-  font: 12px/1.5 var(--mono);
-  white-space: pre-wrap;
-  word-break: break-all;
-}
 
 .message {
   margin: auto;

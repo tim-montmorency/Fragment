@@ -96,7 +96,8 @@
         L'enregistrement fait un commit dans le répertoire GitHub. Il faut un
         <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">jeton « fine-grained »</a>
         limité à ce répertoire, avec la permission <strong>Contents : Read and write</strong>.
-        Le jeton reste dans ce navigateur seulement.
+        Le jeton est conservé dans ce navigateur : pas besoin de le saisir à nouveau.
+        Le site publié et une copie locale (Go Live) ont chacun leur propre mémoire.
       </p>
       <div class="grille-reglages">
         <label>Compte ou organisation<input name="proprietaire" spellcheck="false"></label>
@@ -114,22 +115,6 @@
         <button type="button" id="btn-oublier" class="secondaire">Oublier le jeton</button>
         <span class="espaceur"></span>
         <button type="button" id="btn-tester" class="secondaire">Tester</button>
-        <button value="ok" class="principal">Fermer</button>
-      </div>
-    </form>
-  </dialog>
-
-  <!-- Après l'enregistrement -->
-  <dialog id="succes">
-    <form method="dialog">
-      <h2>Fragment enregistré</h2>
-      <p class="aide">GitHub Pages republie le site, habituellement en moins d'une minute. Penser à faire un <code>git pull</code> dans la copie locale.</p>
-      <label>Code de l'iframe</label>
-      <pre class="extrait" id="extrait"></pre>
-      <div class="pied-dialogue">
-        <button type="button" id="btn-integrer-succes" class="secondaire">Options d'intégration…</button>
-        <span class="espaceur"></span>
-        <button type="button" id="btn-copier" class="secondaire">Copier</button>
         <button value="ok" class="principal">Fermer</button>
       </div>
     </form>
