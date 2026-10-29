@@ -1,45 +1,51 @@
 .dot {
-  width: 10px;
-  height: 10px;
-  background-color: white;
+  margin: 1vw;
+  width: 3vw;
+  height: 3vw;
+  background-color: var(--color-base-content);
   position: absolute;
   top: 50%;
-  left: 50px;
+  left: 10vw;
   border-radius: 100%;
 }
 
 .depart {
-  width: 10px;
-  height: 10px;
-  border: 1px dashed var(--color-primary);
+  width: 5vw;
+  height: 5vw;
+  border: 2px dashed var(--color-primary);
   position: absolute;
   top: 50%;
-  left: 50px;
+  left: 10vw;
   border-radius: 100%;
 }
 
 .depart:before {
-  content: "Position initiale";
+  content: "Départ";
   position: absolute;
+  text-align: center;
+  transform: translateX(-50%);
+  left: 50%;
   bottom: calc(100% + 0.5rem);
-  color: #2fb170;
+  color: var(--color-primary);
 }
 
 .arrivee {
   text-align: right;
-  width: 10px;
-  height: 10px;
-  border: 1px dashed #2fb170;
+  width: 5vw;
+  height: 5vw;
+  border: 2px dashed var(--color-primary);
   position: absolute;
   top: 50%;
-  right: 50px;
+  left: 85vw;
   border-radius: 100%;
 }
 
 .arrivee:before {
-  content: "Position cible";
+  content: "Arrivé";
   position: absolute;
+  text-align: center;
+  transform: translateX(-50%);
+  left: 50%;
   bottom: calc(100% + 0.5rem);
-  right: 0;
-  color: #2fb170;
+  color: var(--color-primary);
 }
