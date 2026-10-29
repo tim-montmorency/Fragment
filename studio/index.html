@@ -46,10 +46,18 @@
     <section class="groupe">
       <div class="barre">
         <span class="onglet actif">Résultat <span class="direct" title="Aperçu en direct"></span></span>
+        <button type="button" id="btn-erreurs" class="erreurs" title="Erreurs de la console" aria-controls="console" hidden></button>
         <button type="button" id="btn-rejouer" class="outil" title="Relancer le fragment (animations, scripts)">↻ Rejouer</button>
       </div>
       <div class="panneaux">
         <div id="resultat"></div>
+        <div id="console" class="console" hidden>
+          <div class="console-entete">
+            <span>Console</span>
+            <button type="button" id="btn-fermer-console" title="Fermer">×</button>
+          </div>
+          <ul id="liste-erreurs"></ul>
+        </div>
       </div>
     </section>
   </main>

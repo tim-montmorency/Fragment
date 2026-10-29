@@ -261,24 +261,130 @@ ${corps.map((l) => "  " + l).join("\n")}
   }
 
   /** Page complète avec CSS et JS en ligne, pour l'aperçu. */
-  function genererApercu() {
+  /**
+   * Petit script injecté en tête de l'aperçu : renvoie au studio les erreurs JavaScript,
+   * les promesses rejetées, les console.error et les fichiers introuvables.
+   */
+  function capteurErreurs(generation) {
+    return `<script>(function () {
+    var g = ${generation};
+    function envoyer(d) { try { d.fragment = "console"; d.generation = g; parent.postMessage(d, "*"); } catch (x) {} }
+    function texte(a) { try { return typeof a === "string" ? a : (a && a.message) || JSON.stringify(a); } catch (x) { return String(a); } }
+    window.addEventListener("error", function (e) {
+      var t = e.target;
+      if (t && t !== window && (t.src || t.href)) { envoyer({ type: "ressource", message: "Fichier introuvable : " + (t.src || t.href) }); return; }
+      envoyer({ type: "erreur", message: e.message, ligne: e.lineno, colonne: e.colno, fichier: e.filename });
+    }, true);
+    window.addEventListener("unhandledrejection", function (e) { envoyer({ type: "erreur", message: "Promesse rejetée : " + texte(e.reason) }); });
+    var ce = console.error;
+    console.error = function () { envoyer({ type: "console", message: [].map.call(arguments, texte).join(" ") }); return ce.apply(console, arguments); };
+  })();<\/script>`;
+  }
+
+  function genererApercu(generation = 0) {
     const f = genererFichiers();
     const chemin = `f/${nomCourant()}`;
     let doc = f["index.html"]
       .replace(/<link rel="stylesheet" href="style\.css">/, () => `<style>\n${f["style.css"]}</style>`)
       .replace(/<script( type="module")? src="script\.js"><\/script>/, (m, type) =>
-        `<script${type || ""}>\n${f["script.js"].replace(/<\/script/gi, "<\\/script")}</script>`);
-    // Les chemins relatifs (images, etc.) sont résolus dans le dossier de l'exemple
-    return doc.replace("<head>", `<head>\n  <base href="${new URL(chemin + "/", SITE).href}">`);
+        `<script data-fragment-js${type || ""}>\n${f["script.js"].replace(/<\/script/gi, "<\\/script")}</script>`);
+    // Capteur d'erreurs en premier ; chemins relatifs (images, etc.) résolus dans le dossier du fragment
+    doc = doc.replace("<head>", () =>
+      `<head>\n  ${capteurErreurs(generation)}\n  <base href="${new URL(chemin + "/", SITE).href}">`);
+
+    // Lignes occupées par script.js dans la page générée (pour traduire les numéros de ligne)
+    const i = doc.indexOf("<script data-fragment-js");
+    if (i >= 0) {
+      const debut = doc.slice(0, i).split("\n").length + 1;
+      etat.lignesJs = { debut, fin: debut + f["script.js"].split("\n").length - 2 };
+    } else {
+      etat.lignesJs = null;
+    }
+    return doc;
   }
+
+  // ---------- Erreurs de l'aperçu ----------
+
+  let generation = 0;     // numéro de l'aperçu courant (ignore les messages des anciens)
+  let erreurs = [];
+
+  /** Recharge l'aperçu et remet la liste d'erreurs à zéro. */
+  function rafraichirApercu() {
+    generation++;
+    erreurs = [];
+    afficherErreurs();
+    apercu.charger({ srcdoc: genererApercu(generation) });
+  }
+
+  function emplacement(e) {
+    const js = etat.lignesJs;
+    if (e.ligne && js && e.ligne >= js.debut && e.ligne <= js.fin) {
+      return { texte: `script.js, ligne ${e.ligne - js.debut + 1}`, ligneJs: e.ligne - js.debut + 1 };
+    }
+    if (e.fichier && /^https?:/.test(e.fichier) && !e.fichier.startsWith(SITE.href)) {
+      return { texte: `${e.fichier.split("/").pop() || e.fichier}${e.ligne ? `, ligne ${e.ligne}` : ""}` };
+    }
+    return e.ligne ? { texte: "index.html" } : null;
+  }
+
+  function afficherErreurs() {
+    const bouton = $("btn-erreurs");
+    const n = erreurs.length;
+    bouton.hidden = n === 0;
+    bouton.textContent = `⚠ ${n} erreur${n > 1 ? "s" : ""}`;
+    if (!n) $("console").hidden = true;
+
+    const liste = $("liste-erreurs");
+    liste.innerHTML = "";
+    erreurs.forEach((e) => {
+      const li = document.createElement("li");
+      li.className = `erreur-${e.type}`;
+      const message = document.createElement("span");
+      message.className = "message-erreur";
+      message.textContent = e.message;
+      li.append(message);
+      const lieu = emplacement(e);
+      if (lieu) {
+        const lien = document.createElement(lieu.ligneJs ? "button" : "span");
+        lien.className = "lieu-erreur";
+        lien.textContent = lieu.texte;
+        if (lieu.ligneJs) {
+          lien.type = "button";
+          lien.title = "Aller à cette ligne";
+          lien.addEventListener("click", () => allerALaLigne(lieu.ligneJs));
+        }
+        li.append(lien);
+      }
+      liste.append(li);
+    });
+  }
+
+  function allerALaLigne(n) {
+    activerOnglet("js");
+    const vue = editeurs.js;
+    const ligne = vue.state.doc.line(Math.min(Math.max(n, 1), vue.state.doc.lines));
+    vue.dispatch({ selection: { anchor: ligne.from, head: ligne.to }, scrollIntoView: true });
+    vue.focus();
+  }
+
+  window.addEventListener("message", (e) => {
+    const d = e.data;
+    if (!d || d.fragment !== "console" || d.generation !== generation) return;
+    if (erreurs.length >= 50) return;
+    // Même erreur répétée (boucle d'animation, etc.) : une seule fois
+    if (erreurs.some((x) => x.message === d.message && x.ligne === d.ligne)) return;
+    erreurs.push(d);
+    afficherErreurs();
+  });
 
   // ---------- Aperçu en direct ----------
 
+  let activerOnglet = () => {};
   let apercu;   // CadreDouble : nouvelle version chargée en arrière-plan, sans flash blanc
   let minuterie;
   function planifierApercu() {
     clearTimeout(minuterie);
-    minuterie = setTimeout(() => apercu.charger({ srcdoc: genererApercu() }), DELAI_APERCU);
+    minuterie = setTimeout(rafraichirApercu, DELAI_APERCU);
   }
 
   function marquerModifie() {
@@ -301,6 +407,7 @@ ${corps.map((l) => "  " + l).join("\n")}
       });
       editeurs[cible].requestMeasure();
     };
+    activerOnglet = activer;
 
     cles.forEach(([cle, libelle, langage]) => {
       const b = document.createElement("button");
@@ -538,7 +645,7 @@ ${corps.map((l) => "  " + l).join("\n")}
     majAdresse();
     etat.modifie = false;
     clearTimeout(minuterie);
-    apercu.charger({ srcdoc: genererApercu() });
+    rafraichirApercu();
   }
 
   async function nouvelExemple() {
@@ -845,9 +952,11 @@ ${corps.map((l) => "  " + l).join("\n")}
     $("btn-exemple").addEventListener("click", () => $("config-exemple").showModal());
 
     $("btn-enregistrer").addEventListener("click", enregistrer);
+    $("btn-erreurs").addEventListener("click", () => { $("console").hidden = !$("console").hidden; });
+    $("btn-fermer-console").addEventListener("click", () => { $("console").hidden = true; });
     $("btn-rejouer").addEventListener("click", () => {
       clearTimeout(minuterie);
-      apercu.charger({ srcdoc: genererApercu() });
+      rafraichirApercu();
     });
     $("btn-integrer").addEventListener("click", integrer);
     $("btn-reconstruire").addEventListener("click", () => { $("reglages").close(); reconstruireIndex(); });

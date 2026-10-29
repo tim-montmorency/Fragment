@@ -166,6 +166,9 @@ Interface pour créer ou modifier un fragment avec aperçu en direct, puis l'enr
     affichent alors « Fragment introuvable ». Le fragment reste récupérable dans l'historique Git.
   - **Connexion GitHub…** : jeton, test, reconstruction de l'index.
   - Attributs de `<html>` et `<body>` : par exemple `data-theme="dark"` pour daisyUI, ou `class="…"` sur le body. `lang="fr"` est ajouté automatiquement, sauf si un autre `lang` est indiqué.
+- **⚠ Erreurs**, dans la barre du résultat : apparaît quand l'aperçu produit des erreurs JavaScript, des promesses rejetées,
+  des `console.error` ou des fichiers introuvables. Un clic ouvre la console ; un clic sur « script.js, ligne N » place le curseur
+  sur la ligne dans l'éditeur JS. La liste repart à zéro à chaque mise à jour de l'aperçu.
 - **↻ Rejouer**, dans la barre du résultat : relance le fragment (animations, scripts) sans attendre une modification.
 - **Pied de page** (fragment enregistré) : **Voir ↗** ouvre la visionneuse, **Intégrer** ouvre la fenêtre d'intégration.
 - **Onglet HTML** : seulement le contenu de `<body>`. Le reste de `index.html` est généré.
