@@ -80,16 +80,37 @@ const CDN = (() => {
   const estModule = (fichier) =>
     /\.mjs$/i.test(fichier) || /\.module(\.min)?\.js$/i.test(fichier) || /\/(esm|es)\//i.test(fichier) || /\+esm$/.test(fichier);
 
-  /** Ressource(s) à ajouter pour un fichier d'un paquet. */
-  function ressources(nom, version, fichier) {
+  /**
+   * Vrai si le fichier JS est un module ES (import / export au niveau du fichier) :
+   * il ne fonctionne pas comme <script> classique. Ex. : index.js de daisyui, qui est
+   * le plugin Tailwind pour les outils de build, pas un script pour le navigateur.
+   */
+  async function contientModuleES(nom, version, fichier) {
+    try {
+      const r = await fetch(`${BASE}/${nom}@${version}/${fichier.replace(/^\//, "")}`);
+      if (!r.ok) return false;
+      const t = (await r.text()).slice(0, 300000);
+      return /(^|[;}\s])import\s*(\{|\*|[\w$]+\s*(,|from\b)|["'])/.test(t) ||
+        /(^|[;}\s])export\s*(default\b|\{|\*|const\b|let\b|var\b|function\b|class\b|async\b)/.test(t);
+    } catch (e) {
+      return false;
+    }
+  }
+
+  /**
+   * Ressource(s) à ajouter pour un fichier d'un paquet.
+   * module : module ES détecté. principal : fichier principal du paquet (clé d'importmap = nom du paquet,
+   * sinon « paquet/chemin », ex. import … from "gsap/ScrollTrigger.js").
+   */
+  function ressources(nom, version, fichier, { module = false, principal = false } = {}) {
     const chemin = fichier.replace(/^\//, "");
     const url = `${BASE}/${nom}@${version}/${chemin}`;
     const particulier = PARTICULIERS[nom] || {};
 
     if (/\.css$/i.test(chemin)) return [{ type: "css", url }];
 
-    if (estModule(chemin)) {
-      const liste = [{ type: "module", cle: nom, url }];
+    if (module || estModule(chemin)) {
+      const liste = [{ type: "module", cle: principal ? nom : `${nom}/${chemin}`, url }];
       Object.entries(particulier.importmap || {}).forEach(([cle, sousChemin]) => {
         liste.push({ type: "module", cle, url: `${BASE}/${nom}@${version}/${sousChemin}` });
       });
@@ -196,7 +217,15 @@ const CDN = (() => {
       const e = await entrees(nom, version);
       const liste = [];
       if (e.css) liste.push(...ressources(nom, version, e.css));
-      if (e.js) liste.push(...ressources(nom, version, e.js));
+      if (e.js) {
+        const esm = !estModule(e.js) && await contientModuleES(nom, version, e.js);
+        if (esm && e.css) {
+          // Paquet CSS dont le JS est un module pour outils de build (daisyui, etc.) : CSS seulement
+          statut(`${nom} : feuille de style ajoutée ; son script (module pour outils de build) a été ignoré.`);
+        } else {
+          liste.push(...ressources(nom, version, e.js, { module: esm, principal: true }));
+        }
+      }
       if (liste.length) terminer(liste);
       else afficherFichiers({ nom, version });
     }
@@ -260,7 +289,13 @@ const CDN = (() => {
           const d = document.createElement("div");
           d.className = "cdn-ligne cdn-fichier";
           d.textContent = c;
-          return { element: d, action: () => terminer(ressources(nom, version, c)) };
+          return {
+            element: d,
+            action: async () => {
+              const esm = /\.m?js$/i.test(c) && !estModule(c) && await contientModuleES(nom, version, c);
+              terminer(ressources(nom, version, c, { module: esm }));
+            },
+          };
         });
         // Garder l'en-tête (et le focus du filtre) en place
         [...boite.children].forEach((el) => { if (el !== entete) el.remove(); });

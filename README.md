@@ -154,6 +154,9 @@ Interface pour créer ou modifier un fragment avec aperçu en direct, puis l'enr
   mis en minuscules et dédoublonnés.
 - **Bibliothèques** : recherche dans npm, servie par jsDelivr (version exacte, fichier principal choisi automatiquement).
   - **Entrée** ou clic : ajoute le fichier principal du paquet (et sa feuille de style s'il en a une).
+    Un script qui est en fait un module ES (`import` / `export`) est détecté : s'il accompagne une feuille de style
+    (ex. `daisyui`, dont le JS est le plugin Tailwind pour les outils de build), seule la feuille de style est ajoutée ;
+    sinon il va dans l'importmap.
   - **Fichiers ▸** (ou flèche droite) : choisir un autre fichier du paquet, par exemple `ScrollTrigger.min.js` dans `gsap`.
   - **+** sur une pastille : ajouter un autre fichier du même paquet, par exemple `themes.css` dans `daisyui`.
   - Une adresse collée (`https://…`) s'ajoute telle quelle.
