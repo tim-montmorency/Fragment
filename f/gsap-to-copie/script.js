@@ -1,7 +1,7 @@
 const largeurFenetre = window.innerWidth;
 
 gsap.to(".dot", {
-  x: largeurFenetre - 100 - 10,
+  x: "80vw",
   duration: 4,
   ease: "linear"
 });
