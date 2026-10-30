@@ -1,51 +1,50 @@
 .dot {
   margin: 1vw;
-  width: 3vw;
-  height: 3vw;
+  width: 8vw;
+  height: 8vw;
   background-color: var(--color-base-content);
   position: absolute;
-  top: 50%;
+  top: 45vh;
   left: 10vw;
   border-radius: 100%;
 }
 
 .depart {
-  width: 5vw;
-  height: 5vw;
+  width: 10vw;
+  height: 10vw;
   border: 2px dashed var(--color-primary);
   position: absolute;
-  top: 50%;
+  top: 45vh;
   left: 10vw;
   border-radius: 100%;
-}
-
-.depart:before {
-  content: "Départ";
-  position: absolute;
-  text-align: center;
-  transform: translateX(-50%);
-  left: 50%;
-  bottom: calc(100% + 0.5rem);
-  color: var(--color-primary);
+  
+  &:before {
+    content: "Départ";
+    position: absolute;
+    text-align: center;
+    transform: translateX(-50%);
+    left: 50%;
+    bottom: calc(100% + 0.5rem);
+    color: var(--color-primary);
+  }
 }
 
 .arrivee {
-  text-align: right;
-  width: 5vw;
-  height: 5vw;
+  width: 10vw;
+  height: 10vw;
   border: 2px dashed var(--color-primary);
   position: absolute;
-  top: 50%;
-  left: 85vw;
+  top: 45vh;
+  left: 80vw;
   border-radius: 100%;
-}
-
-.arrivee:before {
-  content: "Arrivé";
-  position: absolute;
-  text-align: center;
-  transform: translateX(-50%);
-  left: 50%;
-  bottom: calc(100% + 0.5rem);
-  color: var(--color-primary);
+  
+  &:before {
+    content: "Arrivé";
+    position: absolute;
+    text-align: center;
+    transform: translateX(-50%);
+    left: 50%;
+    bottom: calc(100% + 0.5rem);
+    color: var(--color-primary);
+  }
 }
