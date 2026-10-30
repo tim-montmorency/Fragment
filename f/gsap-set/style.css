@@ -4,7 +4,7 @@
   height: 8vw;
   background-color: var(--color-base-content);
   position: absolute;
-  top: 40vh;
+  top: 46vh;
   left: 10vw;
   border-radius: 100%;
 }
@@ -14,7 +14,7 @@
   height: 10vw;
   border: 2px dashed var(--color-primary);
   position: absolute;
-  top: 40vh;
+  top: 45vh;
   left: 10vw;
   border-radius: 100%;
   
@@ -34,7 +34,7 @@
   height: 10vw;
   border: 2px dashed var(--color-primary);
   position: absolute;
-  top: 40vh;
+  top: 45vh;
   left: 85vw;
   border-radius: 100%;
   
