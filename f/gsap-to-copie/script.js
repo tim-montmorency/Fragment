@@ -1,5 +1,5 @@
 gsap.to(".dot", {
-  x: "75vw",
+  x: "70vw",
   duration: 4,
   ease: "linear"
 });
