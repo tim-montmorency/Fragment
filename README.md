@@ -148,6 +148,10 @@ npm install
 npm run build
 ```
 
+Les éditeurs (studio et mode modifiable) utilisent les thèmes **GitHub Dark** et **GitHub Light** définis dans
+`outils/codemirror/theme-github.js`, avec les mêmes couleurs que highlight.js (`github-dark.css` / `github.css`)
+pour le code en lecture seule : le code a la même coloration partout.
+
 ## Studio
 
 `https://tim-montmorency.com/Fragment/studio/` — ou `studio/?ex=<nom>` pour ouvrir directement un fragment.

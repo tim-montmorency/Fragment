@@ -1,4 +1,4 @@
-// Point d'entrée du paquet CodeMirror utilisé par la visionneuse (mode modifiable=1).
+// Point d'entrée du paquet CodeMirror utilisé par la visionneuse (mode modifiable=1) et le studio.
 // Reconstruire : npm install && npm run build  → ../../v/vendor/codemirror.js
 import { EditorView, keymap, lineNumbers, highlightActiveLineGutter, highlightSpecialChars,
   drawSelection, dropCursor, rectangularSelection, crosshairCursor, highlightActiveLine } from "@codemirror/view";
@@ -12,6 +12,7 @@ import { html } from "@codemirror/lang-html";
 import { css } from "@codemirror/lang-css";
 import { javascript } from "@codemirror/lang-javascript";
 import { oneDark } from "@codemirror/theme-one-dark";
+import { githubSombre, githubClair } from "./theme-github.js";
 
 /** Équivalent de basicSetup, avec les numéros de ligne (et le repli) optionnels. */
 function configuration({ numeros = false } = {}) {
@@ -39,4 +40,4 @@ function configuration({ numeros = false } = {}) {
   ];
 }
 
-window.CM = { EditorView, configuration, html, css, javascript, oneDark };
+window.CM = { EditorView, configuration, html, css, javascript, oneDark, githubSombre, githubClair };

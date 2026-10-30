@@ -440,7 +440,7 @@ ${corps.map((l) => "  " + l).join("\n")}
         extensions: [
           CM.configuration({ numeros: true }),
           langage(),
-          CM.oneDark,
+          CM.githubSombre,
           CM.EditorView.updateListener.of((maj) => { if (maj.docChanged) marquerModifie(); }),
         ],
       });

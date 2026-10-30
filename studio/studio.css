@@ -1,12 +1,12 @@
 /*
  * Fragment — Studio
  * S'appuie sur ../commun/theme.css (jetons shadcn, .btn, .input, .select, .dialog, .icone, .infobulle).
- * Le studio est toujours sombre (<html data-theme="sombre">), comme le thème oneDark des éditeurs.
+ * Le studio est toujours sombre (<html data-theme="sombre">), comme le thème GitHub Dark des éditeurs.
  */
 
 :root {
   --barre: #0c0c0e;           /* barres (en-tête, onglets, pied) */
-  --editeur: #282c34;         /* fond oneDark de CodeMirror */
+  --editeur: #0d1117;         /* fond GitHub Dark des éditeurs (CodeMirror) */
   --succes: #4ade80;
   --erreur: #f87171;
   --avertissement: #fbbf24;

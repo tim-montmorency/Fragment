@@ -213,7 +213,7 @@
         if (maj.docChanged) surChangement(cle, maj.state.doc.toString());
       }),
     ];
-    if (theme === "sombre") extensions.push(CM.oneDark);
+    extensions.push(theme === "sombre" ? CM.githubSombre : CM.githubClair); // mêmes couleurs que highlight.js
     const vue = new CM.EditorView({ doc: texte, extensions, parent: conteneur });
     return {
       element: conteneur,
