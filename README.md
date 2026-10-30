@@ -157,32 +157,32 @@ Interface pour créer ou modifier un fragment avec aperçu en direct, puis l'enr
 - **Ouvrir un fragment** : clic sur sa carte dans la galerie (adresse `studio/?ex=<nom>`). **+ Nouveau fragment**, dans la galerie, repart du `_gabarit/`.
 - **Titre / Tags** : le dossier du nouveau fragment est tiré du titre (voir *Structure*). Les tags sont séparés par des virgules,
   mis en minuscules et dédoublonnés.
-- **Bibliothèques** : recherche dans npm, servie par jsDelivr (version exacte, fichier principal choisi automatiquement).
-  - **Entrée** ou clic : ajoute le fichier principal du paquet (et sa feuille de style s'il en a une).
-    Un script qui est en fait un module ES (`import` / `export`) est détecté : s'il accompagne une feuille de style
-    (ex. `daisyui`, dont le JS est le plugin Tailwind pour les outils de build), seule la feuille de style est ajoutée ;
-    sinon il va dans l'importmap.
-  - **Fichiers ▸** (ou flèche droite) : choisir un autre fichier du paquet, par exemple `ScrollTrigger.min.js` dans `gsap`.
-  - **+** sur une pastille : ajouter un autre fichier du même paquet, par exemple `themes.css` dans `daisyui`.
-  - Une adresse collée (`https://…`) s'ajoute telle quelle.
-  - Les fichiers `.css` vont dans `<head>`, les `.js` à la fin du body, les modules ES (`three`, etc.) dans une importmap ; `script.js` passe alors en `type="module"`.
-  - Glisser les pastilles pour changer l'ordre de chargement ; × pour retirer.
-  - Les autres balises déjà présentes dans un fragment sont conservées.
-- **Réglages du fragment** (icône d'engrenage) :
-  - **Dupliquer** : crée un nouveau fragment à partir de celui-ci.
-  - **Supprimer…** : un commit retire le dossier du fragment et son entrée de l'index. Les iframes qui l'intègrent
+- **Réglages du fragment** (icône d'engrenage ; le compteur indique le nombre de bibliothèques, l'infobulle les liste). Trois onglets :
+  - **Bibliothèques** : recherche dans npm, servie par jsDelivr (version exacte, fichier principal choisi automatiquement).
+    - **Entrée** ou clic : ajoute le fichier principal du paquet (et sa feuille de style s'il en a une).
+      Un script qui est en fait un module ES (`import` / `export`) est détecté : s'il accompagne une feuille de style
+      (ex. `daisyui`, dont le JS est le plugin Tailwind pour les outils de build), seule la feuille de style est ajoutée ;
+      sinon il va dans l'importmap.
+    - **Fichiers** (ou flèche droite) : choisir un autre fichier du paquet, par exemple `ScrollTrigger.min.js` dans `gsap`.
+    - Une adresse de n'importe quel site, collée dans le champ (`https://…`), s'ajoute telle quelle ; utile quand la recherche ne trouve pas une bibliothèque.
+    - La liste suit l'ordre de chargement : glisser la poignée pour le changer. **+** ajoute un autre fichier du même paquet
+      (par exemple `themes.css` dans `daisyui`), **×** retire.
+    - Un clic sur une bibliothèque la déplie pour modifier son adresse et son type : **CSS** (`<head>`), **JS** (fin du body),
+      **JS (head)** ou **Module ES** (importmap, avec sa clé d'import ; `script.js` passe alors en `type="module"`).
+      Le type d'une adresse collée est deviné (`.css`, Google Fonts, module ES…).
+    - Les autres balises déjà présentes dans un fragment sont conservées.
+  - **Page** : attributs de `<html>` et `<body>`, par exemple `data-theme="dark"` pour daisyUI, ou `class="…"` sur le body.
+    `lang="fr"` est ajouté automatiquement, sauf si un autre `lang` est indiqué.
+  - **Fragment** : **Connexion GitHub…** (jeton, test, reconstruction de l'index) et **Supprimer…** (fragment enregistré) :
+    après confirmation, un commit retire le dossier du fragment et son entrée de l'index. Les iframes qui l'intègrent
     affichent alors « Fragment introuvable ». Le fragment reste récupérable dans l'historique Git.
-  - **Sources** : toutes les feuilles de style et tous les scripts du fragment, dans l'ordre de chargement (les mêmes que les pastilles).
-    **+ Ajouter une source** accepte une adresse de n'importe quel site, utile quand la recherche ne trouve pas une bibliothèque.
-    Le type est deviné (`.css`, Google Fonts, module ES…) et reste modifiable : **CSS**, **JS** (fin du body),
-    **JS (head)** ou **Module ES** (importmap, avec sa clé d'import). Les lignes sans adresse sont ignorées.
-  - **Connexion GitHub…** : jeton, test, reconstruction de l'index.
-  - Attributs de `<html>` et `<body>` : par exemple `data-theme="dark"` pour daisyUI, ou `class="…"` sur le body. `lang="fr"` est ajouté automatiquement, sauf si un autre `lang` est indiqué.
-- **⚠ Erreurs**, dans la barre du résultat : apparaît quand l'aperçu produit des erreurs JavaScript, des promesses rejetées,
+- **Erreurs**, dans la barre du résultat : apparaît quand l'aperçu produit des erreurs JavaScript, des promesses rejetées,
   des `console.error` ou des fichiers introuvables. Un clic ouvre la console ; un clic sur « script.js, ligne N » place le curseur
   sur la ligne dans l'éditeur JS. La liste repart à zéro à chaque mise à jour de l'aperçu.
 - **Rejouer**, dans la barre du résultat : relance le fragment (animations, scripts) sans attendre une modification.
-- **Pied de page** (fragment enregistré) : **Voir** ouvre la visionneuse, **Intégrer** ouvre la fenêtre d'intégration.
+- **Pied de page** (fragment enregistré) : **Dupliquer** crée, après confirmation du titre de la copie, un nouveau fragment
+  à partir de celui-ci (enregistré dans son propre dossier au prochain enregistrement) ; **Voir** ouvre la visionneuse ;
+  **Intégrer** ouvre la fenêtre d'intégration.
 - **Onglet HTML** : seulement le contenu de `<body>`. Le reste de `index.html` est généré.
 - **Enregistrer** (ou Cmd/Ctrl + S) : un seul commit avec les fichiers du fragment, son `fragment.json` et l'index `fragments.json`.
   La confirmation s'affiche dans le pied de page. GitHub Pages republie ensuite le site (environ une minute) :

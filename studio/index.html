@@ -27,18 +27,10 @@
     </div>
 
     <div class="actions">
-      <button type="button" id="btn-exemple" class="btn btn-outline btn-icon" title="Réglages du fragment" data-infobulle-position="bas"><svg class="icone" aria-hidden="true"><use href="../commun/icones.svg#settings"/></svg></button>
+      <button type="button" id="btn-exemple" class="btn btn-outline btn-icon" title="Réglages du fragment" data-infobulle-position="bas"><svg class="icone" aria-hidden="true"><use href="../commun/icones.svg#settings"/></svg><span class="compteur" id="compteur" hidden></span></button>
       <button type="button" id="btn-enregistrer" class="btn" title="Enregistrer (Ctrl + S)" data-infobulle-position="bas"><svg class="icone" aria-hidden="true"><use href="../commun/icones.svg#save"/></svg><span>Enregistrer</span></button>
     </div>
   </header>
-
-  <div class="bibliotheques">
-    <span class="etiquette">Bibliothèques</span>
-    <div id="recherche-cdn"></div>
-    <ul class="ressources" id="ressources" aria-label="Bibliothèques ajoutées (glisser pour changer l'ordre)"></ul>
-    <span class="aucune" id="aucune">Aucune</span>
-    <span class="extra" id="extra"></span>
-  </div>
 
   <main class="espace">
     <section class="groupe">
@@ -67,44 +59,80 @@
   <footer class="pied">
     <span class="statut" id="statut" aria-live="polite"></span>
     <nav class="pied-liens" id="pied-liens" hidden>
+      <button type="button" id="btn-dupliquer" class="btn btn-ghost btn-sm" title="Créer un nouveau fragment à partir de celui-ci"><svg class="icone" aria-hidden="true"><use href="../commun/icones.svg#copy-plus"/></svg><span>Dupliquer</span></button>
       <a id="lien-voir" class="btn btn-ghost btn-sm" target="_blank" rel="noopener" title="Ouvrir le fragment dans la visionneuse"><svg class="icone" aria-hidden="true"><use href="../commun/icones.svg#external-link"/></svg><span>Voir</span></a>
       <button type="button" id="btn-integrer" class="btn btn-ghost btn-sm" title="Code d'intégration (iframe)"><svg class="icone" aria-hidden="true"><use href="../commun/icones.svg#code-xml"/></svg><span>Intégrer</span></button>
     </nav>
   </footer>
 
-  <!-- Réglages de l'exemple -->
+  <!-- Réglages du fragment -->
   <dialog id="config-exemple" class="dialog fenetre">
     <form method="dialog">
-      <h2 class="dialog-titre">Réglages du fragment</h2>
-      <p class="aide description">
-        Attributs ajoutés aux balises de la page, par exemple <code>data-theme="dark"</code> pour daisyUI.
-        <code>lang="fr"</code> est ajouté automatiquement, sauf si un autre <code>lang</code> est indiqué.
-      </p>
-      <label class="champ-dialogue"><span class="label">Attributs de &lt;html&gt;</span>
-        <input id="attrs-html" class="input mono" placeholder='data-theme="dark"' spellcheck="false" autocomplete="off">
-      </label>
-      <label class="champ-dialogue"><span class="label">Attributs de &lt;body&gt;</span>
-        <input id="attrs-body" class="input mono" placeholder='class="bg-base-200"' spellcheck="false" autocomplete="off">
-      </label>
-
-      <fieldset class="sources">
-        <legend class="label">Sources (feuilles de style et scripts, dans l'ordre de chargement)</legend>
-        <p class="aide description">
-          Les mêmes que les pastilles « Bibliothèques ». Une adresse de n'importe quel site peut être ajoutée ;
-          le type est deviné à partir de l'adresse et reste modifiable.
-        </p>
-        <ul id="liste-sources" class="liste-sources"></ul>
-        <button type="button" id="btn-ajouter-source" class="btn btn-outline btn-sm"><svg class="icone" aria-hidden="true"><use href="../commun/icones.svg#plus"/></svg><span>Ajouter une source</span></button>
-      </fieldset>
-
-      <div class="actions-fragment" id="actions-fragment">
-        <button type="button" id="btn-dupliquer" class="btn btn-outline btn-sm" title="Crée un nouveau fragment à partir de celui-ci"><svg class="icone" aria-hidden="true"><use href="../commun/icones.svg#copy-plus"/></svg><span>Dupliquer</span></button>
-        <button type="button" id="btn-supprimer" class="btn btn-outline btn-sm danger" title="Retire le fragment du site"><svg class="icone" aria-hidden="true"><use href="../commun/icones.svg#trash-2"/></svg><span>Supprimer…</span></button>
+      <div class="fenetre-entete">
+        <h2 class="dialog-titre">Réglages du fragment</h2>
+        <button value="fermer" class="btn btn-ghost btn-sm btn-icon" title="Fermer"><svg class="icone" aria-hidden="true"><use href="../commun/icones.svg#x"/></svg></button>
       </div>
+
+      <div class="onglets-dialogue" role="tablist" aria-label="Sections">
+        <button type="button" role="tab" id="t-bibliotheques" aria-controls="p-bibliotheques" aria-selected="true" autofocus>Bibliothèques</button>
+        <button type="button" role="tab" id="t-page" aria-controls="p-page" aria-selected="false" tabindex="-1">Page</button>
+        <button type="button" role="tab" id="t-fragment" aria-controls="p-fragment" aria-selected="false" tabindex="-1">Fragment</button>
+      </div>
+
+      <section class="panneau-dialogue" id="p-bibliotheques" role="tabpanel" aria-labelledby="t-bibliotheques">
+        <div id="recherche-cdn"></div>
+        <p class="aide description">
+          Recherche sur npm (jsDelivr), ou adresse de n'importe quel site collée dans le champ.
+          Les bibliothèques sont chargées dans l'ordre de la liste ; un clic sur l'une d'elles permet de la modifier.
+        </p>
+        <ul class="liste-biblios" id="liste-biblios" aria-label="Bibliothèques (glisser la poignée pour changer l'ordre)"></ul>
+        <p class="aide description extra" id="extra" hidden></p>
+      </section>
+
+      <section class="panneau-dialogue" id="p-page" role="tabpanel" aria-labelledby="t-page" hidden>
+        <p class="aide description">
+          Attributs ajoutés aux balises de la page, par exemple <code>data-theme="dark"</code> pour daisyUI.
+          <code>lang="fr"</code> est ajouté automatiquement, sauf si un autre <code>lang</code> est indiqué.
+        </p>
+        <label class="champ-dialogue"><span class="label">Attributs de &lt;html&gt;</span>
+          <input id="attrs-html" class="input mono" placeholder='data-theme="dark"' spellcheck="false" autocomplete="off">
+        </label>
+        <label class="champ-dialogue"><span class="label">Attributs de &lt;body&gt;</span>
+          <input id="attrs-body" class="input mono" placeholder='class="bg-base-200"' spellcheck="false" autocomplete="off">
+        </label>
+      </section>
+
+      <section class="panneau-dialogue" id="p-fragment" role="tabpanel" aria-labelledby="t-fragment" hidden>
+        <div class="bloc-reglage">
+          <div>
+            <p class="label">Compte GitHub</p>
+            <p class="aide description">Jeton nécessaire pour enregistrer les fragments dans le répertoire.</p>
+          </div>
+          <button type="button" id="btn-github" class="btn btn-outline btn-sm"><svg class="icone" aria-hidden="true"><use href="../commun/icones.svg#key-round"/></svg><span>Connexion GitHub…</span></button>
+        </div>
+        <div class="bloc-reglage bloc-danger" id="actions-fragment">
+          <div>
+            <p class="label">Supprimer le fragment</p>
+            <p class="aide description">Retire le fragment du site. Les iframes qui l'intègrent afficheront « Fragment introuvable ».</p>
+          </div>
+          <button type="button" id="btn-supprimer" class="btn btn-outline btn-sm danger"><svg class="icone" aria-hidden="true"><use href="../commun/icones.svg#trash-2"/></svg><span>Supprimer…</span></button>
+        </div>
+      </section>
+    </form>
+  </dialog>
+
+  <!-- Confirmation (Dupliquer, Supprimer) -->
+  <dialog id="confirmation" class="dialog fenetre confirmation">
+    <form method="dialog">
+      <h2 class="dialog-titre" id="confirmation-titre"></h2>
+      <p class="aide description" id="confirmation-message"></p>
+      <label class="champ-dialogue" id="confirmation-champ" hidden><span class="label" id="confirmation-libelle"></span>
+        <input class="input" id="confirmation-valeur" autocomplete="off">
+      </label>
       <div class="pied-dialogue">
-        <button type="button" id="btn-github" class="btn btn-ghost btn-sm" title="Jeton GitHub nécessaire pour enregistrer"><svg class="icone" aria-hidden="true"><use href="../commun/icones.svg#key-round"/></svg><span>Connexion GitHub…</span></button>
         <span class="espaceur"></span>
-        <button value="ok" class="btn btn-sm">Fermer</button>
+        <button value="annuler" class="btn btn-outline btn-sm">Annuler</button>
+        <button value="ok" class="btn btn-sm" id="confirmation-ok"></button>
       </div>
     </form>
   </dialog>

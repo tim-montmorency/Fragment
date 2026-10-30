@@ -185,15 +185,23 @@
 
   // ---------- Génération des fichiers ----------
 
-  /** Signale sur le bouton « ⚙ » que des attributs sont définis. */
-  function indiquerAttributs() {
+  /** Bouton Réglages : compteur de bibliothèques, infobulle récapitulative, pastille si attributs html/body. */
+  function indiquerReglages() {
     const html = nettoyerAttributs($("attrs-html").value);
     const body = nettoyerAttributs($("attrs-body").value);
+    const biblios = etat.ressources.filter((r) => r.url);
     const b = $("btn-exemple");
-    b.classList.toggle("defini", Boolean(html || body));
-    b.title = html || body
-      ? `Réglages du fragment\n<html ${html}>\n<body ${body}>`
-      : "Réglages du fragment";
+    const compteur = $("compteur");
+    compteur.hidden = !biblios.length;
+    compteur.textContent = biblios.length;
+    b.classList.toggle("defini", Boolean(html || body) && !biblios.length);
+    const lignes = ["Réglages du fragment"];
+    if (biblios.length) lignes.push(biblios.map((r) => (r.type === "module" ? r.cle : CDN.libelle(r))).join("\n"));
+    if (html) lignes.push(`<html ${html}>`);
+    if (body) lignes.push(`<body ${body}>`);
+    b.dataset.infobulle = lignes.join("\n");
+    b.removeAttribute("title");
+    b.setAttribute("aria-label", "Réglages du fragment");
   }
 
   /** Attributs saisis à la main : sans « < » ni « > », espaces superflus retirés. */
@@ -459,9 +467,9 @@ ${corps.map((l) => "  " + l).join("\n")}
     });
   }
 
-  const TYPES = { css: "CSS", js: "JS", module: "ES" };
+  // ---------- Bibliothèques (fenêtre Réglages) : édition de etat.ressources ----------
 
-  // ---------- Sources (⚙) : édition complète de etat.ressources ----------
+  const TYPES = { css: "CSS", js: "JS", module: "ES" };
 
   const TYPES_SOURCE = [
     ["css", "CSS"],
@@ -479,121 +487,142 @@ ${corps.map((l) => "  " + l).join("\n")}
     if (r.type === "module" && !r.cle) r.cle = CDN.ressourceDepuisUrl(r.url || "x.js").cle || "";
   }
 
-  /** Une source modifiée : pastilles et aperçu à jour, sans redessiner la liste (garde le focus). */
-  function sourceModifiee() {
-    afficherBibliotheques();
-    marquerModifie();
+  // Lignes dépliées (conservées quand la liste est redessinée)
+  const deplies = new WeakSet();
+
+  /** Résumé d'une ligne : type, nom lisible, adresse. */
+  function resumer(li, r) {
+    li.className = `biblio biblio-${r.type}${deplies.has(r) ? " deplie" : ""}`;
+    li.querySelector(".type").textContent = TYPES[r.type] + (r.tete ? " · head" : "");
+    li.querySelector(".nom").textContent = !r.url ? "(adresse vide)" : r.type === "module" ? r.cle || "(clé d'import manquante)" : CDN.libelle(r);
+    li.querySelector(".adresse").textContent = r.url;
   }
 
-  function afficherSources() {
-    const liste = $("liste-sources");
+  function afficherBibliotheques() {
+    const liste = $("liste-biblios");
     liste.innerHTML = "";
     if (!etat.ressources.length) {
       const vide = document.createElement("li");
-      vide.className = "aide";
-      vide.textContent = "Aucune source.";
+      vide.className = "biblio-vide";
+      vide.innerHTML = `${UI.icone("package", "icone-lg")}<span>Aucune bibliothèque</span>`;
       liste.append(vide);
     }
 
     etat.ressources.forEach((r, i) => {
       const li = document.createElement("li");
-      li.className = "source";
       li.innerHTML = `
-        <select class="select source-type" aria-label="Type">
-          ${TYPES_SOURCE.map(([v, l]) => `<option value="${v}">${l}</option>`).join("")}
-        </select>
-        <input class="input source-url mono" placeholder="https://…" spellcheck="false" autocomplete="off" aria-label="Adresse">
-        <input class="input source-cle mono" placeholder="clé d'import" spellcheck="false" autocomplete="off" aria-label="Clé d'import (module ES)">
-        <button type="button" class="btn btn-ghost btn-sm btn-icon source-retirer" title="Retirer cette source">${UI.icone("x")}</button>`;
+        <div class="biblio-ligne">
+          <span class="poignee" title="Glisser pour changer l'ordre">${UI.icone("grip-vertical")}</span>
+          <span class="type"></span>
+          <button type="button" class="biblio-resume" aria-expanded="false">
+            <span class="nom"></span><span class="adresse"></span>
+          </button>
+          <span class="biblio-outils">
+            <button type="button" class="btn btn-ghost btn-sm btn-icon biblio-modifier" title="Modifier">${UI.icone("chevron-down")}</button>
+            <button type="button" class="btn btn-ghost btn-sm btn-icon biblio-retirer" title="Retirer">${UI.icone("x")}</button>
+          </span>
+        </div>
+        <div class="biblio-details">
+          <label class="champ-dialogue champ-type"><span class="label">Type</span>
+            <select class="select source-type">
+              ${TYPES_SOURCE.map(([v, l]) => `<option value="${v}">${l}</option>`).join("")}
+            </select>
+          </label>
+          <label class="champ-dialogue champ-url"><span class="label">Adresse</span>
+            <input class="input source-url mono" placeholder="https://…" spellcheck="false" autocomplete="off">
+          </label>
+          <label class="champ-dialogue champ-cle"><span class="label">Clé d'import</span>
+            <input class="input source-cle mono" placeholder="ex. three" spellcheck="false" autocomplete="off">
+          </label>
+        </div>`;
+      resumer(li, r);
 
+      const resume = li.querySelector(".biblio-resume");
+      const details = li.querySelector(".biblio-details");
       const type = li.querySelector(".source-type");
       const url = li.querySelector(".source-url");
       const cle = li.querySelector(".source-cle");
+      const champCle = li.querySelector(".champ-cle");
+      resume.title = r.type === "module" ? `import … from "${r.cle}"\n${r.url}` : r.url;
       type.value = typeSource(r);
       url.value = r.url;
       cle.value = r.cle || "";
-      cle.hidden = r.type !== "module";
+      champCle.hidden = r.type !== "module";
+      details.hidden = !deplies.has(r);
+      resume.setAttribute("aria-expanded", String(deplies.has(r)));
 
-      type.addEventListener("change", () => {
-        delete r.auto; // type choisi à la main : plus de détection automatique
-        appliquerType(r, type.value);
-        cle.hidden = r.type !== "module";
-        cle.value = r.cle || "";
-        sourceModifiee();
-      });
+      // Déplier / replier
+      const basculer = () => {
+        if (deplies.has(r)) deplies.delete(r); else deplies.add(r);
+        details.hidden = !deplies.has(r);
+        resume.setAttribute("aria-expanded", String(deplies.has(r)));
+        li.classList.toggle("deplie", deplies.has(r));
+        if (deplies.has(r)) url.focus();
+      };
+      resume.addEventListener("click", basculer);
+      li.querySelector(".biblio-modifier").addEventListener("click", basculer);
 
-      url.addEventListener("input", () => {
-        r.url = url.value.trim();
-        // Nouvelle source : type deviné à partir de l'adresse tant qu'il n'a pas été choisi à la main
-        if (r.auto && r.url) {
-          const devine = CDN.ressourceDepuisUrl(r.url);
-          appliquerType(r, devine.type);
-          if (devine.type === "module") r.cle = devine.cle;
-          type.value = typeSource(r);
-          cle.hidden = r.type !== "module";
-          cle.value = r.cle || "";
-        }
-        sourceModifiee();
-      });
-
-      cle.addEventListener("input", () => {
-        r.cle = cle.value.trim();
-        sourceModifiee();
-      });
-
-      // Entrée dans un champ : ne pas fermer la fenêtre (formulaire « dialog »)
-      li.addEventListener("keydown", (e) => { if (e.key === "Enter") e.preventDefault(); });
-
-      li.querySelector(".source-retirer").addEventListener("click", () => {
-        etat.ressources.splice(i, 1);
-        afficherSources();
-        sourceModifiee();
-      });
-
-      liste.append(li);
-    });
-  }
-
-  function afficherBibliotheques() {
-    const liste = $("ressources");
-    liste.innerHTML = "";
-
-    etat.ressources.forEach((r, i) => {
-      if (!r.url) return; // source en cours de saisie dans ⚙
-      const puce = document.createElement("li");
-      puce.className = `puce puce-${r.type}`;
-      puce.draggable = true;
-      puce.title = r.type === "module" ? `import … from "${r.cle}"\n${r.url}` : r.url;
-      puce.innerHTML = `<span class="type"></span><span class="nom"></span><button type="button" class="retirer" title="Retirer">${UI.icone("x", "icone-sm")}</button>`;
-      puce.querySelector(".type").textContent = TYPES[r.type] + (r.tete ? " · head" : "");
-      puce.querySelector(".nom").textContent = r.type === "module" ? r.cle : CDN.libelle(r);
       // « + » : autre fichier du même paquet (ex. themes.css de daisyui)
       const paquet = CDN.paquetDepuisUrl(r.url);
       if (paquet && !r.url.endsWith("/")) {
         const plus = document.createElement("button");
         plus.type = "button";
-        plus.className = "ajouter";
-        plus.innerHTML = UI.icone("plus", "icone-sm");
+        plus.className = "btn btn-ghost btn-sm btn-icon biblio-ajouter";
+        plus.innerHTML = UI.icone("plus");
         plus.title = `Ajouter un autre fichier de ${paquet.nom}@${paquet.version}`;
-        plus.addEventListener("click", () => rechercheCdn.fichiers(paquet.nom, paquet.version));
-        puce.querySelector(".retirer").before(plus);
+        plus.addEventListener("click", () => {
+          rechercheCdn.fichiers(paquet.nom, paquet.version);
+          $("recherche-cdn").scrollIntoView({ block: "nearest" });
+        });
+        li.querySelector(".biblio-outils").prepend(plus);
       }
 
-      puce.querySelector(".retirer").addEventListener("click", () => {
+      li.querySelector(".biblio-retirer").addEventListener("click", () => {
         etat.ressources.splice(i, 1);
         afficherBibliotheques();
         marquerModifie();
       });
 
-      // Glisser-déposer pour changer l'ordre de chargement
-      puce.addEventListener("dragstart", (e) => {
-        e.dataTransfer.setData("text/plain", String(i));
-        puce.classList.add("glisse");
+      // Modifications : résumé et aperçu à jour, sans redessiner la liste (garde le focus)
+      type.addEventListener("change", () => {
+        delete r.auto; // type choisi à la main : plus de détection automatique
+        appliquerType(r, type.value);
+        champCle.hidden = r.type !== "module";
+        cle.value = r.cle || "";
+        resumer(li, r);
+        sourceModifiee();
       });
-      puce.addEventListener("dragend", () => puce.classList.remove("glisse"));
-      puce.addEventListener("dragover", (e) => { e.preventDefault(); puce.classList.add("cible"); });
-      puce.addEventListener("dragleave", () => puce.classList.remove("cible"));
-      puce.addEventListener("drop", (e) => {
+      url.addEventListener("input", () => {
+        r.url = url.value.trim();
+        if (r.auto && r.url) {
+          const devine = CDN.ressourceDepuisUrl(r.url);
+          appliquerType(r, devine.type);
+          if (devine.type === "module") r.cle = devine.cle;
+          type.value = typeSource(r);
+          champCle.hidden = r.type !== "module";
+          cle.value = r.cle || "";
+        }
+        resumer(li, r);
+        sourceModifiee();
+      });
+      cle.addEventListener("input", () => {
+        r.cle = cle.value.trim();
+        resumer(li, r);
+        sourceModifiee();
+      });
+
+      // Glisser-déposer par la poignée seulement (les champs restent sélectionnables)
+      const poignee = li.querySelector(".poignee");
+      poignee.addEventListener("pointerdown", () => { li.draggable = true; });
+      li.addEventListener("dragstart", (e) => {
+        e.dataTransfer.setData("text/plain", String(i));
+        e.dataTransfer.effectAllowed = "move";
+        li.classList.add("glisse");
+      });
+      li.addEventListener("dragend", () => { li.draggable = false; li.classList.remove("glisse"); });
+      li.addEventListener("dragover", (e) => { e.preventDefault(); li.classList.add("cible"); });
+      li.addEventListener("dragleave", () => li.classList.remove("cible"));
+      li.addEventListener("drop", (e) => {
         e.preventDefault();
         const de = parseInt(e.dataTransfer.getData("text/plain"), 10);
         if (Number.isNaN(de) || de === i) return afficherBibliotheques();
@@ -602,13 +631,85 @@ ${corps.map((l) => "  " + l).join("\n")}
         afficherBibliotheques();
         marquerModifie();
       });
-      liste.append(puce);
+
+      liste.append(li);
     });
 
     const n = etat.extraTete.length + etat.extraCorps.length;
-    $("extra").textContent = n ? `+ ${n} autre${n > 1 ? "s" : ""} balise${n > 1 ? "s" : ""} conservée${n > 1 ? "s" : ""}` : "";
+    $("extra").hidden = !n;
+    $("extra").textContent = n
+      ? `${n} autre${n > 1 ? "s" : ""} balise${n > 1 ? "s" : ""} de l'index.html conservée${n > 1 ? "s" : ""} telle${n > 1 ? "s" : ""} quelle${n > 1 ? "s" : ""}.`
+      : "";
     $("extra").title = [...etat.extraTete, ...etat.extraCorps].join("\n");
-    $("aucune").hidden = etat.ressources.some((r) => r.url);
+    indiquerReglages();
+  }
+
+  function sourceModifiee() {
+    indiquerReglages();
+    marquerModifie();
+  }
+
+  // ---------- Fenêtre Réglages : onglets ----------
+
+  function choisirOngletReglages(id) {
+    document.querySelectorAll('#config-exemple [role="tab"]').forEach((t) => {
+      const actif = t.id === `t-${id}`;
+      t.setAttribute("aria-selected", String(actif));
+      t.tabIndex = actif ? 0 : -1;
+      $(t.getAttribute("aria-controls")).hidden = !actif;
+    });
+  }
+
+  function brancherOngletsReglages() {
+    const onglets = [...document.querySelectorAll('#config-exemple [role="tab"]')];
+    onglets.forEach((t, i) => {
+      t.addEventListener("click", () => choisirOngletReglages(t.id.slice(2)));
+      t.addEventListener("keydown", (e) => {
+        const d = { ArrowRight: 1, ArrowLeft: -1 }[e.key];
+        if (!d) return;
+        e.preventDefault();
+        const suivant = onglets[(i + d + onglets.length) % onglets.length];
+        choisirOngletReglages(suivant.id.slice(2));
+        suivant.focus();
+      });
+    });
+  }
+
+  function ouvrirReglagesFragment(onglet = "bibliotheques") {
+    afficherBibliotheques();
+    choisirOngletReglages(onglet);
+    $("config-exemple").showModal();
+    $(`t-${onglet}`).focus();
+  }
+
+  // ---------- Fenêtre de confirmation ----------
+
+  /**
+   * Fenêtre de confirmation au style du studio.
+   * Résout avec true (ou la valeur du champ, si « champ » est fourni), ou null si annulé.
+   */
+  function confirmer({ titre, message, bouton, danger = false, champ = null }) {
+    const d = $("confirmation");
+    $("confirmation-titre").textContent = titre;
+    $("confirmation-message").textContent = message;
+    $("confirmation-champ").hidden = !champ;
+    if (champ) {
+      $("confirmation-libelle").textContent = champ.libelle;
+      $("confirmation-valeur").value = champ.valeur || "";
+    }
+    const ok = $("confirmation-ok");
+    ok.textContent = bouton;
+    ok.className = `btn btn-sm${danger ? " btn-destructive" : ""}`;
+    d.returnValue = "";
+    d.showModal();
+    if (champ) $("confirmation-valeur").select();
+    else ok.focus();
+    return new Promise((resoudre) => {
+      d.addEventListener("close", () => {
+        if (d.returnValue !== "ok") return resoudre(null);
+        resoudre(champ ? $("confirmation-valeur").value.trim() : true);
+      }, { once: true });
+    });
   }
 
   // ---------- Liste des fragments (index central fragments.json) ----------
@@ -651,7 +752,7 @@ ${corps.map((l) => "  " + l).join("\n")}
     else url.searchParams.delete("ex");
     history.replaceState(null, "", url);
 
-    // Voir / Intégrer (pied de page) et Dupliquer / Supprimer (⚙) : fragment enregistré seulement
+    // Dupliquer / Voir / Intégrer (pied de page) et Supprimer (Réglages) : fragment enregistré seulement
     $("pied-liens").hidden = !etat.ex;
     $("actions-fragment").hidden = !etat.ex;
     if (etat.ex) $("lien-voir").href = `${new URL("v/", SITE).href}?ex=${etat.ex}`;
@@ -733,7 +834,7 @@ ${corps.map((l) => "  " + l).join("\n")}
     $("tags").value = (tags || []).join(", ");
     $("attrs-html").value = analyse?.attrsHtml || "";
     $("attrs-body").value = analyse?.attrsBody || "";
-    indiquerAttributs();
+    indiquerReglages();
     remplacerEditeur("html", html);
     remplacerEditeur("css", css);
     remplacerEditeur("js", js);
@@ -891,7 +992,14 @@ ${corps.map((l) => "  " + l).join("\n")}
   async function supprimer() {
     if (!etat.ex) return;
     const titre = $("titre").value.trim() || etat.ex;
-    if (!confirm(`Supprimer « ${titre} » ?\n\nLe fragment sera retiré du site, et les iframes qui l'intègrent afficheront « Fragment introuvable ». Il restera récupérable dans l'historique Git.`)) return;
+    const ok = await confirmer({
+      titre: `Supprimer « ${titre} » ?`,
+      message: "Le fragment sera retiré du site, et les iframes qui l'intègrent afficheront « Fragment introuvable ». " +
+        "Il restera récupérable dans l'historique Git.",
+      bouton: "Supprimer",
+      danger: true,
+    });
+    if (!ok) return;
     if (!reglages.jeton) {
       $("config-exemple").close();
       statut("Un jeton GitHub est nécessaire pour supprimer.", "erreur");
@@ -921,15 +1029,23 @@ ${corps.map((l) => "  " + l).join("\n")}
     }
   }
 
-  /** Le fragment ouvert devient un nouveau fragment (nouveau dossier à l'enregistrement). */
-  function dupliquer() {
+  /** Le fragment ouvert devient un nouveau fragment (nouveau dossier à l'enregistrement), après confirmation. */
+  async function dupliquer() {
     if (!etat.ex) return statut("Ce fragment n'est pas encore enregistré : rien à dupliquer.");
+    const actuel = $("titre").value.trim() || etat.ex;
+    const titre = await confirmer({
+      titre: `Dupliquer « ${actuel} » ?`,
+      message: "Le code et les réglages sont copiés dans un nouveau fragment, créé au prochain enregistrement. " +
+        "L'original reste inchangé.",
+      bouton: "Dupliquer",
+      champ: { libelle: "Titre de la copie", valeur: `${actuel} (copie)` },
+    });
+    if (titre === null) return;
     etat.copieDe = etat.ex;
     etat.ex = null;
     etat.meta = {};
-    $("titre").value = `${$("titre").value.trim()} (copie)`;
+    $("titre").value = titre || `${actuel} (copie)`;
     majAdresse();
-    $("config-exemple").close();
     marquerModifie();
     statut("Copie : un nouveau fragment sera créé à l'enregistrement.");
   }
@@ -1052,13 +1168,18 @@ ${corps.map((l) => "  " + l).join("\n")}
   function brancherEvenements() {
     ["titre", "tags", "attrs-html", "attrs-body"].forEach((id) => $(id).addEventListener("input", marquerModifie));
     $("btn-dupliquer").addEventListener("click", dupliquer);
-    ["attrs-html", "attrs-body"].forEach((id) => $(id).addEventListener("input", indiquerAttributs));
-    $("btn-exemple").addEventListener("click", () => { afficherSources(); $("config-exemple").showModal(); });
-    $("btn-ajouter-source").addEventListener("click", () => {
-      etat.ressources.push({ type: "js", url: "", auto: true });
-      afficherSources();
-      const champs = $("liste-sources").querySelectorAll(".source-url");
-      champs[champs.length - 1]?.focus();
+    ["attrs-html", "attrs-body"].forEach((id) => $(id).addEventListener("input", indiquerReglages));
+    $("btn-exemple").addEventListener("click", () => ouvrirReglagesFragment());
+    brancherOngletsReglages();
+    // Entrée dans un champ des fenêtres : ne pas les fermer (formulaires « dialog »)
+    ["config-exemple", "confirmation"].forEach((id) => $(id).addEventListener("keydown", (e) => {
+      if (e.key !== "Enter" || !e.target.matches("input, select")) return;
+      e.preventDefault();
+      if (e.target.id === "confirmation-valeur") $("confirmation").close("ok");
+    }));
+    // Échap dans la recherche de bibliothèques : ferme les résultats, pas la fenêtre
+    $("config-exemple").addEventListener("cancel", (e) => {
+      if (document.activeElement?.closest("#recherche-cdn") && !document.querySelector(".cdn-resultats").hidden) e.preventDefault();
     });
 
     $("btn-enregistrer").addEventListener("click", enregistrer);
