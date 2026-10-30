@@ -1,6 +1,15 @@
 {
   "fragments": [
     {
+      "nom": "gsap-set",
+      "titre": "GSAP - set()",
+      "tags": [
+        "web3",
+        "gsap"
+      ],
+      "modifie": "2026-10-30"
+    },
+    {
       "nom": "gsap-from",
       "titre": "GSAP - from()",
       "tags": [
@@ -12,15 +21,6 @@
     {
       "nom": "gsap-fromto",
       "titre": "GSAP - fromTo()",
-      "tags": [
-        "web3",
-        "gsap"
-      ],
-      "modifie": "2026-10-29"
-    },
-    {
-      "nom": "gsap-set",
-      "titre": "GSAP - set()",
       "tags": [
         "web3",
         "gsap"
