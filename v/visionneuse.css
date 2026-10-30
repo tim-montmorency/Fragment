@@ -128,9 +128,68 @@ body {
   flex: none;
 }
 
-.outils button,
-.outils a {
-  font-weight: 400;
+.outils {
+  align-items: center;
+  gap: 2px;
+  padding: 0 4px;
+}
+
+.barre .outil {
+  display: inline-grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: 0;
+  border-radius: 6px;
+}
+
+.barre .outil:hover {
+  background: color-mix(in srgb, var(--texte) 12%, transparent);
+}
+
+.barre .outil:focus-visible {
+  outline: 2px solid var(--texte-attenue);
+  outline-offset: -2px;
+}
+
+/* ---------- Icônes et infobulles (voir ../commun/ui.js) ---------- */
+
+.icone {
+  flex: none;
+  width: 16px;
+  height: 16px;
+}
+
+.infobulle {
+  position: fixed;
+  z-index: 10000;
+  display: none;
+  max-width: 240px;
+  padding: 5px 10px;
+  font: 500 12px/1.4 system-ui, sans-serif;
+  white-space: pre-line;
+  color: var(--fond);
+  background: var(--texte);
+  border-radius: 6px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  pointer-events: none;
+  opacity: 0;
+  transform: translateY(2px) scale(0.97);
+  transition: opacity 0.12s ease-out, transform 0.12s ease-out;
+}
+
+.infobulle[data-cote="bas"] {
+  transform: translateY(-2px) scale(0.97);
+}
+
+.infobulle.visible {
+  opacity: 1;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .infobulle { transition: none; }
 }
 
 /* ---------- Panneaux ---------- */

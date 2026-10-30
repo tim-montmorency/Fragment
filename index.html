@@ -17,11 +17,11 @@
     </div>
     <div class="outils">
       <div class="recherche">
-        <svg aria-hidden="true" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+        <svg class="icone" aria-hidden="true"><use href="commun/icones.svg#search"/></svg>
         <input type="search" id="recherche" class="input" placeholder="Rechercher un fragment…" aria-label="Rechercher un fragment" autocomplete="off" spellcheck="false">
       </div>
       <a class="btn" href="studio/">
-        <svg aria-hidden="true" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
+        <svg class="icone" aria-hidden="true"><use href="commun/icones.svg#plus"/></svg>
         Nouveau fragment
       </a>
     </div>
@@ -35,6 +35,7 @@
     <p class="vide description" id="vide" hidden></p>
   </main>
 
+  <script src="commun/ui.js"></script>
   <script src="commun/galerie.js"></script>
 </body>
 </html>

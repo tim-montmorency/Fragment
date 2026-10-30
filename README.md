@@ -28,7 +28,12 @@ Fragment/
 ├── studio/               Création et modification des fragments
 ├── v/                    Visionneuse (code + résultat, utilisée dans les iframes)
 │   └── vendor/           highlight.js et CodeMirror (auto-hébergés)
-├── commun/               Galerie et fenêtre « Intégrer » (partagée galerie / studio)
+├── commun/               Partagé par la galerie, le studio et la visionneuse
+│   ├── theme.css         Jetons et composants (style shadcn/ui, sans compilation)
+│   ├── ui.js             Icônes et infobulles
+│   ├── icones.svg        Icônes Lucide (licence ISC, voir icones-LICENCE.txt)
+│   ├── polices/          Geist et Geist Mono (licence OFL)
+│   └── integrer.js/.css  Fenêtre « Intégrer »
 ├── outils/codemirror/    Source du paquet CodeMirror
 └── _gabarit/             Point de départ d'un nouveau fragment
 ```
@@ -75,7 +80,7 @@ Le studio s'en occupe normalement. À la main, dans la copie locale du répertoi
 1. Copier `_gabarit/` vers `f/<nom>/` (lettres, chiffres, `-` et `_` seulement).
 2. Écrire le fragment. Les bibliothèques se chargent directement dans `index.html`.
 3. Ajouter `f/<nom>/fragment.json` (titre et tags).
-4. Pousser, puis dans le studio : **⚙ → Connexion GitHub… → Reconstruire l'index**, pour que la galerie le liste.
+4. Pousser, puis dans le studio : **Réglages (icône d'engrenage) → Connexion GitHub… → Reconstruire l'index**, pour que la galerie le liste.
 
 L'onglet **HTML** de la visionneuse n'affiche que le contenu de `<body>`, sans les balises `<script src="…">`.
 Le paramètre `html=complet` affiche le fichier entier.
@@ -163,7 +168,7 @@ Interface pour créer ou modifier un fragment avec aperçu en direct, puis l'enr
   - Les fichiers `.css` vont dans `<head>`, les `.js` à la fin du body, les modules ES (`three`, etc.) dans une importmap ; `script.js` passe alors en `type="module"`.
   - Glisser les pastilles pour changer l'ordre de chargement ; × pour retirer.
   - Les autres balises déjà présentes dans un fragment sont conservées.
-- **⚙ Réglages du fragment** :
+- **Réglages du fragment** (icône d'engrenage) :
   - **Dupliquer** : crée un nouveau fragment à partir de celui-ci.
   - **Supprimer…** : un commit retire le dossier du fragment et son entrée de l'index. Les iframes qui l'intègrent
     affichent alors « Fragment introuvable ». Le fragment reste récupérable dans l'historique Git.
@@ -176,28 +181,39 @@ Interface pour créer ou modifier un fragment avec aperçu en direct, puis l'enr
 - **⚠ Erreurs**, dans la barre du résultat : apparaît quand l'aperçu produit des erreurs JavaScript, des promesses rejetées,
   des `console.error` ou des fichiers introuvables. Un clic ouvre la console ; un clic sur « script.js, ligne N » place le curseur
   sur la ligne dans l'éditeur JS. La liste repart à zéro à chaque mise à jour de l'aperçu.
-- **↻ Rejouer**, dans la barre du résultat : relance le fragment (animations, scripts) sans attendre une modification.
-- **Pied de page** (fragment enregistré) : **Voir ↗** ouvre la visionneuse, **Intégrer** ouvre la fenêtre d'intégration.
+- **Rejouer**, dans la barre du résultat : relance le fragment (animations, scripts) sans attendre une modification.
+- **Pied de page** (fragment enregistré) : **Voir** ouvre la visionneuse, **Intégrer** ouvre la fenêtre d'intégration.
 - **Onglet HTML** : seulement le contenu de `<body>`. Le reste de `index.html` est généré.
 - **Enregistrer** (ou Cmd/Ctrl + S) : un seul commit avec les fichiers du fragment, son `fragment.json` et l'index `fragments.json`.
   La confirmation s'affiche dans le pied de page. GitHub Pages republie ensuite le site (environ une minute) :
   le studio vérifie la publication et affiche **en ligne ✓** quand elle est terminée. Pendant ce temps, la fenêtre
   **Intégrer** le signale et son aperçu se recharge tout seul une fois le fragment en ligne.
   En local (Go Live), ce suivi est désactivé : faire un `git pull` pour voir le fragment.
-- **⚙ → Connexion GitHub… → Reconstruire l'index** : recrée `fragments.json` à partir des dossiers `f/`, après des ajouts ou suppressions faits à la main.
+- **Réglages (icône d'engrenage) → Connexion GitHub… → Reconstruire l'index** : recrée `fragments.json` à partir des dossiers `f/`, après des ajouts ou suppressions faits à la main.
 
 ### Jeton GitHub (une seule fois par navigateur)
 
 1. GitHub → *Settings → Developer settings → Personal access tokens → Fine-grained tokens → Generate new token*.
 2. *Resource owner* : `tim-montmorency`. *Repository access* : **Only select repositories** → `Fragment`.
 3. *Permissions → Repository permissions → Contents* : **Read and write**.
-4. Copier le jeton dans le studio (**⚙ → Connexion GitHub…**), puis **Tester**.
+4. Copier le jeton dans le studio (**Réglages (icône d'engrenage) → Connexion GitHub…**), puis **Tester**.
 
 Le jeton est conservé dans le navigateur (localStorage) : pas besoin de le saisir à nouveau. Chaque adresse a sa propre mémoire
 (le site publié et une copie locale avec Go Live, par exemple), et une fenêtre de navigation privée ne le garde pas.
-Dans ⚙, le lien devient **Connexion GitHub ✓** quand un jeton est enregistré.
+Dans les réglages, le lien devient **Connecté à GitHub** (coche verte) quand un jeton est enregistré.
 Sur un ordinateur partagé, utiliser **Oublier le jeton** à la fin.
 Après un enregistrement par le studio, faire un `git pull` dans la copie locale.
+
+## Interface
+
+- **Thème** : `commun/theme.css` reprend l'apparence de [shadcn/ui](https://ui.shadcn.com) en CSS simple
+  (jetons `--background`, `--primary`…, classes `.btn`, `.input`, `.select`, `.dialog`, `.badge`…).
+  La galerie suit le mode clair ou sombre du système ; le studio est toujours sombre.
+- **Icônes** : [Lucide](https://lucide.dev), regroupées dans `commun/icones.svg`.
+  En HTML : `<svg class="icone"><use href="commun/icones.svg#settings"/></svg>` ; en JS : `UI.icone("settings")`.
+  Pour en ajouter une, copier le contenu de son SVG dans un nouveau `<symbol id="…">` du fichier.
+- **Infobulles** : tout élément avec un attribut `title` reçoit une infobulle stylée (survol ou focus au clavier),
+  grâce à `commun/ui.js`. `data-infobulle-position="bas"` la place sous l'élément.
 
 ## Tester en local
 

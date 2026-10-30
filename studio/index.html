@@ -5,29 +5,30 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="noindex">
   <title>Fragment — Studio</title>
-  <link rel="stylesheet" href="studio.css">
+  <link rel="preload" href="../commun/polices/Geist-Variable.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="../commun/theme.css">
   <link rel="stylesheet" href="../commun/integrer.css">
+  <link rel="stylesheet" href="studio.css">
 </head>
 <body>
   <header class="entete">
-    <a class="logo" href="../" title="Galerie des fragments">Fragment</a>
+    <a class="logo" href="../" title="Galerie des fragments" data-infobulle-position="bas">Fragment<span class="point">.</span></a>
     <span class="separateur">/</span>
     <span class="sous-titre">Studio</span>
 
     <div class="champ champ-large">
-      <label for="titre">Titre</label>
-      <input id="titre" placeholder="GSAP - from()">
+      <label class="label" for="titre">Titre</label>
+      <input class="input" id="titre" placeholder="GSAP - from()">
     </div>
 
     <div class="champ champ-tags">
-      <label for="tags">Tags (séparés par des virgules)</label>
-      <input id="tags" placeholder="ex. web3, gsap" spellcheck="false" autocomplete="off">
+      <label class="label" for="tags">Tags <span class="description">(séparés par des virgules)</span></label>
+      <input class="input" id="tags" placeholder="ex. web3, gsap" spellcheck="false" autocomplete="off">
     </div>
 
     <div class="actions">
-      <button type="button" id="btn-exemple" class="secondaire" title="Réglages du fragment">⚙</button>
-      <button type="button" id="btn-enregistrer" class="principal">Enregistrer</button>
+      <button type="button" id="btn-exemple" class="btn btn-outline btn-icon" title="Réglages du fragment" data-infobulle-position="bas"><svg class="icone" aria-hidden="true"><use href="../commun/icones.svg#settings"/></svg></button>
+      <button type="button" id="btn-enregistrer" class="btn" title="Enregistrer (Ctrl + S)" data-infobulle-position="bas"><svg class="icone" aria-hidden="true"><use href="../commun/icones.svg#save"/></svg><span>Enregistrer</span></button>
     </div>
   </header>
 
@@ -47,15 +48,15 @@
     <section class="groupe">
       <div class="barre">
         <span class="onglet actif">Résultat <span class="direct" title="Aperçu en direct"></span></span>
-        <button type="button" id="btn-erreurs" class="erreurs" title="Erreurs de la console" aria-controls="console" hidden></button>
-        <button type="button" id="btn-rejouer" class="outil" title="Relancer le fragment (animations, scripts)">↻ Rejouer</button>
+        <button type="button" id="btn-erreurs" class="erreurs" title="Afficher la console" aria-controls="console" hidden></button>
+        <button type="button" id="btn-rejouer" class="btn btn-ghost btn-sm outil" title="Relancer le fragment (animations, scripts)"><svg class="icone" aria-hidden="true"><use href="../commun/icones.svg#rotate-cw"/></svg><span>Rejouer</span></button>
       </div>
       <div class="panneaux">
         <div id="resultat"></div>
         <div id="console" class="console" hidden>
           <div class="console-entete">
-            <span>Console</span>
-            <button type="button" id="btn-fermer-console" title="Fermer">×</button>
+            <span><svg class="icone icone-sm" aria-hidden="true"><use href="../commun/icones.svg#terminal"/></svg> Console</span>
+            <button type="button" id="btn-fermer-console" class="btn btn-ghost btn-sm btn-icon" title="Fermer la console"><svg class="icone" aria-hidden="true"><use href="../commun/icones.svg#x"/></svg></button>
           </div>
           <ul id="liste-erreurs"></ul>
         </div>
@@ -66,53 +67,53 @@
   <footer class="pied">
     <span class="statut" id="statut" aria-live="polite"></span>
     <nav class="pied-liens" id="pied-liens" hidden>
-      <a id="lien-voir" target="_blank" rel="noopener" title="Ouvrir le fragment dans la visionneuse">Voir ↗</a>
-      <button type="button" id="btn-integrer" title="Code d'intégration (iframe)">Intégrer</button>
+      <a id="lien-voir" class="btn btn-ghost btn-sm" target="_blank" rel="noopener" title="Ouvrir le fragment dans la visionneuse"><svg class="icone" aria-hidden="true"><use href="../commun/icones.svg#external-link"/></svg><span>Voir</span></a>
+      <button type="button" id="btn-integrer" class="btn btn-ghost btn-sm" title="Code d'intégration (iframe)"><svg class="icone" aria-hidden="true"><use href="../commun/icones.svg#code-xml"/></svg><span>Intégrer</span></button>
     </nav>
   </footer>
 
   <!-- Réglages de l'exemple -->
-  <dialog id="config-exemple">
+  <dialog id="config-exemple" class="dialog fenetre">
     <form method="dialog">
-      <h2>Réglages du fragment</h2>
-      <p class="aide">
+      <h2 class="dialog-titre">Réglages du fragment</h2>
+      <p class="aide description">
         Attributs ajoutés aux balises de la page, par exemple <code>data-theme="dark"</code> pour daisyUI.
         <code>lang="fr"</code> est ajouté automatiquement, sauf si un autre <code>lang</code> est indiqué.
       </p>
-      <label>Attributs de &lt;html&gt;
-        <input id="attrs-html" class="mono" placeholder='data-theme="dark"' spellcheck="false" autocomplete="off">
+      <label class="champ-dialogue"><span class="label">Attributs de &lt;html&gt;</span>
+        <input id="attrs-html" class="input mono" placeholder='data-theme="dark"' spellcheck="false" autocomplete="off">
       </label>
-      <label>Attributs de &lt;body&gt;
-        <input id="attrs-body" class="mono" placeholder='class="bg-base-200"' spellcheck="false" autocomplete="off">
+      <label class="champ-dialogue"><span class="label">Attributs de &lt;body&gt;</span>
+        <input id="attrs-body" class="input mono" placeholder='class="bg-base-200"' spellcheck="false" autocomplete="off">
       </label>
 
       <fieldset class="sources">
-        <legend>Sources (feuilles de style et scripts, dans l'ordre de chargement)</legend>
-        <p class="aide">
+        <legend class="label">Sources (feuilles de style et scripts, dans l'ordre de chargement)</legend>
+        <p class="aide description">
           Les mêmes que les pastilles « Bibliothèques ». Une adresse de n'importe quel site peut être ajoutée ;
           le type est deviné à partir de l'adresse et reste modifiable.
         </p>
         <ul id="liste-sources" class="liste-sources"></ul>
-        <button type="button" id="btn-ajouter-source" class="secondaire petit">+ Ajouter une source</button>
+        <button type="button" id="btn-ajouter-source" class="btn btn-outline btn-sm"><svg class="icone" aria-hidden="true"><use href="../commun/icones.svg#plus"/></svg><span>Ajouter une source</span></button>
       </fieldset>
 
       <div class="actions-fragment" id="actions-fragment">
-        <button type="button" id="btn-dupliquer" class="secondaire" title="Crée un nouveau fragment à partir de celui-ci">Dupliquer</button>
-        <button type="button" id="btn-supprimer" class="danger" title="Retire le fragment du site">Supprimer…</button>
+        <button type="button" id="btn-dupliquer" class="btn btn-outline btn-sm" title="Crée un nouveau fragment à partir de celui-ci"><svg class="icone" aria-hidden="true"><use href="../commun/icones.svg#copy-plus"/></svg><span>Dupliquer</span></button>
+        <button type="button" id="btn-supprimer" class="btn btn-outline btn-sm danger" title="Retire le fragment du site"><svg class="icone" aria-hidden="true"><use href="../commun/icones.svg#trash-2"/></svg><span>Supprimer…</span></button>
       </div>
       <div class="pied-dialogue">
-        <button type="button" id="btn-github" class="lien" title="Jeton GitHub nécessaire pour enregistrer">Connexion GitHub…</button>
+        <button type="button" id="btn-github" class="btn btn-ghost btn-sm" title="Jeton GitHub nécessaire pour enregistrer"><svg class="icone" aria-hidden="true"><use href="../commun/icones.svg#key-round"/></svg><span>Connexion GitHub…</span></button>
         <span class="espaceur"></span>
-        <button value="ok" class="principal">Fermer</button>
+        <button value="ok" class="btn btn-sm">Fermer</button>
       </div>
     </form>
   </dialog>
 
   <!-- Réglages GitHub -->
-  <dialog id="reglages">
+  <dialog id="reglages" class="dialog fenetre">
     <form method="dialog" id="form-reglages">
-      <h2>Réglages GitHub</h2>
-      <p class="aide">
+      <h2 class="dialog-titre">Réglages GitHub</h2>
+      <p class="aide description">
         L'enregistrement fait un commit dans le répertoire GitHub. Il faut un
         <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">jeton « fine-grained »</a>
         limité à ce répertoire, avec la permission <strong>Contents : Read and write</strong>.
@@ -120,26 +121,27 @@
         Le site publié et une copie locale (Go Live) ont chacun leur propre mémoire.
       </p>
       <div class="grille-reglages">
-        <label>Compte ou organisation<input name="proprietaire" spellcheck="false"></label>
-        <label>Répertoire<input name="repertoire" spellcheck="false"></label>
-        <label>Branche<input name="branche" spellcheck="false"></label>
+        <label class="champ-dialogue"><span class="label">Compte ou organisation</span><input class="input" name="proprietaire" spellcheck="false"></label>
+        <label class="champ-dialogue"><span class="label">Répertoire</span><input class="input" name="repertoire" spellcheck="false"></label>
+        <label class="champ-dialogue"><span class="label">Branche</span><input class="input" name="branche" spellcheck="false"></label>
       </div>
-      <label>Jeton<input name="jeton" type="password" autocomplete="off" spellcheck="false" placeholder="github_pat_…"></label>
-      <p class="aide" id="etat-jeton"></p>
-      <p class="aide">
+      <label class="champ-dialogue"><span class="label">Jeton</span><input class="input" name="jeton" type="password" autocomplete="off" spellcheck="false" placeholder="github_pat_…"></label>
+      <p class="aide description" id="etat-jeton"></p>
+      <p class="aide description">
         <strong>Index de la galerie</strong> — <code>fragments.json</code> est mis à jour à chaque enregistrement.
         Après des ajouts ou suppressions faits à la main dans <code>f/</code>, il peut être recréé :
-        <button type="button" id="btn-reconstruire" class="lien">Reconstruire l'index</button>
+        <button type="button" id="btn-reconstruire" class="btn btn-link">Reconstruire l'index</button>
       </p>
       <div class="pied-dialogue">
-        <button type="button" id="btn-oublier" class="secondaire">Oublier le jeton</button>
+        <button type="button" id="btn-oublier" class="btn btn-ghost btn-sm danger">Oublier le jeton</button>
         <span class="espaceur"></span>
-        <button type="button" id="btn-tester" class="secondaire">Tester</button>
-        <button value="ok" class="principal">Fermer</button>
+        <button type="button" id="btn-tester" class="btn btn-outline btn-sm">Tester</button>
+        <button value="ok" class="btn btn-sm">Fermer</button>
       </div>
     </form>
   </dialog>
 
+  <script src="../commun/ui.js"></script>
   <script src="../v/vendor/codemirror.js"></script>
   <script src="../v/cadre-double.js"></script>
   <script src="github.js"></script>

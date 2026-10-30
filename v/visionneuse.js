@@ -257,11 +257,14 @@
     };
   }
 
-  function bouton(texte, titre, action) {
+  /** Bouton d'outil : icône Lucide seule, libellé en infobulle (commun/ui.js). */
+  function bouton(icone, titre, action) {
     const b = document.createElement("button");
     b.type = "button";
-    b.textContent = texte;
+    b.className = "outil";
+    b.innerHTML = UI.icone(icone);
     b.title = titre;
+    b.setAttribute("aria-label", titre);
     b.addEventListener("click", action);
     return b;
   }
@@ -323,13 +326,13 @@
 
     if (cles.includes("resultat") && boutons.has("rejouer")) {
       outils.append(
-        bouton("↻ Rejouer", "Relancer l'exemple", () => { activer("resultat"); resultat.rejouer(); })
+        bouton("rotate-cw", "Rejouer", () => { activer("resultat"); resultat.rejouer(); })
       );
     }
 
     if (cles.includes("resultat") && boutons.has("ouvrir")) {
       outils.append(
-        bouton("↗ Ouvrir", "Ouvrir l'exemple dans un nouvel onglet", () => {
+        bouton("external-link", "Ouvrir dans un nouvel onglet", () => {
           if (modifiable && etat.modifie) {
             const blob = new Blob([assembler()], { type: "text/html" });
             window.open(URL.createObjectURL(blob), "_blank");
@@ -414,7 +417,7 @@
     });
 
     const outilsCode = () =>
-      bouton("⟲ Réinitialiser", "Revenir au code d'origine", () => {
+      bouton("rotate-ccw", "Réinitialiser le code", () => {
         Object.entries(panneauxCode).forEach(([cle, p]) => p.remplacer(etat.original[cle]));
         etat.courant = { ...etat.original };
         etat.modifie = false;

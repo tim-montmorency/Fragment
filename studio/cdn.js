@@ -159,7 +159,8 @@ const CDN = (() => {
   function monter(conteneur, { ajouter, statut = () => {} }) {
     conteneur.classList.add("cdn");
     conteneur.innerHTML = `
-      <input type="search" class="cdn-champ" placeholder="Ajouter une bibliothèque (npm) ou coller une adresse…"
+      ${UI.icone("search", "cdn-loupe")}
+      <input type="search" class="input cdn-champ" placeholder="Ajouter une bibliothèque (npm) ou coller une adresse…"
              autocomplete="off" spellcheck="false" aria-label="Rechercher une bibliothèque">
       <div class="cdn-resultats" role="listbox" hidden></div>`;
 
@@ -240,7 +241,7 @@ const CDN = (() => {
           <strong></strong> <span class="cdn-version"></span>
           <div class="cdn-description"></div>
         </div>
-        <button type="button" class="cdn-fichiers" title="Choisir un autre fichier du paquet">Fichiers ▸</button>`;
+        <button type="button" class="cdn-fichiers" title="Choisir un autre fichier du paquet">Fichiers ${UI.icone("chevron-right", "icone-sm")}</button>`;
       d.querySelector("strong").textContent = p.nom;
       d.querySelector(".cdn-version").textContent = p.version;
       d.querySelector(".cdn-description").textContent = p.description;
@@ -273,9 +274,9 @@ const CDN = (() => {
       const entete = document.createElement("div");
       entete.className = "cdn-entete";
       entete.innerHTML = `
-        <button type="button" class="cdn-retour" title="Retour aux résultats">←</button>
+        <button type="button" class="cdn-retour" title="Retour aux résultats">${UI.icone("chevron-left")}</button>
         <span><strong></strong> — choisir un fichier</span>
-        <input type="search" class="cdn-filtre" placeholder="Filtrer (ex. scroll)" spellcheck="false">`;
+        <input type="search" class="input cdn-filtre" placeholder="Filtrer (ex. scroll)" spellcheck="false">`;
       entete.querySelector("strong").textContent = `${nom}@${version}`;
       entete.querySelector(".cdn-retour").addEventListener("mousedown", (e) => {
         e.preventDefault();

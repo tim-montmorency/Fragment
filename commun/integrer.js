@@ -60,7 +60,8 @@ const Integrer = (() => {
   function creer() {
     dialogue = document.createElement("dialog");
     dialogue.className = "integrer dialog";
-    const ICONE_COPIER = '<svg aria-hidden="true" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>';
+    // Icônes Lucide (commun/ui.js), si la page charge ui.js
+    const icone = (nom) => (typeof UI === "undefined" ? "" : UI.icone(nom));
     dialogue.innerHTML = html`
       <form method="dialog" class="integrer-grille">
         <header class="integrer-entete">
@@ -69,7 +70,7 @@ const Integrer = (() => {
             <p class="description integrer-nom"></p>
           </div>
           <button value="fermer" class="btn btn-ghost btn-sm btn-icon integrer-fermer" title="Fermer" aria-label="Fermer">
-            <svg aria-hidden="true" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+            ${icone("x")}
           </button>
         </header>
 
@@ -132,9 +133,9 @@ const Integrer = (() => {
           <div class="integrer-code">
             <code class="integrer-extrait"></code>
             <div class="integrer-actions">
-              <a class="btn btn-link integrer-lien" target="_blank" rel="noopener">Ouvrir la visionneuse ↗</a>
+              <a class="btn btn-link integrer-lien" target="_blank" rel="noopener">Ouvrir la visionneuse ${icone("external-link")}</a>
               <button type="button" class="btn btn-ghost btn-sm integrer-defaut" title="Revenir aux options par défaut">Options par défaut</button>
-              <button type="button" class="btn btn-sm integrer-copier">${ICONE_COPIER}<span>Copier</span></button>
+              <button type="button" class="btn btn-sm integrer-copier">${icone("copy")}<span>Copier</span></button>
             </div>
           </div>
         </div>
@@ -159,8 +160,13 @@ const Integrer = (() => {
       try {
         await navigator.clipboard.writeText(dialogue.querySelector(".integrer-extrait").textContent);
         const texte = e.currentTarget.querySelector("span");
-        texte.textContent = "Copié !";
-        setTimeout(() => (texte.textContent = "Copier"), 1500);
+        const use = e.currentTarget.querySelector("use");
+        const changer = (mot, nom) => {
+          texte.textContent = mot;
+          if (use) use.setAttribute("href", use.getAttribute("href").replace(/#.*$/, `#${nom}`));
+        };
+        changer("Copié !", "check");
+        setTimeout(() => changer("Copier", "copy"), 1500);
       } catch (err) { /* presse-papiers indisponible */ }
     });
     // Libérer l'aperçu à la fermeture

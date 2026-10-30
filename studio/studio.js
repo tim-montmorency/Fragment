@@ -333,7 +333,7 @@ ${corps.map((l) => "  " + l).join("\n")}
     const bouton = $("btn-erreurs");
     const n = erreurs.length;
     bouton.hidden = n === 0;
-    bouton.textContent = `⚠ ${n} erreur${n > 1 ? "s" : ""}`;
+    bouton.innerHTML = `${UI.icone("triangle-alert", "icone-sm")}<span>${n} erreur${n > 1 ? "s" : ""}</span>`;
     if (!n) $("console").hidden = true;
 
     const liste = $("liste-erreurs");
@@ -499,12 +499,12 @@ ${corps.map((l) => "  " + l).join("\n")}
       const li = document.createElement("li");
       li.className = "source";
       li.innerHTML = `
-        <select class="source-type" aria-label="Type">
+        <select class="select source-type" aria-label="Type">
           ${TYPES_SOURCE.map(([v, l]) => `<option value="${v}">${l}</option>`).join("")}
         </select>
-        <input class="source-url mono" placeholder="https://…" spellcheck="false" autocomplete="off" aria-label="Adresse">
-        <input class="source-cle mono" placeholder="clé d'import" spellcheck="false" autocomplete="off" aria-label="Clé d'import (module ES)">
-        <button type="button" class="source-retirer" title="Retirer">×</button>`;
+        <input class="input source-url mono" placeholder="https://…" spellcheck="false" autocomplete="off" aria-label="Adresse">
+        <input class="input source-cle mono" placeholder="clé d'import" spellcheck="false" autocomplete="off" aria-label="Clé d'import (module ES)">
+        <button type="button" class="btn btn-ghost btn-sm btn-icon source-retirer" title="Retirer cette source">${UI.icone("x")}</button>`;
 
       const type = li.querySelector(".source-type");
       const url = li.querySelector(".source-url");
@@ -564,7 +564,7 @@ ${corps.map((l) => "  " + l).join("\n")}
       puce.className = `puce puce-${r.type}`;
       puce.draggable = true;
       puce.title = r.type === "module" ? `import … from "${r.cle}"\n${r.url}` : r.url;
-      puce.innerHTML = `<span class="type"></span><span class="nom"></span><button type="button" class="retirer" title="Retirer">×</button>`;
+      puce.innerHTML = `<span class="type"></span><span class="nom"></span><button type="button" class="retirer" title="Retirer">${UI.icone("x", "icone-sm")}</button>`;
       puce.querySelector(".type").textContent = TYPES[r.type] + (r.tete ? " · head" : "");
       puce.querySelector(".nom").textContent = r.type === "module" ? r.cle : CDN.libelle(r);
       // « + » : autre fichier du même paquet (ex. themes.css de daisyui)
@@ -573,7 +573,7 @@ ${corps.map((l) => "  " + l).join("\n")}
         const plus = document.createElement("button");
         plus.type = "button";
         plus.className = "ajouter";
-        plus.textContent = "+";
+        plus.innerHTML = UI.icone("plus", "icone-sm");
         plus.title = `Ajouter un autre fichier de ${paquet.nom}@${paquet.version}`;
         plus.addEventListener("click", () => rechercheCdn.fichiers(paquet.nom, paquet.version));
         puce.querySelector(".retirer").before(plus);
@@ -816,6 +816,8 @@ ${corps.map((l) => "  " + l).join("\n")}
 
     const bouton = $("btn-enregistrer");
     bouton.disabled = true;
+    bouton.querySelector("use").setAttribute("href", "../commun/icones.svg#loader-circle");
+    bouton.querySelector(".icone").classList.add("tourne");
     statut("Enregistrement…");
     try {
       // Index à jour, lu juste avant l'écriture
@@ -857,6 +859,8 @@ ${corps.map((l) => "  " + l).join("\n")}
       statut(`Échec de l'enregistrement : ${MESSAGES_ERREUR[e.status] || e.message}.`, "erreur");
     } finally {
       bouton.disabled = false;
+      bouton.querySelector("use").setAttribute("href", "../commun/icones.svg#save");
+      bouton.querySelector(".icone").classList.remove("tourne");
     }
   }
 
@@ -1009,7 +1013,11 @@ ${corps.map((l) => "  " + l).join("\n")}
 
   /** « Connexion GitHub ✓ » dans ⚙ quand un jeton est enregistré dans ce navigateur. */
   function indiquerJeton() {
-    $("btn-github").textContent = reglages.jeton ? "Connexion GitHub ✓" : "Connexion GitHub…";
+    const b = $("btn-github");
+    b.innerHTML = reglages.jeton
+      ? `${UI.icone("circle-check")}<span>Connecté à GitHub</span>`
+      : `${UI.icone("key-round")}<span>Connexion GitHub…</span>`;
+    b.classList.toggle("connecte", Boolean(reglages.jeton));
     $("btn-github").title = reglages.jeton
       ? "Un jeton est enregistré dans ce navigateur"
       : "Jeton GitHub nécessaire pour enregistrer";
