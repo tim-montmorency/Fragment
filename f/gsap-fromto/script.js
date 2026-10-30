@@ -8,6 +8,6 @@ gsap.fromTo(".pill",
     width: "8vw",
     borderRadius: 0, 
     rotation: 180, 
-    duration: 500000 
+    duration: 5 
   }
 );
