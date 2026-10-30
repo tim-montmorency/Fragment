@@ -1,4 +1,4 @@
 gsap.set(".dot", {
-  x: "37.5vw",
+  x: "35vw",
   backgroundColor: "yellow"
 });
