@@ -59,7 +59,7 @@
 
   function carte(f) {
     const li = document.createElement("li");
-    li.className = "carte";
+    li.className = "carte card";
     // Toute la carte mène au studio (lien étiré sur la carte, voir galerie.css)
     li.innerHTML = `
       <div class="miniature" aria-hidden="true">
@@ -83,7 +83,7 @@
     (f.tags || []).forEach((t) => {
       const b = document.createElement("button");
       b.type = "button";
-      b.className = "tag";
+      b.className = "badge badge-bouton tag";
       b.textContent = t;
       b.addEventListener("click", () => choisirTag(t));
       const item = document.createElement("li");
@@ -105,7 +105,7 @@
     tags.forEach(([valeur, libelle, n]) => {
       const b = document.createElement("button");
       b.type = "button";
-      b.className = "tag";
+      b.className = "badge badge-bouton";
       b.setAttribute("aria-pressed", valeur === tagActif);
       b.innerHTML = `<span></span> <small>${n}</small>`;
       b.querySelector("span").textContent = libelle;

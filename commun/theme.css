@@ -1,0 +1,330 @@
+/*
+ * Fragment — thème commun (inspiré de shadcn/ui, palette « zinc »)
+ * ----------------------------------------------------------------
+ * Jetons de couleur (clair / sombre selon le système), police Geist auto-hébergée
+ * et composants : .btn, .input, .select, .checkbox, .badge, .card, .dialog.
+ * Aucun style global sur les éléments : chaque page applique sa propre base.
+ */
+
+/* ---------- Polices (Geist, SIL Open Font License — voir polices/LICENCE-Geist.txt) ---------- */
+
+@font-face {
+  font-family: "Geist";
+  src: url("polices/Geist-Variable.woff2") format("woff2");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Geist Mono";
+  src: url("polices/GeistMono-Variable.woff2") format("woff2");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* ---------- Jetons ---------- */
+
+:root {
+  color-scheme: light;
+  --background: #ffffff;
+  --foreground: #09090b;
+  --card: #ffffff;
+  --card-foreground: #09090b;
+  --popover: #ffffff;
+  --primary: #18181b;
+  --primary-foreground: #fafafa;
+  --secondary: #f4f4f5;
+  --secondary-foreground: #18181b;
+  --muted: #f4f4f5;
+  --muted-foreground: #71717a;
+  --accent: #f4f4f5;
+  --accent-foreground: #18181b;
+  --destructive: #dc2626;
+  --destructive-foreground: #fafafa;
+  --border: #e4e4e7;
+  --input: #e4e4e7;
+  --ring: #a1a1aa;
+  --warning: #b45309;
+  --marque: #e63946;          /* rouge TIM : point du logo, pastilles « en direct » */
+  --overlay: rgba(0, 0, 0, 0.5);
+  --shadow: 0 10px 38px -10px rgba(22, 23, 24, 0.25), 0 10px 20px -15px rgba(22, 23, 24, 0.15);
+
+  --radius: 0.625rem;
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+
+  --font-sans: "Geist", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "Geist Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+}
+
+/* Sombre : selon le système, ou forcé avec <html data-theme="sombre"> (clair forcé : data-theme="clair") */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="clair"]) {
+    color-scheme: dark;
+    --background: #09090b;
+    --foreground: #fafafa;
+    --card: #09090b;
+    --card-foreground: #fafafa;
+    --popover: #0c0c0e;
+    --primary: #fafafa;
+    --primary-foreground: #18181b;
+    --secondary: #27272a;
+    --secondary-foreground: #fafafa;
+    --muted: #27272a;
+    --muted-foreground: #a1a1aa;
+    --accent: #27272a;
+    --accent-foreground: #fafafa;
+    --destructive: #ef4444;
+    --destructive-foreground: #fafafa;
+    --border: #27272a;
+    --input: #27272a;
+    --ring: #71717a;
+    --warning: #fbbf24;
+    --overlay: rgba(0, 0, 0, 0.7);
+    --shadow: 0 10px 38px -10px rgba(0, 0, 0, 0.6), 0 10px 20px -15px rgba(0, 0, 0, 0.4);
+  }
+}
+
+:root[data-theme="sombre"] {
+  color-scheme: dark;
+  --background: #09090b;
+  --foreground: #fafafa;
+  --card: #09090b;
+  --card-foreground: #fafafa;
+  --popover: #0c0c0e;
+  --primary: #fafafa;
+  --primary-foreground: #18181b;
+  --secondary: #27272a;
+  --secondary-foreground: #fafafa;
+  --muted: #27272a;
+  --muted-foreground: #a1a1aa;
+  --accent: #27272a;
+  --accent-foreground: #fafafa;
+  --destructive: #ef4444;
+  --destructive-foreground: #fafafa;
+  --border: #27272a;
+  --input: #27272a;
+  --ring: #71717a;
+  --warning: #fbbf24;
+  --overlay: rgba(0, 0, 0, 0.7);
+  --shadow: 0 10px 38px -10px rgba(0, 0, 0, 0.6), 0 10px 20px -15px rgba(0, 0, 0, 0.4);
+}
+
+/* ---------- Focus (anneau shadcn) ---------- */
+
+:where(.btn, .input, .select, .checkbox, .badge-bouton):focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+
+/* ---------- Bouton ---------- */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  height: 2.25rem;
+  padding: 0 1rem;
+  font: 500 0.875rem/1 var(--font-sans);
+  white-space: nowrap;
+  text-decoration: none;
+  color: var(--primary-foreground);
+  background: var(--primary);
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: background-color 0.15s, color 0.15s, border-color 0.15s, opacity 0.15s;
+}
+
+.btn:hover { opacity: 0.9; }
+.btn:disabled { opacity: 0.5; pointer-events: none; }
+
+.btn-secondary { color: var(--secondary-foreground); background: var(--secondary); }
+.btn-secondary:hover { opacity: 1; background: color-mix(in srgb, var(--secondary) 80%, var(--foreground) 6%); }
+
+.btn-outline { color: var(--foreground); background: var(--background); border-color: var(--input); }
+.btn-outline:hover { opacity: 1; background: var(--accent); color: var(--accent-foreground); }
+
+.btn-ghost { color: var(--foreground); background: transparent; }
+.btn-ghost:hover { opacity: 1; background: var(--accent); color: var(--accent-foreground); }
+
+.btn-destructive { color: var(--destructive-foreground); background: var(--destructive); }
+
+.btn-link {
+  height: auto;
+  padding: 0;
+  color: var(--foreground);
+  background: none;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+.btn-sm { height: 2rem; padding: 0 0.75rem; font-size: 0.8125rem; }
+.btn-icon { width: 2.25rem; padding: 0; }
+.btn-sm.btn-icon { width: 2rem; }
+
+/* ---------- Champs ---------- */
+
+.input,
+.select {
+  height: 2.25rem;
+  width: 100%;
+  padding: 0 0.75rem;
+  font: 400 0.875rem var(--font-sans);
+  color: var(--foreground);
+  background: transparent;
+  border: 1px solid var(--input);
+  border-radius: var(--radius-md);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  transition: border-color 0.15s;
+}
+
+.input::placeholder { color: var(--muted-foreground); }
+
+.select {
+  appearance: none;
+  padding-right: 2rem;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2371717a' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.625rem center;
+  cursor: pointer;
+}
+
+.select option { color: var(--foreground); background: var(--popover); }
+
+.label {
+  font: 500 0.875rem/1.2 var(--font-sans);
+  color: var(--foreground);
+}
+
+.description {
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  color: var(--muted-foreground);
+}
+
+/* Case à cocher */
+.checkbox {
+  appearance: none;
+  flex: none;
+  width: 1rem;
+  height: 1rem;
+  margin: 0;
+  border: 1px solid var(--primary);
+  border-radius: 4px;
+  background: transparent;
+  display: inline-grid;
+  place-content: center;
+  cursor: pointer;
+}
+
+.checkbox::before {
+  content: "";
+  width: 0.625rem;
+  height: 0.625rem;
+  transform: scale(0);
+  background: var(--primary-foreground);
+  clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%);
+}
+
+.checkbox:checked { background: var(--primary); }
+.checkbox:checked::before { transform: scale(1); }
+
+.choix {
+  display: inline-flex;
+  flex-direction: row;
+  align-items: center;
+  margin: 0;
+  gap: 0.5rem;
+  font: 400 0.875rem var(--font-sans);
+  color: var(--foreground);
+  cursor: pointer;
+}
+
+/* ---------- Badge ---------- */
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  height: 1.375rem;
+  padding: 0 0.625rem;
+  font: 500 0.75rem/1 var(--font-sans);
+  color: var(--secondary-foreground);
+  background: var(--secondary);
+  border: 1px solid transparent;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+.badge-outline { color: var(--foreground); background: transparent; border-color: var(--border); }
+
+/* Badge cliquable (filtre) : contour, plein quand actif */
+.badge-bouton {
+  cursor: pointer;
+  color: var(--foreground);
+  background: transparent;
+  border-color: var(--border);
+  transition: background-color 0.15s, border-color 0.15s;
+}
+
+.badge-bouton:hover { background: var(--accent); }
+
+.badge-bouton[aria-pressed="true"] {
+  color: var(--primary-foreground);
+  background: var(--primary);
+  border-color: var(--primary);
+}
+
+.badge-bouton small { opacity: 0.6; font-weight: 400; }
+
+/* ---------- Carte ---------- */
+
+.card {
+  color: var(--card-foreground);
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+/* ---------- Fenêtre (dialog) ---------- */
+
+.dialog {
+  max-width: calc(100% - 2rem);
+  max-height: calc(100% - 2rem);
+  padding: 0;
+  color: var(--foreground);
+  background: var(--background);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow);
+  font-family: var(--font-sans);
+}
+
+.dialog::backdrop {
+  background: var(--overlay);
+}
+
+.dialog[open] {
+  animation: dialog-entree 0.15s ease-out;
+}
+
+@keyframes dialog-entree {
+  from { opacity: 0; transform: scale(0.97); }
+}
+
+.dialog-titre {
+  margin: 0;
+  font: 600 1.125rem/1.2 var(--font-sans);
+  letter-spacing: -0.01em;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dialog[open] { animation: none; }
+}

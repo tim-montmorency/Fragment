@@ -59,29 +59,35 @@ const Integrer = (() => {
 
   function creer() {
     dialogue = document.createElement("dialog");
-    dialogue.className = "integrer";
+    dialogue.className = "integrer dialog";
+    const ICONE_COPIER = '<svg aria-hidden="true" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>';
     dialogue.innerHTML = html`
       <form method="dialog" class="integrer-grille">
         <header class="integrer-entete">
-          <h2>Intégrer <span class="integrer-nom"></span></h2>
-          <button value="fermer" class="integrer-fermer" title="Fermer">×</button>
+          <div>
+            <h2 class="dialog-titre">Intégrer</h2>
+            <p class="description integrer-nom"></p>
+          </div>
+          <button value="fermer" class="btn btn-ghost btn-sm btn-icon integrer-fermer" title="Fermer" aria-label="Fermer">
+            <svg aria-hidden="true" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+          </button>
         </header>
 
         <div class="integrer-options">
           <fieldset>
-            <legend>Onglets visibles</legend>
+            <legend class="label">Onglets visibles</legend>
             <div class="integrer-cases">
               ${Object.entries(LIBELLES).map(([v, l]) =>
-                `<label><input type="checkbox" name="onglets" value="${v}" checked> ${l}</label>`).join("")}
+                `<label class="choix"><input class="checkbox" type="checkbox" name="onglets" value="${v}" checked> ${l}</label>`).join("")}
             </div>
           </fieldset>
 
-          <label>Onglet ouvert au départ
-            <select name="actif"></select>
+          <label class="integrer-champ"><span class="label">Onglet ouvert au départ</span>
+            <select class="select" name="actif"></select>
           </label>
 
-          <label>Disposition
-            <select name="disposition">
+          <label class="integrer-champ"><span class="label">Disposition</span>
+            <select class="select" name="disposition">
               <option value="">(par défaut)</option>
               <option value="onglets">Onglets</option>
               <option value="cote">Code à côté du résultat</option>
@@ -89,32 +95,32 @@ const Integrer = (() => {
             </select>
           </label>
 
-          <label>Thème du code
-            <select name="theme">
+          <label class="integrer-champ"><span class="label">Thème du code</span>
+            <select class="select" name="theme">
               <option value="sombre">Sombre</option>
               <option value="clair">Clair</option>
             </select>
           </label>
 
           <fieldset>
-            <legend>Options</legend>
-            <div class="integrer-cases">
-              <label><input type="checkbox" name="modifiable"> Modifiable (aperçu en direct)</label>
-              <label><input type="checkbox" name="numeros"> Numéros de ligne</label>
-              <label><input type="checkbox" name="html-complet"> HTML complet</label>
+            <legend class="label">Options</legend>
+            <div class="integrer-cases integrer-colonne">
+              <label class="choix"><input class="checkbox" type="checkbox" name="modifiable"> Modifiable (aperçu en direct)</label>
+              <label class="choix"><input class="checkbox" type="checkbox" name="numeros"> Numéros de ligne</label>
+              <label class="choix"><input class="checkbox" type="checkbox" name="html-complet"> HTML complet</label>
             </div>
           </fieldset>
 
           <fieldset>
-            <legend>Boutons</legend>
+            <legend class="label">Boutons</legend>
             <div class="integrer-cases">
-              <label><input type="checkbox" name="boutons" value="rejouer" checked> Rejouer</label>
-              <label><input type="checkbox" name="boutons" value="ouvrir" checked> Ouvrir</label>
+              <label class="choix"><input class="checkbox" type="checkbox" name="boutons" value="rejouer" checked> Rejouer</label>
+              <label class="choix"><input class="checkbox" type="checkbox" name="boutons" value="ouvrir" checked> Ouvrir</label>
             </div>
           </fieldset>
 
-          <label>Proportions (classe du compendium)
-            <select name="aspect">
+          <label class="integrer-champ"><span class="label">Proportions (classe du compendium)</span>
+            <select class="select" name="aspect">
               ${PROPORTIONS.map(([v, l]) => `<option value="${v}">${l}</option>`).join("")}
             </select>
           </label>
@@ -126,9 +132,9 @@ const Integrer = (() => {
           <div class="integrer-code">
             <code class="integrer-extrait"></code>
             <div class="integrer-actions">
-              <a class="integrer-lien" target="_blank" rel="noopener">Ouvrir la visionneuse ↗</a>
-              <button type="button" class="integrer-defaut" title="Revenir aux options par défaut">Options par défaut</button>
-              <button type="button" class="integrer-copier">Copier</button>
+              <a class="btn btn-link integrer-lien" target="_blank" rel="noopener">Ouvrir la visionneuse ↗</a>
+              <button type="button" class="btn btn-ghost btn-sm integrer-defaut" title="Revenir aux options par défaut">Options par défaut</button>
+              <button type="button" class="btn btn-sm integrer-copier">${ICONE_COPIER}<span>Copier</span></button>
             </div>
           </div>
         </div>
@@ -152,8 +158,9 @@ const Integrer = (() => {
     dialogue.querySelector(".integrer-copier").addEventListener("click", async (e) => {
       try {
         await navigator.clipboard.writeText(dialogue.querySelector(".integrer-extrait").textContent);
-        e.target.textContent = "Copié !";
-        setTimeout(() => (e.target.textContent = "Copier"), 1500);
+        const texte = e.currentTarget.querySelector("span");
+        texte.textContent = "Copié !";
+        setTimeout(() => (texte.textContent = "Copier"), 1500);
       } catch (err) { /* presse-papiers indisponible */ }
     });
     // Libérer l'aperçu à la fermeture
