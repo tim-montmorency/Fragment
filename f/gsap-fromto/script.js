@@ -1,13 +1,11 @@
 gsap.fromTo(".pill", 
   { 
-    borderRadius: "5vw" ,
-    x: "75vw", 
-    y: "75vh"
+    borderRadius: "5vw"
   },
   { 
-    x: "75vw", 
-    y: "75vh", 
-    width: "3vw", 
+    x: "70vw", 
+    y: "70vh",
+    width: "8vw",
     borderRadius: 0, 
     rotation: 180, 
     duration: 500000 
