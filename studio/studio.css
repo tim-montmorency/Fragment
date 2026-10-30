@@ -557,6 +557,7 @@ button.onglet:hover {
 
 dialog {
   width: min(560px, calc(100% - 32px));
+  max-height: calc(100% - 32px);
   padding: 20px;
   color: var(--texte);
   background: var(--fond-barre);
@@ -783,4 +784,85 @@ button.lieu-erreur {
 
 button.lieu-erreur:hover {
   color: var(--texte);
+}
+
+/* ---------- Sources (⚙) ---------- */
+
+#config-exemple {
+  width: min(720px, calc(100% - 32px));
+}
+
+.sources {
+  margin: 6px 0 14px;
+  padding: 14px 0 0;
+  border: 0;
+  border-top: 1px solid var(--bordure);
+}
+
+.sources legend {
+  padding: 0;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--texte);
+}
+
+.sources .aide {
+  margin: 4px 0 10px;
+}
+
+.liste-sources {
+  list-style: none;
+  margin: 0 0 8px;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.source {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.source-type {
+  flex: 0 0 110px;
+  font-size: 12px;
+}
+
+.source-url {
+  flex: 1;
+  min-width: 0;
+}
+
+.source-cle {
+  flex: 0 0 150px;
+}
+
+.source-cle[hidden] {
+  display: none;
+}
+
+.source input.mono {
+  font: 12px var(--mono);
+  padding: 5px 8px;
+}
+
+.source-retirer {
+  flex: none;
+  padding: 2px 8px;
+  border: 0;
+  background: none;
+  color: var(--texte-attenue);
+  font-size: 16px;
+  line-height: 1;
+}
+
+.source-retirer:hover {
+  color: var(--accent);
+}
+
+button.petit {
+  font-size: 12px;
+  padding: 4px 10px;
 }

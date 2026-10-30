@@ -200,24 +200,26 @@
   const nettoyerAttributs = (texte) => texte.replace(/[<>]/g, "").replace(/\s+/g, " ").trim();
 
   function importmap(modules) {
-    const imports = Object.fromEntries(modules.map((r) => [r.cle, r.url]));
+    const imports = Object.fromEntries(modules.map((r) => [r.cle.trim(), r.url.trim()]));
     const json = JSON.stringify({ imports }, null, 2).split("\n").map((l) => "    " + l).join("\n");
     return `<script type="importmap">\n${json}\n  </script>`;
   }
 
   function genererIndex() {
     const titre = $("titre").value.trim() || "Fragment";
-    const r = etat.ressources;
+    // Sources incomplètes (adresse vide, module sans clé) ignorées ; adresses échappées pour l'attribut
+    const r = etat.ressources.filter((x) => x.url.trim() && (x.type !== "module" || x.cle.trim()));
+    const adresse = (x) => x.url.trim().replace(/&/g, "&amp;").replace(/"/g, "&quot;");
     const modules = r.filter((x) => x.type === "module");
 
     const tete = [
-      ...r.filter((x) => x.type === "css").map((x) => `<link rel="stylesheet" href="${x.url}">`),
-      ...r.filter((x) => x.type === "js" && x.tete).map((x) => `<script src="${x.url}"></script>`),
+      ...r.filter((x) => x.type === "css").map((x) => `<link rel="stylesheet" href="${adresse(x)}">`),
+      ...r.filter((x) => x.type === "js" && x.tete).map((x) => `<script src="${adresse(x)}"></script>`),
       ...(modules.length ? [importmap(modules)] : []),
       ...etat.extraTete,
     ];
     const corps = [
-      ...r.filter((x) => x.type === "js" && !x.tete).map((x) => `<script src="${x.url}"></script>`),
+      ...r.filter((x) => x.type === "js" && !x.tete).map((x) => `<script src="${adresse(x)}"></script>`),
       ...etat.extraCorps,
     ];
 
@@ -459,11 +461,105 @@ ${corps.map((l) => "  " + l).join("\n")}
 
   const TYPES = { css: "CSS", js: "JS", module: "ES" };
 
+  // ---------- Sources (⚙) : édition complète de etat.ressources ----------
+
+  const TYPES_SOURCE = [
+    ["css", "CSS"],
+    ["js", "JS"],
+    ["js-tete", "JS (head)"],
+    ["module", "Module ES"],
+  ];
+
+  const typeSource = (r) => (r.type === "js" && r.tete ? "js-tete" : r.type);
+
+  function appliquerType(r, valeur) {
+    r.type = valeur === "js-tete" ? "js" : valeur;
+    if (valeur === "js-tete") r.tete = true;
+    else delete r.tete;
+    if (r.type === "module" && !r.cle) r.cle = CDN.ressourceDepuisUrl(r.url || "x.js").cle || "";
+  }
+
+  /** Une source modifiée : pastilles et aperçu à jour, sans redessiner la liste (garde le focus). */
+  function sourceModifiee() {
+    afficherBibliotheques();
+    marquerModifie();
+  }
+
+  function afficherSources() {
+    const liste = $("liste-sources");
+    liste.innerHTML = "";
+    if (!etat.ressources.length) {
+      const vide = document.createElement("li");
+      vide.className = "aide";
+      vide.textContent = "Aucune source.";
+      liste.append(vide);
+    }
+
+    etat.ressources.forEach((r, i) => {
+      const li = document.createElement("li");
+      li.className = "source";
+      li.innerHTML = `
+        <select class="source-type" aria-label="Type">
+          ${TYPES_SOURCE.map(([v, l]) => `<option value="${v}">${l}</option>`).join("")}
+        </select>
+        <input class="source-url mono" placeholder="https://…" spellcheck="false" autocomplete="off" aria-label="Adresse">
+        <input class="source-cle mono" placeholder="clé d'import" spellcheck="false" autocomplete="off" aria-label="Clé d'import (module ES)">
+        <button type="button" class="source-retirer" title="Retirer">×</button>`;
+
+      const type = li.querySelector(".source-type");
+      const url = li.querySelector(".source-url");
+      const cle = li.querySelector(".source-cle");
+      type.value = typeSource(r);
+      url.value = r.url;
+      cle.value = r.cle || "";
+      cle.hidden = r.type !== "module";
+
+      type.addEventListener("change", () => {
+        delete r.auto; // type choisi à la main : plus de détection automatique
+        appliquerType(r, type.value);
+        cle.hidden = r.type !== "module";
+        cle.value = r.cle || "";
+        sourceModifiee();
+      });
+
+      url.addEventListener("input", () => {
+        r.url = url.value.trim();
+        // Nouvelle source : type deviné à partir de l'adresse tant qu'il n'a pas été choisi à la main
+        if (r.auto && r.url) {
+          const devine = CDN.ressourceDepuisUrl(r.url);
+          appliquerType(r, devine.type);
+          if (devine.type === "module") r.cle = devine.cle;
+          type.value = typeSource(r);
+          cle.hidden = r.type !== "module";
+          cle.value = r.cle || "";
+        }
+        sourceModifiee();
+      });
+
+      cle.addEventListener("input", () => {
+        r.cle = cle.value.trim();
+        sourceModifiee();
+      });
+
+      // Entrée dans un champ : ne pas fermer la fenêtre (formulaire « dialog »)
+      li.addEventListener("keydown", (e) => { if (e.key === "Enter") e.preventDefault(); });
+
+      li.querySelector(".source-retirer").addEventListener("click", () => {
+        etat.ressources.splice(i, 1);
+        afficherSources();
+        sourceModifiee();
+      });
+
+      liste.append(li);
+    });
+  }
+
   function afficherBibliotheques() {
     const liste = $("ressources");
     liste.innerHTML = "";
 
     etat.ressources.forEach((r, i) => {
+      if (!r.url) return; // source en cours de saisie dans ⚙
       const puce = document.createElement("li");
       puce.className = `puce puce-${r.type}`;
       puce.draggable = true;
@@ -512,7 +608,7 @@ ${corps.map((l) => "  " + l).join("\n")}
     const n = etat.extraTete.length + etat.extraCorps.length;
     $("extra").textContent = n ? `+ ${n} autre${n > 1 ? "s" : ""} balise${n > 1 ? "s" : ""} conservée${n > 1 ? "s" : ""}` : "";
     $("extra").title = [...etat.extraTete, ...etat.extraCorps].join("\n");
-    $("aucune").hidden = etat.ressources.length > 0;
+    $("aucune").hidden = etat.ressources.some((r) => r.url);
   }
 
   // ---------- Liste des fragments (index central fragments.json) ----------
@@ -949,7 +1045,13 @@ ${corps.map((l) => "  " + l).join("\n")}
     ["titre", "tags", "attrs-html", "attrs-body"].forEach((id) => $(id).addEventListener("input", marquerModifie));
     $("btn-dupliquer").addEventListener("click", dupliquer);
     ["attrs-html", "attrs-body"].forEach((id) => $(id).addEventListener("input", indiquerAttributs));
-    $("btn-exemple").addEventListener("click", () => $("config-exemple").showModal());
+    $("btn-exemple").addEventListener("click", () => { afficherSources(); $("config-exemple").showModal(); });
+    $("btn-ajouter-source").addEventListener("click", () => {
+      etat.ressources.push({ type: "js", url: "", auto: true });
+      afficherSources();
+      const champs = $("liste-sources").querySelectorAll(".source-url");
+      champs[champs.length - 1]?.focus();
+    });
 
     $("btn-enregistrer").addEventListener("click", enregistrer);
     $("btn-erreurs").addEventListener("click", () => { $("console").hidden = !$("console").hidden; });

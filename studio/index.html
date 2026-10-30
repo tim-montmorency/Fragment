@@ -84,6 +84,17 @@
       <label>Attributs de &lt;body&gt;
         <input id="attrs-body" class="mono" placeholder='class="bg-base-200"' spellcheck="false" autocomplete="off">
       </label>
+
+      <fieldset class="sources">
+        <legend>Sources (feuilles de style et scripts, dans l'ordre de chargement)</legend>
+        <p class="aide">
+          Les mêmes que les pastilles « Bibliothèques ». Une adresse de n'importe quel site peut être ajoutée ;
+          le type est deviné à partir de l'adresse et reste modifiable.
+        </p>
+        <ul id="liste-sources" class="liste-sources"></ul>
+        <button type="button" id="btn-ajouter-source" class="secondaire petit">+ Ajouter une source</button>
+      </fieldset>
+
       <div class="actions-fragment" id="actions-fragment">
         <button type="button" id="btn-dupliquer" class="secondaire" title="Crée un nouveau fragment à partir de celui-ci">Dupliquer</button>
         <button type="button" id="btn-supprimer" class="danger" title="Retire le fragment du site">Supprimer…</button>

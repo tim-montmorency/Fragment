@@ -167,6 +167,10 @@ Interface pour créer ou modifier un fragment avec aperçu en direct, puis l'enr
   - **Dupliquer** : crée un nouveau fragment à partir de celui-ci.
   - **Supprimer…** : un commit retire le dossier du fragment et son entrée de l'index. Les iframes qui l'intègrent
     affichent alors « Fragment introuvable ». Le fragment reste récupérable dans l'historique Git.
+  - **Sources** : toutes les feuilles de style et tous les scripts du fragment, dans l'ordre de chargement (les mêmes que les pastilles).
+    **+ Ajouter une source** accepte une adresse de n'importe quel site, utile quand la recherche ne trouve pas une bibliothèque.
+    Le type est deviné (`.css`, Google Fonts, module ES…) et reste modifiable : **CSS**, **JS** (fin du body),
+    **JS (head)** ou **Module ES** (importmap, avec sa clé d'import). Les lignes sans adresse sont ignorées.
   - **Connexion GitHub…** : jeton, test, reconstruction de l'index.
   - Attributs de `<html>` et `<body>` : par exemple `data-theme="dark"` pour daisyUI, ou `class="…"` sur le body. `lang="fr"` est ajouté automatiquement, sauf si un autre `lang` est indiqué.
 - **⚠ Erreurs**, dans la barre du résultat : apparaît quand l'aperçu produit des erreurs JavaScript, des promesses rejetées,

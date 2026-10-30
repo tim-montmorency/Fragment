@@ -122,7 +122,8 @@ const CDN = (() => {
 
   /** Ressource à partir d'une adresse collée telle quelle. */
   function ressourceDepuisUrl(url) {
-    if (/\.css(\?|#|$)/i.test(url)) return { type: "css", url };
+    // Feuille de style : extension .css, ou service de polices (Google Fonts, Bunny Fonts…)
+    if (/\.css(\?|#|$)/i.test(url) || /fonts\.(googleapis|bunny)\.(com|net)\/css/i.test(url)) return { type: "css", url };
     if (estModule(url.split(/[?#]/)[0])) {
       const m = url.match(/\/npm\/((?:@[^/]+\/)?[^@/]+)/);
       return { type: "module", cle: m ? m[1] : url.split("/").pop().replace(/(\.module)?(\.min)?\.m?js$/i, ""), url };
