@@ -1,6 +1,7 @@
 gsap.fromTo(".pill", 
   { 
-    borderRadius: "5vw"
+    borderRadius: "5vw",
+    delay: 2
   },
   { 
     x: "70vw", 
