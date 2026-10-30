@@ -4,8 +4,6 @@
   height: 8vw;
   background-color: var(--color-base-content);
   position: absolute;
-  top: 10vh;
-  left: 10vw;
   border-radius: 100px;
 }
 
