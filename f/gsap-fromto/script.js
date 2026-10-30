@@ -8,7 +8,6 @@ gsap.fromTo(".pill",
     x: "80vw", 
     y: "80vh",
     borderRadius: 0, 
-    
     width: "8vw",
     rotation: 180, 
     
