@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="fr" data-theme="sombre">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <title>Fragment — Connexion GitHub</title>
+  <link rel="stylesheet" href="../commun/theme.css">
+  <style>
+    html, body { height: 100%; margin: 0; }
+    body {
+      display: grid;
+      place-items: center;
+      padding: 1.5rem;
+      font: 400 0.875rem/1.5 var(--font-sans);
+      color: var(--foreground);
+      background: var(--background);
+    }
+    main { max-width: 360px; text-align: center; }
+    .icone-lg { width: 1.5rem; height: 1.5rem; color: var(--muted-foreground); }
+    .ok { color: #4ade80; }
+    .erreur { color: #f87171; }
+    p { margin: 0.75rem 0 1.25rem; }
+  </style>
+</head>
+<body>
+  <main>
+    <svg class="icone icone-lg tourne" id="icone" aria-hidden="true"><use href="../commun/icones.svg#loader-circle"/></svg>
+    <p id="message" aria-live="polite">Connexion à GitHub…</p>
+    <a class="btn btn-outline btn-sm" id="retour" href="./" hidden>Retour au studio</a>
+  </main>
+
+  <script src="config.js"></script>
+  <script src="connexion.js"></script>
+  <script>
+    (async () => {
+      const icone = document.getElementById("icone");
+      const message = document.getElementById("message");
+      const fin = (ok, texte) => {
+        icone.classList.remove("tourne");
+        icone.classList.add(ok ? "ok" : "erreur");
+        icone.querySelector("use").setAttribute("href", `../commun/icones.svg#${ok ? "circle-check" : "triangle-alert"}`);
+        message.textContent = texte;
+      };
+      try {
+        const s = await Connexion.terminerConnexion();
+        Connexion.annoncer({ ok: true });
+        fin(true, `Connecté${s.login ? ` en tant que ${s.login}` : ""}. Cette fenêtre peut être fermée.`);
+        document.getElementById("retour").hidden = false;
+        document.getElementById("retour").textContent = "Fermer";
+        document.getElementById("retour").addEventListener("click", (e) => {
+          // Fermer la fenêtre ; si le navigateur refuse (page ouverte à la main), retour au studio
+          e.preventDefault();
+          window.close();
+          setTimeout(() => location.replace("./"), 200);
+        });
+        setTimeout(() => window.close(), 700);
+      } catch (e) {
+        Connexion.annoncer({ ok: false, erreur: e.message });
+        fin(false, e.message);
+        document.getElementById("retour").hidden = false;
+      }
+    })();
+  </script>
+</body>
+</html>

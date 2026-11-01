@@ -1,0 +1,9 @@
+# Déploiement en ligne de commande (facultatif) : npx wrangler deploy
+# Le secret se définit à part : npx wrangler secret put GITHUB_CLIENT_SECRET
+name = "fragment-connexion"
+main = "worker.js"
+compatibility_date = "2026-01-01"
+
+[vars]
+GITHUB_CLIENT_ID = "Iv23liLUgXvej0DVgwTF"
+ORIGINES = "https://tim-montmorency.com,http://127.0.0.1:5500"

@@ -26,6 +26,8 @@ Fragment/
 │       ├── script.js     facultatif
 │       └── fragment.json titre, tags, dates
 ├── studio/               Création et modification des fragments
+│   └── config.js         Connexion GitHub : Client ID et adresse du relais
+├── relais/               Relais de connexion GitHub (Cloudflare Worker)
 ├── v/                    Visionneuse (code + résultat, utilisée dans les iframes)
 │   └── vendor/           highlight.js et CodeMirror (auto-hébergés)
 ├── commun/               Partagé par la galerie, le studio et la visionneuse
@@ -80,7 +82,7 @@ Le studio s'en occupe normalement. À la main, dans la copie locale du répertoi
 1. Copier `_gabarit/` vers `f/<nom>/` (lettres, chiffres, `-` et `_` seulement).
 2. Écrire le fragment. Les bibliothèques se chargent directement dans `index.html`.
 3. Ajouter `f/<nom>/fragment.json` (titre et tags).
-4. Pousser, puis dans le studio : **Réglages (icône d'engrenage) → Connexion GitHub… → Reconstruire l'index**, pour que la galerie le liste.
+4. Pousser, puis dans le studio : **Réglages → Fragment → Jeton personnel, répertoire et index… → Reconstruire l'index**, pour que la galerie le liste.
 
 L'onglet **HTML** de la visionneuse n'affiche que le contenu de `<body>`, sans les balises `<script src="…">`.
 Le paramètre `html=complet` affiche le fichier entier.
@@ -177,7 +179,8 @@ Interface pour créer ou modifier un fragment avec aperçu en direct, puis l'enr
     - Les autres balises déjà présentes dans un fragment sont conservées.
   - **Page** : attributs de `<html>` et `<body>`, par exemple `data-theme="dark"` pour daisyUI, ou `class="…"` sur le body.
     `lang="fr"` est ajouté automatiquement, sauf si un autre `lang` est indiqué.
-  - **Fragment** : **Connexion GitHub…** (jeton, test, reconstruction de l'index) et **Supprimer…** (fragment enregistré) :
+  - **Fragment** : compte GitHub (voir *Connexion GitHub*), réglages avancés (jeton personnel, répertoire,
+    reconstruction de l'index) et **Supprimer…** (fragment enregistré) :
     après confirmation, un commit retire le dossier du fragment et son entrée de l'index. Les iframes qui l'intègrent
     affichent alors « Fragment introuvable ». Le fragment reste récupérable dans l'historique Git.
 - **Erreurs**, dans la barre du résultat : apparaît quand l'aperçu produit des erreurs JavaScript, des promesses rejetées,
@@ -193,19 +196,56 @@ Interface pour créer ou modifier un fragment avec aperçu en direct, puis l'enr
   le studio vérifie la publication et affiche **en ligne ✓** quand elle est terminée. Pendant ce temps, la fenêtre
   **Intégrer** le signale et son aperçu se recharge tout seul une fois le fragment en ligne.
   En local (Go Live), ce suivi est désactivé : faire un `git pull` pour voir le fragment.
-- **Réglages (icône d'engrenage) → Connexion GitHub… → Reconstruire l'index** : recrée `fragments.json` à partir des dossiers `f/`, après des ajouts ou suppressions faits à la main.
+- **Réglages → Fragment → Jeton personnel, répertoire et index… → Reconstruire l'index** : recrée `fragments.json` à partir des dossiers `f/`, après des ajouts ou suppressions faits à la main.
 
-### Jeton GitHub (une seule fois par navigateur)
+### Connexion GitHub
+
+Pour enregistrer, il faut un compte GitHub avec l'accès **en écriture** (rôle *Write* ou plus) au répertoire `Fragment`.
+Les droits viennent uniquement de ce rôle : retirer l'accès d'une personne sur le répertoire lui retire aussi le studio.
+
+**Utilisation** : **Réglages → Fragment → Se connecter avec GitHub**, ou directement **Enregistrer** : une petite fenêtre GitHub
+s'ouvre, le travail en cours reste intact. La connexion est valide 8 heures et se renouvelle toute seule pendant 6 mois.
+Dans un autre navigateur, il suffit de se reconnecter (un clic si la session GitHub y est déjà ouverte).
+Les commits sont faits au nom de la personne connectée. **Se déconnecter** efface la connexion de ce navigateur.
+
+**Mise en place (une seule fois, par un propriétaire de l'organisation)** — la connexion passe par une *GitHub App*
+et un petit relais, parce qu'une page statique ne peut pas garder le « client secret » de l'application.
+
+1. **GitHub App** : *tim-montmorency → Settings → Developer settings → GitHub Apps → New GitHub App*.
+   - *GitHub App name* : `Fragment (TIM Montmorency)` ; *Homepage URL* : `https://tim-montmorency.com/Fragment/`.
+   - *Callback URL* : `https://tim-montmorency.com/Fragment/studio/connexion.html`
+     (ajouter au besoin l'adresse locale, ex. `http://127.0.0.1:5500/studio/connexion.html` pour Go Live).
+   - Cocher *Expire user authorization tokens* ; laisser décochés *Request user authorization (OAuth) during installation*
+     et *Enable Device Flow*.
+   - *Webhook* : décocher *Active*.
+   - *Permissions → Repository permissions → Contents* : **Read and write** (*Metadata : Read-only* est ajouté d'office).
+   - *Where can this GitHub App be installed?* : **Only on this account**. Créer l'application.
+   - Noter le **Client ID**, puis *Generate a new client secret* et copier le **client secret** (affiché une seule fois).
+   - *Install App* → `tim-montmorency` → **Only select repositories** → `Fragment`.
+2. **Relais** (Cloudflare Worker, gratuit) : *Cloudflare → Workers & Pages → Create → Worker*, nom `fragment-connexion`.
+   - *Edit code* : remplacer le contenu par celui de `relais/worker.js`, puis *Deploy*.
+   - *Settings → Variables and Secrets* : `GITHUB_CLIENT_ID` (texte), `GITHUB_CLIENT_SECRET` (**Secret**),
+     `ORIGINES` = `https://tim-montmorency.com,http://127.0.0.1:5500`.
+   - Noter l'adresse du Worker, ex. `https://fragment-connexion.<compte>.workers.dev`.
+   - En ligne de commande, `relais/wrangler.toml` permet aussi `npx wrangler deploy`.
+3. **Studio** : inscrire le Client ID et l'adresse du relais dans `studio/config.js`, puis pousser.
+
+Le relais ne conserve rien : il échange le code de connexion contre un jeton, et renouvelle les jetons expirés.
+Les deux valeurs de `studio/config.js` sont publiques ; le client secret reste dans Cloudflare.
+
+### Jeton personnel (sans connexion GitHub)
+
+Tant que `studio/config.js` est vide, ou pour un usage ponctuel, un jeton personnel fonctionne aussi
+(**Réglages → Fragment → Jeton personnel, répertoire et index…**) :
 
 1. GitHub → *Settings → Developer settings → Personal access tokens → Fine-grained tokens → Generate new token*.
 2. *Resource owner* : `tim-montmorency`. *Repository access* : **Only select repositories** → `Fragment`.
 3. *Permissions → Repository permissions → Contents* : **Read and write**.
-4. Copier le jeton dans le studio (**Réglages (icône d'engrenage) → Connexion GitHub…**), puis **Tester**.
+4. Le copier dans le studio, puis **Tester**.
 
-Le jeton est conservé dans le navigateur (localStorage) : pas besoin de le saisir à nouveau. Chaque adresse a sa propre mémoire
-(le site publié et une copie locale avec Go Live, par exemple), et une fenêtre de navigation privée ne le garde pas.
-Dans les réglages, le lien devient **Connecté à GitHub** (coche verte) quand un jeton est enregistré.
-Sur un ordinateur partagé, utiliser **Oublier le jeton** à la fin.
+Le jeton est conservé dans ce navigateur (localStorage) ; chaque adresse a sa propre mémoire (site publié, Go Live…).
+Sur un ordinateur partagé, utiliser **Oublier le jeton** à la fin. La connexion GitHub, si elle est active, a priorité.
+
 Après un enregistrement par le studio, faire un `git pull` dans la copie locale.
 
 ## Interface

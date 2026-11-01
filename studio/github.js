@@ -8,12 +8,18 @@ const GitHub = (() => {
 
   const API = "https://api.github.com";
 
+  /**
+   * jeton : chaîne (jeton personnel) ou fonction asynchrone qui renvoie un jeton valide
+   * (connexion GitHub : le jeton est renouvelé au besoin), ou "" pour un accès anonyme.
+   */
   function client({ proprietaire, repertoire, branche, jeton }) {
     const base = `${API}/repos/${encodeURIComponent(proprietaire)}/${encodeURIComponent(repertoire)}`;
+    const jetonCourant = async () => (typeof jeton === "function" ? (await jeton()) || "" : jeton || "");
 
-    function entetes(accept = "application/vnd.github+json", anonyme = false) {
+    async function entetes(accept = "application/vnd.github+json", anonyme = false) {
       const h = { Accept: accept, "X-GitHub-Api-Version": "2022-11-28" };
-      if (jeton && !anonyme) h.Authorization = `Bearer ${jeton}`;
+      const j = anonyme ? "" : await jetonCourant();
+      if (j) h.Authorization = `Bearer ${j}`;
       return h;
     }
 
@@ -22,7 +28,7 @@ const GitHub = (() => {
     const REFUS = [401, 403, 404];
 
     async function requete(chemin, { methode = "GET", corps, anonyme = false } = {}) {
-      const options = { method: methode, headers: entetes(undefined, anonyme), cache: "no-store" };
+      const options = { method: methode, headers: await entetes(undefined, anonyme), cache: "no-store" };
       if (corps) {
         options.headers["Content-Type"] = "application/json";
         options.body = JSON.stringify(corps);
@@ -50,7 +56,7 @@ const GitHub = (() => {
         try {
           arbre = await requete(chemin);
         } catch (e) {
-          if (!jeton || !REFUS.includes(e.status)) throw e;
+          if (!(await jetonCourant()) || !REFUS.includes(e.status)) throw e;
           arbre = await requete(chemin, { anonyme: true });
           arbre.jetonRefuse = true;
         }
@@ -62,9 +68,10 @@ const GitHub = (() => {
       /** Contenu texte d'un fichier, ou null s'il n'existe pas. */
       async lire(chemin) {
         const url = `${base}/contents/${chemin.split("/").map(encodeURIComponent).join("/")}?ref=${encodeURIComponent(branche)}`;
-        let r = await fetch(url, { headers: entetes("application/vnd.github.raw+json"), cache: "no-store" });
-        if (jeton && REFUS.includes(r.status)) {
-          r = await fetch(url, { headers: entetes("application/vnd.github.raw+json", true), cache: "no-store" });
+        const avecJeton = await entetes("application/vnd.github.raw+json");
+        let r = await fetch(url, { headers: avecJeton, cache: "no-store" });
+        if (avecJeton.Authorization && REFUS.includes(r.status)) {
+          r = await fetch(url, { headers: await entetes("application/vnd.github.raw+json", true), cache: "no-store" });
         }
         if (r.status === 404) return null;
         if (!r.ok) throw new Error(`Lecture impossible : ${chemin} (${r.status})`);

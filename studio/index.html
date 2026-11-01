@@ -103,13 +103,21 @@
       </section>
 
       <section class="panneau-dialogue" id="p-fragment" role="tabpanel" aria-labelledby="t-fragment" hidden>
-        <div class="bloc-reglage">
-          <div>
-            <p class="label">Compte GitHub</p>
-            <p class="aide description">Jeton nécessaire pour enregistrer les fragments dans le répertoire.</p>
+        <div class="bloc-reglage bloc-compte">
+          <div class="compte">
+            <span class="avatar" id="compte-avatar"><svg class="icone" aria-hidden="true"><use href="../commun/icones.svg#user-round"/></svg></span>
+            <div>
+              <p class="label" id="compte-titre">Compte GitHub</p>
+              <p class="aide description" id="compte-description">Jeton nécessaire pour enregistrer les fragments dans le répertoire.</p>
+            </div>
           </div>
+          <button type="button" id="btn-connexion" class="btn btn-sm" hidden><svg class="icone" aria-hidden="true"><use href="../commun/icones.svg#log-in"/></svg><span>Se connecter avec GitHub</span></button>
+          <button type="button" id="btn-deconnexion" class="btn btn-outline btn-sm" hidden><svg class="icone" aria-hidden="true"><use href="../commun/icones.svg#log-out"/></svg><span>Se déconnecter</span></button>
           <button type="button" id="btn-github" class="btn btn-outline btn-sm"><svg class="icone" aria-hidden="true"><use href="../commun/icones.svg#key-round"/></svg><span>Connexion GitHub…</span></button>
         </div>
+        <p class="aide description lien-avance" id="lien-avance" hidden>
+          <button type="button" id="btn-avance" class="btn btn-link">Jeton personnel, répertoire et index…</button>
+        </p>
         <div class="bloc-reglage bloc-danger" id="actions-fragment">
           <div>
             <p class="label">Supprimer le fragment</p>
@@ -172,6 +180,8 @@
   <script src="../commun/ui.js"></script>
   <script src="../v/vendor/codemirror.js"></script>
   <script src="../v/cadre-double.js"></script>
+  <script src="config.js"></script>
+  <script src="connexion.js"></script>
   <script src="github.js"></script>
   <script src="cdn.js"></script>
   <script src="../commun/integrer.js"></script>

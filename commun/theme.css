@@ -141,6 +141,7 @@
   transition: background-color 0.15s, color 0.15s, border-color 0.15s, opacity 0.15s;
 }
 
+.btn[hidden] { display: none; }
 .btn:hover { opacity: 0.9; }
 .btn:disabled { opacity: 0.5; pointer-events: none; }
 

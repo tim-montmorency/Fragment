@@ -71,7 +71,11 @@
   }
 
   let reglages = lireReglages();
-  const github = () => GitHub.client(reglages);
+
+  /** Jeton utilisé : la connexion GitHub d'abord, sinon le jeton personnel des réglages. */
+  const jetonActif = async () => (Connexion.connecte() ? await Connexion.jeton() : "") || reglages.jeton;
+  const aAcces = () => Connexion.connecte() || Boolean(reglages.jeton);
+  const github = () => GitHub.client({ ...reglages, jeton: jetonActif });
 
   // ---------- Utilitaires ----------
 
@@ -776,7 +780,7 @@ ${corps.map((l) => "  " + l).join("\n")}
         const noms = await nomsDepuisArbre();
         etat.fragments = noms.map((nom) => ({ nom, titre: nom, tags: [] }));
         etat.avertissement = noms.jetonRefuse
-          ? "Le jeton GitHub enregistré est refusé (invalide, expiré ou sans accès) : vérifier les réglages GitHub."
+          ? "L'accès GitHub enregistré est refusé (expiré ou sans accès) : se reconnecter dans Réglages → Fragment."
           : "Index fragments.json introuvable : la liste vient du répertoire. « Reconstruire l'index » (Réglages → Fragment → Connexion GitHub) le recrée.";
       } catch (e) {
         etat.fragments = [];
@@ -889,9 +893,9 @@ ${corps.map((l) => "  " + l).join("\n")}
   // ---------- Enregistrement ----------
 
   const MESSAGES_ERREUR = {
-    401: "jeton invalide ou expiré",
-    403: "le jeton n'a pas la permission d'écrire dans ce répertoire",
-    404: "répertoire ou branche introuvable (ou jeton sans accès)",
+    401: "accès GitHub expiré ou invalide : se reconnecter",
+    403: "pas de permission d'écriture sur ce répertoire (rôle Write nécessaire)",
+    404: "répertoire ou branche introuvable, ou sans accès en écriture",
     409: "conflit avec un autre enregistrement, réessayer",
     422: "conflit avec un autre enregistrement, réessayer",
   };
@@ -907,10 +911,7 @@ ${corps.map((l) => "  " + l).join("\n")}
       $("titre").focus();
       return statut("Un titre est nécessaire pour enregistrer.", "erreur");
     }
-    if (!reglages.jeton) {
-      statut("Un jeton GitHub est nécessaire pour enregistrer.", "erreur");
-      return ouvrirReglages();
-    }
+    if (!(await assurerAcces("enregistrer"))) return;
 
     const titre = $("titre").value.trim();
     const tags = lireTags($("tags").value);
@@ -958,6 +959,7 @@ ${corps.map((l) => "  " + l).join("\n")}
       afficherListe();
       suivrePublication(nom, titre, fichiers);
     } catch (e) {
+      accesRefuse(e);
       statut(`Échec de l'enregistrement : ${MESSAGES_ERREUR[e.status] || e.message}.`, "erreur");
     } finally {
       bouton.disabled = false;
@@ -968,7 +970,7 @@ ${corps.map((l) => "  " + l).join("\n")}
 
   /** Recrée fragments.json à partir des dossiers f/<nom>/ (utile après des ajouts faits à la main). */
   async function reconstruireIndex() {
-    if (!reglages.jeton) return statut("Un jeton GitHub est nécessaire pour reconstruire l'index.", "erreur");
+    if (!(await assurerAcces("reconstruire l'index"))) return;
     statut("Reconstruction de l'index…");
     try {
       const noms = await nomsDepuisArbre();
@@ -1001,11 +1003,7 @@ ${corps.map((l) => "  " + l).join("\n")}
       danger: true,
     });
     if (!ok) return;
-    if (!reglages.jeton) {
-      $("config-exemple").close();
-      statut("Un jeton GitHub est nécessaire pour supprimer.", "erreur");
-      return ouvrirReglages();
-    }
+    if (!(await assurerAcces("supprimer"))) return;
 
     const nom = etat.ex;
     const bouton = $("btn-supprimer");
@@ -1026,6 +1024,7 @@ ${corps.map((l) => "  " + l).join("\n")}
       location.href = `${SITE.href}?supprime=${encodeURIComponent(nom)}`;
     } catch (e) {
       bouton.disabled = false;
+      accesRefuse(e);
       statut(`Échec de la suppression : ${MESSAGES_ERREUR[e.status] || e.message}.`, "erreur");
     }
   }
@@ -1128,16 +1127,80 @@ ${corps.map((l) => "  " + l).join("\n")}
     $("reglages").showModal();
   }
 
-  /** « Connexion GitHub ✓ » dans ⚙ quand un jeton est enregistré dans ce navigateur. */
-  function indiquerJeton() {
-    const b = $("btn-github");
-    b.innerHTML = reglages.jeton
-      ? `${UI.icone("circle-check")}<span>Connecté à GitHub</span>`
-      : `${UI.icone("key-round")}<span>Connexion GitHub…</span>`;
-    b.classList.toggle("connecte", Boolean(reglages.jeton));
-    $("btn-github").title = reglages.jeton
-      ? "Un jeton est enregistré dans ce navigateur"
-      : "Jeton GitHub nécessaire pour enregistrer";
+  // ---------- Compte GitHub ----------
+
+  /** Bloc « Compte GitHub » (Réglages → Fragment) : connexion GitHub, ou jeton personnel si elle n'est pas configurée. */
+  function indiquerCompte() {
+    const configuree = Connexion.configuree;
+    const u = Connexion.connecte() ? Connexion.utilisateur() || { login: "", avatar: "" } : null;
+
+    $("btn-connexion").hidden = !configuree || Boolean(u);
+    $("btn-deconnexion").hidden = !u;
+    $("btn-github").hidden = configuree;
+    $("lien-avance").hidden = !configuree;
+
+    const avatar = $("compte-avatar");
+    avatar.innerHTML = u && u.avatar ? '<img alt="" width="32" height="32">' : UI.icone("user-round");
+    if (u && u.avatar) avatar.querySelector("img").src = `${u.avatar}${u.avatar.includes("?") ? "&" : "?"}s=64`;
+    avatar.classList.toggle("connecte", Boolean(u));
+
+    if (u) {
+      $("compte-titre").textContent = u.login ? u.login : "Connecté à GitHub";
+      $("compte-description").textContent = "Connecté avec GitHub : les enregistrements sont faits à ce nom.";
+    } else if (configuree) {
+      $("compte-titre").textContent = "Compte GitHub";
+      $("compte-description").textContent = "Connexion nécessaire pour enregistrer. Le compte doit avoir l'accès en écriture au répertoire.";
+    } else {
+      // Sans connexion GitHub configurée : jeton personnel
+      const b = $("btn-github");
+      b.innerHTML = reglages.jeton
+        ? `${UI.icone("circle-check")}<span>Connecté à GitHub</span>`
+        : `${UI.icone("key-round")}<span>Connexion GitHub…</span>`;
+      b.classList.toggle("connecte", Boolean(reglages.jeton));
+      $("compte-titre").textContent = "Compte GitHub";
+      $("compte-description").textContent = reglages.jeton
+        ? "Un jeton personnel est enregistré dans ce navigateur."
+        : "Jeton nécessaire pour enregistrer les fragments dans le répertoire.";
+    }
+  }
+
+  /** Lance la connexion GitHub (fenêtre). À appeler directement depuis un clic. */
+  async function connecterGitHub() {
+    let ok = false;
+    try {
+      ok = await Connexion.connecter();
+    } catch (e) {
+      statut(e.message, "erreur");
+      return false;
+    }
+    indiquerCompte();
+    const u = Connexion.utilisateur();
+    if (ok) statut(`Connecté à GitHub${u?.login ? ` (${u.login})` : ""}.`, "succes");
+    return ok;
+  }
+
+  /**
+   * Avant une écriture : un accès GitHub est-il disponible ? Sinon, connexion GitHub (ou réglages du jeton).
+   * Appelée au début d'un clic, pour que la fenêtre de connexion ne soit pas bloquée.
+   */
+  async function assurerAcces(action) {
+    if (aAcces()) return true;
+    if (!Connexion.configuree) {
+      $("config-exemple").close();
+      statut(`Un jeton GitHub est nécessaire pour ${action}.`, "erreur");
+      ouvrirReglages();
+      return false;
+    }
+    statut(`Connexion à GitHub pour ${action}…`);
+    return connecterGitHub();
+  }
+
+  /** Accès refusé (401) avec la connexion GitHub : la session est effacée, il faudra se reconnecter. */
+  function accesRefuse(e) {
+    if (e.status === 401 && Connexion.connecte()) {
+      Connexion.deconnecter();
+      indiquerCompte();
+    }
   }
 
   function sauverReglages() {
@@ -1145,7 +1208,7 @@ ${corps.map((l) => "  " + l).join("\n")}
     const anciens = { ...reglages };
     ["proprietaire", "repertoire", "branche", "jeton"].forEach((k) => { reglages[k] = f.elements[k].value.trim(); });
     ecrireReglages(reglages);
-    indiquerJeton();
+    indiquerCompte();
     const repoChange = ["proprietaire", "repertoire", "branche"].some((k) => anciens[k] !== reglages[k]);
     if (repoChange || anciens.jeton !== reglages.jeton) chargerListe();
   }
@@ -1193,6 +1256,15 @@ ${corps.map((l) => "  " + l).join("\n")}
     $("btn-integrer").addEventListener("click", integrer);
     $("btn-reconstruire").addEventListener("click", () => { $("reglages").close(); reconstruireIndex(); });
     $("btn-github").addEventListener("click", () => { $("config-exemple").close(); ouvrirReglages(); });
+    $("btn-avance").addEventListener("click", () => { $("config-exemple").close(); ouvrirReglages(); });
+    $("btn-connexion").addEventListener("click", connecterGitHub);
+    $("btn-deconnexion").addEventListener("click", () => {
+      Connexion.deconnecter();
+      indiquerCompte();
+      statut("Déconnecté de GitHub dans ce navigateur.");
+    });
+    // Connexion ou déconnexion faite dans un autre onglet du studio
+    window.addEventListener("storage", (e) => { if (e.key === "fragment.studio.connexion") indiquerCompte(); });
     $("btn-supprimer").addEventListener("click", supprimer);
     $("form-reglages").addEventListener("change", sauverReglages);
     $("reglages").addEventListener("close", sauverReglages);
@@ -1217,7 +1289,7 @@ ${corps.map((l) => "  " + l).join("\n")}
   }
 
   async function demarrer() {
-    if (!window.CM || typeof GitHub === "undefined" || typeof CadreDouble === "undefined" || typeof Integrer === "undefined") {
+    if (!window.CM || typeof GitHub === "undefined" || typeof Connexion === "undefined" || typeof CadreDouble === "undefined" || typeof Integrer === "undefined") {
       document.body.innerHTML = '<p class="message">Le studio n\'a pas pu se charger.</p>';
       return;
     }
@@ -1225,7 +1297,7 @@ ${corps.map((l) => "  " + l).join("\n")}
     creerEditeurs();
     creerBibliotheques();
     brancherEvenements();
-    indiquerJeton();
+    indiquerCompte();
 
     const params = new URLSearchParams(location.search);
     const demande = params.get("f") || params.get("ex"); // « ex » : ancien nom, toujours accepté
@@ -1233,7 +1305,11 @@ ${corps.map((l) => "  " + l).join("\n")}
     if (demande && SLUG.test(demande)) await ouvrirExemple(demande);
     else await nouvelExemple();
     if (etat.avertissement) statut(etat.avertissement, "erreur");
-    else if (!reglages.jeton) statut("Aucun jeton GitHub : l'aperçu fonctionne, mais l'enregistrement demandera un jeton (⚙ → Connexion GitHub).");
+    else if (!aAcces()) {
+      statut(Connexion.configuree
+        ? "Non connecté à GitHub : l'aperçu fonctionne ; l'enregistrement demandera de se connecter."
+        : "Aucun jeton GitHub : l'aperçu fonctionne, mais l'enregistrement demandera un jeton (Réglages → Fragment).");
+    }
   }
 
   demarrer();
