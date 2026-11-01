@@ -3,9 +3,9 @@
  * ----------------------
  * Affiche le code et/ou le résultat d'un exemple selon les paramètres d'URL.
  *
- *   v/?ex=gsap-to&onglets=js,resultat&actif=js
- *   v/?ex=gsap-to&modifiable=1          ← éditeurs + aperçu en direct
- *   v/?ex=gsap-to&boutons=rejouer       ← seulement le bouton Rejouer
+ *   v/?f=gsap-to&onglets=js,resultat&actif=js
+ *   v/?f=gsap-to&modifiable=1          ← éditeurs + aperçu en direct
+ *   v/?f=gsap-to&boutons=rejouer       ← seulement le bouton Rejouer
  *
  * Chaque fragment est un dossier f/<nom>/ contenant index.html (obligatoire),
  * style.css et script.js (facultatifs). Le résultat est index.html chargé
@@ -27,7 +27,8 @@
 
   // ---------- Lecture des paramètres ----------
 
-  const ex = (P.get("ex") || "").trim().replace(/^\/+|\/+$/g, "");
+  // « f » : nom du fragment ; « ex », ancien nom du paramètre, reste accepté (iframes existantes)
+  const ex = (P.get("f") || P.get("ex") || "").trim().replace(/^\/+|\/+$/g, "");
   const exValide = /^[a-z0-9_-]+$/i.test(ex); // nom du fragment (dossier f/<nom>/)
 
   const ongletsDemandes = (P.get("onglets") || "html,css,js,resultat")

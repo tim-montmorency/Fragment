@@ -191,7 +191,7 @@ const Integrer = (() => {
   function construire() {
     const f = new FormData(dialogue.querySelector("form"));
     const p = new URLSearchParams();
-    p.set("ex", nomCourant);
+    p.set("f", nomCourant);
 
     const onglets = f.getAll("onglets");
     if (onglets.join(",") !== "html,css,js,resultat") p.set("onglets", onglets.join(","));

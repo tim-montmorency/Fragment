@@ -75,7 +75,7 @@
     li.querySelector("iframe").dataset.src = `f/${encodeURIComponent(f.nom)}/`;
     li.querySelector("iframe").title = `Aperçu de ${f.titre || f.nom}`;
     const titre = li.querySelector(".titre");
-    titre.href = `studio/?ex=${encodeURIComponent(f.nom)}`;
+    titre.href = `studio/?f=${encodeURIComponent(f.nom)}`;
     titre.textContent = f.titre || f.nom;
     li.querySelector(".date").textContent = dateLisible(f.modifie);
 

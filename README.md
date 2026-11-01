@@ -43,7 +43,7 @@ et un fragment peut en avoir plusieurs.
 
 Le dossier d'un fragment est nommé automatiquement à partir de son titre, à la création
 (« GSAP - to() » → `gsap-to`, puis `gsap-to-2` si le nom est déjà pris). Il ne change plus ensuite,
-même si le titre change, parce que les iframes des notes en dépendent (`?ex=gsap-to`).
+même si le titre change, parce que les iframes des notes en dépendent (`?f=gsap-to`).
 
 ### fragment.json
 
@@ -88,12 +88,12 @@ Le paramètre `html=complet` affiche le fichier entier.
 ## Paramètres de la visionneuse
 
 ```
-https://<site>/v/?ex=gsap-to&onglets=js,resultat&actif=js
+https://<site>/v/?f=gsap-to&onglets=js,resultat&actif=js
 ```
 
 | Paramètre | Valeurs | Défaut | Effet |
 | :--- | :--- | :--- | :--- |
-| `ex` | `gsap-to` | — | Nom du fragment (dossier `f/<nom>/`, obligatoire) |
+| `f` | `gsap-to` | — | Nom du fragment (dossier `f/<nom>/`, obligatoire). L'ancien nom `ex` reste accepté. |
 | `onglets` | `html,css,js,resultat` | les quatre | Onglets visibles, dans l'ordre indiqué |
 | `actif` | `html`, `css`, `js`, `resultat` | le premier | Onglet ouvert au chargement |
 | `disposition` | `onglets`, `cote`, `pile` | `onglets` | Tout en onglets, code à côté du résultat, ou code au-dessus |
@@ -109,13 +109,13 @@ Par défaut, la disposition est `onglets`, ou `cote` en mode modifiable.
 
 ```html
 <!-- Résultat seulement -->
-<iframe src="https://<site>/v/?ex=gsap-to&onglets=resultat" class="aspect-3-2" style="width:100%;border:0" loading="lazy"></iframe>
+<iframe src="https://<site>/v/?f=gsap-to&onglets=resultat" class="aspect-3-2" style="width:100%;border:0" loading="lazy"></iframe>
 
 <!-- CSS seulement -->
-<iframe src="https://<site>/v/?ex=gsap-to&onglets=css" class="aspect-3-2" style="width:100%;border:0" loading="lazy"></iframe>
+<iframe src="https://<site>/v/?f=gsap-to&onglets=css" class="aspect-3-2" style="width:100%;border:0" loading="lazy"></iframe>
 
 <!-- JS à côté du résultat, seulement le bouton Rejouer -->
-<iframe src="https://<site>/v/?ex=gsap-to&onglets=js,resultat&disposition=cote&boutons=rejouer" class="aspect-3-2" style="width:100%;border:0" loading="lazy"></iframe>
+<iframe src="https://<site>/v/?f=gsap-to&onglets=js,resultat&disposition=cote&boutons=rejouer" class="aspect-3-2" style="width:100%;border:0" loading="lazy"></iframe>
 ```
 
 Le résultat démarre seulement quand il devient visible à l'écran (pratique pour les animations).
@@ -128,7 +128,7 @@ Avec `modifiable=1`, les onglets de code deviennent des éditeurs (CodeMirror) e
 une demi-seconde après la dernière frappe.
 
 ```html
-<iframe src="https://<site>/v/?ex=gsap-to&onglets=js,resultat&modifiable=1" class="aspect-3-2" style="width:100%;border:0" loading="lazy"></iframe>
+<iframe src="https://<site>/v/?f=gsap-to&onglets=js,resultat&modifiable=1" class="aspect-3-2" style="width:100%;border:0" loading="lazy"></iframe>
 ```
 
 - Une pastille rouge animée à côté de **Résultat** indique que l'aperçu est en direct.
@@ -154,11 +154,11 @@ pour le code en lecture seule : le code a la même coloration partout.
 
 ## Studio
 
-`https://tim-montmorency.com/Fragment/studio/` — ou `studio/?ex=<nom>` pour ouvrir directement un fragment.
+`https://tim-montmorency.com/Fragment/studio/` — ou `studio/?f=<nom>` pour ouvrir directement un fragment.
 
 Interface pour créer ou modifier un fragment avec aperçu en direct, puis l'enregistrer dans le répertoire GitHub.
 
-- **Ouvrir un fragment** : clic sur sa carte dans la galerie (adresse `studio/?ex=<nom>`). **+ Nouveau fragment**, dans la galerie, repart du `_gabarit/`.
+- **Ouvrir un fragment** : clic sur sa carte dans la galerie (adresse `studio/?f=<nom>`). **+ Nouveau fragment**, dans la galerie, repart du `_gabarit/`.
 - **Titre / Tags** : le dossier du nouveau fragment est tiré du titre (voir *Structure*). Les tags sont séparés par des virgules,
   mis en minuscules et dédoublonnés.
 - **Réglages du fragment** (icône d'engrenage ; le compteur indique le nombre de bibliothèques, l'infobulle les liste). Trois onglets :

@@ -745,17 +745,18 @@ ${corps.map((l) => "  " + l).join("\n")}
     return noms;
   }
 
-  /** Adresse de la page : studio/?ex=<nom> pour un fragment enregistré (rechargement, partage). */
+  /** Adresse de la page : studio/?f=<nom> pour un fragment enregistré (rechargement, partage). */
   function majAdresse() {
     const url = new URL(location.href);
-    if (etat.ex) url.searchParams.set("ex", etat.ex);
-    else url.searchParams.delete("ex");
+    url.searchParams.delete("ex"); // ancien nom du paramètre
+    if (etat.ex) url.searchParams.set("f", etat.ex);
+    else url.searchParams.delete("f");
     history.replaceState(null, "", url);
 
     // Dupliquer / Voir / Intégrer (pied de page) et Supprimer (Réglages) : fragment enregistré seulement
     $("pied-liens").hidden = !etat.ex;
     $("actions-fragment").hidden = !etat.ex;
-    if (etat.ex) $("lien-voir").href = `${new URL("v/", SITE).href}?ex=${etat.ex}`;
+    if (etat.ex) $("lien-voir").href = `${new URL("v/", SITE).href}?f=${etat.ex}`;
   }
 
   function afficherListe() {
@@ -776,7 +777,7 @@ ${corps.map((l) => "  " + l).join("\n")}
         etat.fragments = noms.map((nom) => ({ nom, titre: nom, tags: [] }));
         etat.avertissement = noms.jetonRefuse
           ? "Le jeton GitHub enregistré est refusé (invalide, expiré ou sans accès) : vérifier les réglages GitHub."
-          : "Index fragments.json introuvable : la liste vient du répertoire. « Reconstruire l'index » (⚙ → Connexion GitHub) le recrée.";
+          : "Index fragments.json introuvable : la liste vient du répertoire. « Reconstruire l'index » (Réglages → Fragment → Connexion GitHub) le recrée.";
       } catch (e) {
         etat.fragments = [];
         const raison =
@@ -1226,7 +1227,8 @@ ${corps.map((l) => "  " + l).join("\n")}
     brancherEvenements();
     indiquerJeton();
 
-    const demande = new URLSearchParams(location.search).get("ex");
+    const params = new URLSearchParams(location.search);
+    const demande = params.get("f") || params.get("ex"); // « ex » : ancien nom, toujours accepté
     await chargerListe();
     if (demande && SLUG.test(demande)) await ouvrirExemple(demande);
     else await nouvelExemple();
