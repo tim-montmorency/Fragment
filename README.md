@@ -2,280 +2,58 @@
 
 # Fragment
 
-Petits exemples interactifs (HTML / CSS / JS), appelés **fragments**, à intégrer dans les notes de cours par une simple `<iframe>`.
-Remplace les embeds CodePen.
+Petits exemples interactifs (HTML / CSS / JS), appelés **fragments**, à intégrer dans les notes de cours par une `<iframe>`.
 
-Site : `https://tim-montmorency.com/Fragment/`
+- **Galerie** : https://tim-montmorency.com/Fragment/
+- **Studio** (création et modification) : https://tim-montmorency.com/Fragment/studio/
 
-- **Galerie** (page d'accueil) : tous les fragments, avec recherche et filtre par tag.
-- **Studio** (`studio/`) : création et modification des fragments, enregistrement direct dans GitHub.
-- Chaque fragment est une page web autonome : n'importe quelle technologie peut y être utilisée (GSAP, Tailwind, Three.js…).
-- Une **visionneuse** (`v/`) affiche le code et/ou le résultat selon des paramètres d'URL.
-- Le site des notes ne contient qu'une iframe : si un fragment brise, seul le cadre reste vide.
+## Accès
 
-## Structure
+Un compte GitHub avec le rôle **Write** sur le répertoire `tim-montmorency/Fragment` (à demander à un propriétaire de l'organisation).
+Dans le studio, **Se connecter avec GitHub** : une seule fois par navigateur.
 
-```
-Fragment/
-├── index.html            Galerie des fragments
-├── fragments.json        Index de la galerie (titre, tags, date de chaque fragment)
-├── f/                    Les fragments, un dossier chacun
-│   └── gsap-to/
-│       ├── index.html    obligatoire
-│       ├── style.css     facultatif
-│       ├── script.js     facultatif
-│       └── fragment.json titre, tags, dates
-├── studio/               Création et modification des fragments
-│   └── config.js         Connexion GitHub : Client ID et adresse du relais
-├── relais/               Relais de connexion GitHub (Cloudflare Worker)
-├── v/                    Visionneuse (code + résultat, utilisée dans les iframes)
-│   └── vendor/           highlight.js et CodeMirror (auto-hébergés)
-├── commun/               Partagé par la galerie, le studio et la visionneuse
-│   ├── theme.css         Jetons et composants (style shadcn/ui, sans compilation)
-│   ├── ui.js             Icônes et infobulles
-│   ├── icones.svg        Icônes Lucide (licence ISC, voir icones-LICENCE.txt)
-│   ├── polices/          Geist et Geist Mono (licence OFL)
-│   └── integrer.js/.css  Fenêtre « Intégrer »
-├── outils/codemirror/    Source du paquet CodeMirror
-└── _gabarit/             Point de départ d'un nouveau fragment
-```
+## Créer ou modifier un fragment
 
-Les fragments ne sont pas classés en sous-dossiers : le classement se fait avec les **tags** (`web3`, `gsap`…),
-et un fragment peut en avoir plusieurs.
+1. Galerie → **Nouveau fragment**, ou clic sur un fragment existant.
+2. Écrire le HTML, le CSS et le JS : l'aperçu se met à jour en direct.
+3. Bibliothèques (GSAP, Tailwind, Three.js…) et attributs de `<html>` / `<body>` : bouton **Réglages** (engrenage).
+4. **Enregistrer** (Cmd/Ctrl + S). Le fragment est en ligne environ une minute plus tard.
 
-Le dossier d'un fragment est nommé automatiquement à partir de son titre, à la création
-(« GSAP - to() » → `gsap-to`, puis `gsap-to-2` si le nom est déjà pris). Il ne change plus ensuite,
-même si le titre change, parce que les iframes des notes en dépendent (`?f=gsap-to`).
+Dans le pied de page : **Dupliquer**, **Voir**, **Intégrer**. La suppression se trouve dans Réglages → Fragment.
 
-### fragment.json
+## Intégrer dans les notes
 
-```json
-{
-  "titre": "GSAP - to()",
-  "tags": ["web3", "gsap"],
-  "cree": "2026-10-28",
-  "modifie": "2026-10-28"
-}
-```
-
-## Galerie
-
-La page d'accueil lit `fragments.json` et affiche une carte par fragment, avec une miniature vivante
-(chargée quand la carte devient visible).
-
-- **Recherche** dans le titre et les tags (accents ignorés).
-- **Tags** : un clic filtre la galerie ; un deuxième clic retire le filtre.
-- Les filtres sont dans l'adresse, donc partageables : `…/Fragment/?tag=web3`, `…/Fragment/?q=scroll`.
-- Un **clic sur une carte** ouvre le fragment dans le studio ; **+ Nouveau fragment** en crée un.
-
-## Intégrer un fragment
-
-Le lien **Intégrer**, dans le pied de page du studio, ouvre une fenêtre pour choisir les options de la visionneuse,
-voir l'aperçu et copier le code de l'iframe à coller dans le Markdown.
-Les dernières options choisies sont mémorisées dans le navigateur et réappliquées à la prochaine ouverture,
-pour n'importe quel fragment. **Options par défaut** les réinitialise.
-
-## Ajouter un fragment à la main
-
-Le studio s'en occupe normalement. À la main, dans la copie locale du répertoire :
-
-1. Copier `_gabarit/` vers `f/<nom>/` (lettres, chiffres, `-` et `_` seulement).
-2. Écrire le fragment. Les bibliothèques se chargent directement dans `index.html`.
-3. Ajouter `f/<nom>/fragment.json` (titre et tags).
-4. Pousser, puis dans le studio : **Réglages → Fragment → Jeton personnel, répertoire et index… → Reconstruire l'index**, pour que la galerie le liste.
-
-L'onglet **HTML** de la visionneuse n'affiche que le contenu de `<body>`, sans les balises `<script src="…">`.
-Le paramètre `html=complet` affiche le fichier entier.
-
-## Paramètres de la visionneuse
-
-```
-https://<site>/v/?f=gsap-to&onglets=js,resultat&actif=js
-```
-
-| Paramètre | Valeurs | Défaut | Effet |
-| :--- | :--- | :--- | :--- |
-| `f` | `gsap-to` | — | Nom du fragment (dossier `f/<nom>/`, obligatoire). L'ancien nom `ex` reste accepté. |
-| `onglets` | `html,css,js,resultat` | les quatre | Onglets visibles, dans l'ordre indiqué |
-| `actif` | `html`, `css`, `js`, `resultat` | le premier | Onglet ouvert au chargement |
-| `disposition` | `onglets`, `cote`, `pile` | `onglets` | Tout en onglets, code à côté du résultat, ou code au-dessus |
-| `theme` | `sombre`, `clair` | `sombre` | Thème du code |
-| `numeros` | `1` | — | Numéros de ligne |
-| `html` | `corps`, `complet` | `corps` | Partie du HTML affichée |
-| `modifiable` | `1` | — | Éditeurs de code + aperçu en direct (voir plus bas) |
-| `boutons` | `rejouer,ouvrir` | les deux | Boutons affichés. `boutons=` (vide) les masque |
-
-Par défaut, la disposition est `onglets`, ou `cote` en mode modifiable.
-
-### Exemples
+**Intégrer** → choisir les options → **Copier**, puis coller dans le Markdown :
 
 ```html
-<!-- Résultat seulement -->
-<iframe src="https://<site>/v/?f=gsap-to&onglets=resultat" class="aspect-3-2" style="width:100%;border:0" loading="lazy"></iframe>
-
-<!-- CSS seulement -->
-<iframe src="https://<site>/v/?f=gsap-to&onglets=css" class="aspect-3-2" style="width:100%;border:0" loading="lazy"></iframe>
-
-<!-- JS à côté du résultat, seulement le bouton Rejouer -->
-<iframe src="https://<site>/v/?f=gsap-to&onglets=js,resultat&disposition=cote&boutons=rejouer" class="aspect-3-2" style="width:100%;border:0" loading="lazy"></iframe>
+<iframe src="https://tim-montmorency.com/Fragment/v/?f=gsap-to&onglets=js,resultat" class="aspect-3-2" style="width:100%;border:0" loading="lazy"></iframe>
 ```
 
-Le résultat démarre seulement quand il devient visible à l'écran (pratique pour les animations).
-Le bouton **Rejouer** le relance, **Ouvrir** affiche le fragment seul dans un nouvel onglet
-(boutons configurables avec `boutons`).
+| Paramètre | Effet |
+| :--- | :--- |
+| `f` | Nom du fragment (obligatoire) |
+| `onglets` | Onglets visibles : `html,css,js,resultat` |
+| `actif` | Onglet ouvert au départ |
+| `disposition` | `onglets`, `cote` (code à côté du résultat) ou `pile` |
+| `modifiable=1` | Code modifiable avec aperçu en direct |
+| `theme=clair` | Code sur fond clair |
+| `numeros=1` | Numéros de ligne |
+| `boutons` | `rejouer,ouvrir` ; vide pour les masquer |
 
-## Mode modifiable (aperçu en direct)
+Si un fragment est introuvable, l'iframe affiche un simple message : les notes ne sont jamais brisées.
 
-Avec `modifiable=1`, les onglets de code deviennent des éditeurs (CodeMirror) et le résultat se met à jour
-une demi-seconde après la dernière frappe.
+## Bon à savoir
 
-```html
-<iframe src="https://<site>/v/?f=gsap-to&onglets=js,resultat&modifiable=1" class="aspect-3-2" style="width:100%;border:0" loading="lazy"></iframe>
-```
+- Le nom d'un fragment (dans l'adresse) est tiré du titre à la création et ne change plus : les iframes en dépendent.
+- Chaque enregistrement est un commit : tout reste récupérable dans l'historique.
+- Un fragment est un simple dossier `f/<nom>/` (`index.html`, `style.css`, `script.js`) : il peut aussi être modifié dans VS Code,
+  puis poussé. Dans ce cas, **Réglages → Fragment → Jeton personnel, répertoire et index… → Reconstruire l'index** met la galerie à jour.
 
-- Une pastille rouge animée à côté de **Résultat** indique que l'aperçu est en direct.
-- Le bouton **Réinitialiser**, toujours présent dans ce mode, revient au code d'origine. Les modifications ne sont pas sauvegardées : un rechargement de la page les efface.
-- **Ouvrir** affiche la version modifiée dans un nouvel onglet.
-- Les bibliothèques chargées par CDN dans `index.html` continuent de fonctionner. Les chemins relatifs (images, etc.) aussi.
-- `numeros=1` affiche aussi les numéros de ligne dans les éditeurs.
-- L'éditeur (≈ 560 Ko) n'est chargé qu'en mode modifiable. S'il ne se charge pas, le fragment s'affiche en lecture seule.
+## Maintenance
 
-### Mettre à jour CodeMirror
-
-Le paquet `v/vendor/codemirror.js` est généré à partir de `outils/codemirror/` :
-
-```bash
-cd outils/codemirror
-npm install
-npm run build
-```
-
-Les éditeurs (studio et mode modifiable) utilisent les thèmes **GitHub Dark** et **GitHub Light** définis dans
-`outils/codemirror/theme-github.js`, avec les mêmes couleurs que highlight.js (`github-dark.css` / `github.css`)
-pour le code en lecture seule : le code a la même coloration partout.
-
-## Studio
-
-`https://tim-montmorency.com/Fragment/studio/` — ou `studio/?f=<nom>` pour ouvrir directement un fragment.
-
-Interface pour créer ou modifier un fragment avec aperçu en direct, puis l'enregistrer dans le répertoire GitHub.
-
-- **Ouvrir un fragment** : clic sur sa carte dans la galerie (adresse `studio/?f=<nom>`). **+ Nouveau fragment**, dans la galerie, repart du `_gabarit/`.
-- **Titre / Tags** : le dossier du nouveau fragment est tiré du titre (voir *Structure*). Les tags sont séparés par des virgules,
-  mis en minuscules et dédoublonnés.
-- **Réglages du fragment** (icône d'engrenage ; le compteur indique le nombre de bibliothèques, l'infobulle les liste). Trois onglets :
-  - **Bibliothèques** : recherche dans npm, servie par jsDelivr (version exacte, fichier principal choisi automatiquement).
-    - **Entrée** ou clic : ajoute le fichier principal du paquet (et sa feuille de style s'il en a une).
-      Un script qui est en fait un module ES (`import` / `export`) est détecté : s'il accompagne une feuille de style
-      (ex. `daisyui`, dont le JS est le plugin Tailwind pour les outils de build), seule la feuille de style est ajoutée ;
-      sinon il va dans l'importmap.
-    - **Fichiers** (ou flèche droite) : choisir un autre fichier du paquet, par exemple `ScrollTrigger.min.js` dans `gsap`.
-    - Une adresse de n'importe quel site, collée dans le champ (`https://…`), s'ajoute telle quelle ; utile quand la recherche ne trouve pas une bibliothèque.
-    - La liste suit l'ordre de chargement : glisser la poignée pour le changer. **+** ajoute un autre fichier du même paquet
-      (par exemple `themes.css` dans `daisyui`), **×** retire.
-    - Un clic sur une bibliothèque la déplie pour modifier son adresse et son type : **CSS** (`<head>`), **JS** (fin du body),
-      **JS (head)** ou **Module ES** (importmap, avec sa clé d'import ; `script.js` passe alors en `type="module"`).
-      Le type d'une adresse collée est deviné (`.css`, Google Fonts, module ES…).
-    - Les autres balises déjà présentes dans un fragment sont conservées.
-  - **Page** : attributs de `<html>` et `<body>`, par exemple `data-theme="dark"` pour daisyUI, ou `class="…"` sur le body.
-    `lang="fr"` est ajouté automatiquement, sauf si un autre `lang` est indiqué.
-  - **Fragment** : compte GitHub (voir *Connexion GitHub*), réglages avancés (jeton personnel, répertoire,
-    reconstruction de l'index) et **Supprimer…** (fragment enregistré) :
-    après confirmation, un commit retire le dossier du fragment et son entrée de l'index. Les iframes qui l'intègrent
-    affichent alors « Fragment introuvable ». Le fragment reste récupérable dans l'historique Git.
-- **Erreurs**, dans la barre du résultat : apparaît quand l'aperçu produit des erreurs JavaScript, des promesses rejetées,
-  des `console.error` ou des fichiers introuvables. Un clic ouvre la console ; un clic sur « script.js, ligne N » place le curseur
-  sur la ligne dans l'éditeur JS. La liste repart à zéro à chaque mise à jour de l'aperçu.
-- **Rejouer**, dans la barre du résultat : relance le fragment (animations, scripts) sans attendre une modification.
-- **Pied de page** (fragment enregistré) : **Dupliquer** crée, après confirmation du titre de la copie, un nouveau fragment
-  à partir de celui-ci (enregistré dans son propre dossier au prochain enregistrement) ; **Voir** ouvre la visionneuse ;
-  **Intégrer** ouvre la fenêtre d'intégration.
-- **Onglet HTML** : seulement le contenu de `<body>`. Le reste de `index.html` est généré.
-- **Enregistrer** (ou Cmd/Ctrl + S) : un seul commit avec les fichiers du fragment, son `fragment.json` et l'index `fragments.json`.
-  La confirmation s'affiche dans le pied de page. GitHub Pages republie ensuite le site (environ une minute) :
-  le studio vérifie la publication et affiche **en ligne ✓** quand elle est terminée. Pendant ce temps, la fenêtre
-  **Intégrer** le signale et son aperçu se recharge tout seul une fois le fragment en ligne.
-  En local (Go Live), ce suivi est désactivé : faire un `git pull` pour voir le fragment.
-- **Réglages → Fragment → Jeton personnel, répertoire et index… → Reconstruire l'index** : recrée `fragments.json` à partir des dossiers `f/`, après des ajouts ou suppressions faits à la main.
-
-### Connexion GitHub
-
-Pour enregistrer, il faut un compte GitHub avec l'accès **en écriture** (rôle *Write* ou plus) au répertoire `Fragment`.
-Les droits viennent uniquement de ce rôle : retirer l'accès d'une personne sur le répertoire lui retire aussi le studio.
-
-**Utilisation** : **Réglages → Fragment → Se connecter avec GitHub**, ou directement **Enregistrer** : une petite fenêtre GitHub
-s'ouvre, le travail en cours reste intact. La connexion est valide 8 heures et se renouvelle toute seule pendant 6 mois.
-Dans un autre navigateur, il suffit de se reconnecter (un clic si la session GitHub y est déjà ouverte).
-Les commits sont faits au nom de la personne connectée. **Se déconnecter** efface la connexion de ce navigateur.
-
-**Mise en place (une seule fois, par un propriétaire de l'organisation)** — la connexion passe par une *GitHub App*
-et un petit relais, parce qu'une page statique ne peut pas garder le « client secret » de l'application.
-
-1. **GitHub App** : *tim-montmorency → Settings → Developer settings → GitHub Apps → New GitHub App*.
-   - *GitHub App name* : `Fragment (TIM Montmorency)` ; *Homepage URL* : `https://tim-montmorency.com/Fragment/`.
-   - *Callback URL* : `https://tim-montmorency.com/Fragment/studio/connexion.html`
-     (ajouter au besoin l'adresse locale, ex. `http://127.0.0.1:5500/studio/connexion.html` pour Go Live).
-   - Cocher *Expire user authorization tokens* ; laisser décochés *Request user authorization (OAuth) during installation*
-     et *Enable Device Flow*.
-   - *Webhook* : décocher *Active*.
-   - *Permissions → Repository permissions → Contents* : **Read and write** (*Metadata : Read-only* est ajouté d'office).
-   - *Where can this GitHub App be installed?* : **Only on this account**. Créer l'application.
-   - Noter le **Client ID**, puis *Generate a new client secret* et copier le **client secret** (affiché une seule fois).
-   - *Install App* → `tim-montmorency` → **Only select repositories** → `Fragment`.
-2. **Relais** (Cloudflare Worker, gratuit) : *Cloudflare → Workers & Pages → Create → Worker*, nom `fragment-connexion`.
-   - *Edit code* : remplacer le contenu par celui de `relais/worker.js`, puis *Deploy*.
-   - *Settings → Variables and Secrets* : `GITHUB_CLIENT_ID` (texte), `GITHUB_CLIENT_SECRET` (**Secret**),
-     `ORIGINES` = `https://tim-montmorency.com,http://127.0.0.1:5500`.
-   - Noter l'adresse du Worker, ex. `https://fragment-connexion.<compte>.workers.dev`.
-   - En ligne de commande, `relais/wrangler.toml` permet aussi `npx wrangler deploy`.
-3. **Studio** : inscrire le Client ID et l'adresse du relais dans `studio/config.js`, puis pousser.
-
-Le relais ne conserve rien : il échange le code de connexion contre un jeton, et renouvelle les jetons expirés.
-Les deux valeurs de `studio/config.js` sont publiques ; le client secret reste dans Cloudflare.
-
-### Jeton personnel (sans connexion GitHub)
-
-Tant que `studio/config.js` est vide, ou pour un usage ponctuel, un jeton personnel fonctionne aussi
-(**Réglages → Fragment → Jeton personnel, répertoire et index…**) :
-
-1. GitHub → *Settings → Developer settings → Personal access tokens → Fine-grained tokens → Generate new token*.
-2. *Resource owner* : `tim-montmorency`. *Repository access* : **Only select repositories** → `Fragment`.
-3. *Permissions → Repository permissions → Contents* : **Read and write**.
-4. Le copier dans le studio, puis **Tester**.
-
-Le jeton est conservé dans ce navigateur (localStorage) ; chaque adresse a sa propre mémoire (site publié, Go Live…).
-Sur un ordinateur partagé, utiliser **Oublier le jeton** à la fin. La connexion GitHub, si elle est active, a priorité.
-
-Après un enregistrement par le studio, faire un `git pull` dans la copie locale.
-
-## Interface
-
-- **Thème** : `commun/theme.css` reprend l'apparence de [shadcn/ui](https://ui.shadcn.com) en CSS simple
-  (jetons `--background`, `--primary`…, classes `.btn`, `.input`, `.select`, `.dialog`, `.badge`…).
-  La galerie suit le mode clair ou sombre du système ; le studio est toujours sombre.
-- **Icônes** : [Lucide](https://lucide.dev), regroupées dans `commun/icones.svg`.
-  En HTML : `<svg class="icone"><use href="commun/icones.svg#settings"/></svg>` ; en JS : `UI.icone("settings")`.
-  Pour en ajouter une, copier le contenu de son SVG dans un nouveau `<symbol id="…">` du fichier.
-- **Infobulles** : tout élément avec un attribut `title` reçoit une infobulle stylée (survol ou focus au clavier),
-  grâce à `commun/ui.js`. `data-infobulle-position="bas"` la place sous l'élément.
-
-## Tester en local
-
-La visionneuse lit les fichiers avec `fetch()`, ce qui ne fonctionne pas en ouvrant les fichiers directement (`file://`).
-Un petit serveur local suffit :
-
-```bash
-npx serve .
-# ou : python3 -m http.server
-```
-
-Live Server (Go Live) dans VS Code fonctionne aussi, en ouvrant le dossier `Fragment` lui-même.
-Le script qu'il injecte dans les pages est retiré automatiquement de l'onglet HTML.
-
-## Publication avec GitHub Pages
-
-1. Pousser le répertoire sur GitHub.
-2. *Settings → Pages → Build and deployment* : source **Deploy from a branch**, branche `main`, dossier `/ (root)`.
-3. Le site est publié à `https://<compte>.github.io/<répertoire>/`.
-
-Le fichier `.nojekyll` empêche GitHub d'ignorer les dossiers qui commencent par `_` (comme `_gabarit/`).
+- **Connexion GitHub** : GitHub App « Fragment TIM Montmorency » (réglages de l'organisation) et relais Cloudflare
+  `fragment-connexion` (`relais/worker.js`, compte Cloudflare TIM). Client ID et adresse du relais : `studio/config.js`.
+  Le client secret n'est que dans Cloudflare.
+- **Éditeur de code** (CodeMirror) : `cd outils/codemirror && npm install && npm run build`.
+- **Test local** : servir le dossier (Go Live, ou `python3 -m http.server`).
+- Licences : icônes Lucide (ISC), polices Geist (OFL).
