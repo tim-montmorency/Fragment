@@ -4,7 +4,7 @@ gsap.from(".box", {
   x: -120,
   rotation: -180,
   opacity: 0,
-  duration: 1,
+  duration: 2,
   scrollTrigger: {
     // l'élément observé
     trigger: ".stage",
@@ -17,6 +17,6 @@ gsap.from(".box", {
     // onEnter onLeave
     // onEnterBack onLeaveBack
     toggleActions:
-      "play reverse play reverse",
+      "play complete reverse reset",
   },
 });
