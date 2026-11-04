@@ -30,17 +30,17 @@ body {
   transform: scaleX(0);          /* état de départ : barre vide */
 }
 
-.section {
+#main {
   width: min(90%, 600px);
   margin: 0 auto;
   padding: 4rem 0;
 }
 
-.section h1 { margin-bottom: 1rem; }
+#main h1 { margin-bottom: 1rem; }
 
-.section h2 {
+#main h2 {
   margin-top: 60vh; /* de l'espace pour pouvoir défiler */
   color: #0ae448;
 }
 
-.section p { line-height: 1.6; }
+#main p { line-height: 1.6; }
