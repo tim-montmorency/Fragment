@@ -11,6 +11,12 @@
 # et la dernière version enregistrée finit toujours en ligne.
 #
 # Activation : Settings → Pages → Build and deployment → Source : « GitHub Actions ».
+#
+# Déploiement coincé : il arrive que GitHub ne termine jamais un déploiement Pages.
+# La publication abandonne après 10 minutes, mais le déploiement reste « en cours » chez GitHub
+# et toutes les suivantes échouent (« due to in progress deployment »). L'étape « Débloquer »
+# annule ce déploiement avant de publier : grâce au groupe « pages », aucune autre publication
+# ne tourne à ce moment, donc tout déploiement encore en cours est forcément coincé.
 
 name: Publication
 
@@ -23,6 +29,7 @@ permissions:
   contents: read
   pages: write
   id-token: write
+  deployments: read
 
 concurrency:
   group: pages
@@ -40,5 +47,20 @@ jobs:
       - uses: actions/upload-pages-artifact@v3
         with:
           path: .
+      - name: Débloquer un déploiement coincé
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          for sha in $(gh api "repos/$GITHUB_REPOSITORY/deployments?environment=github-pages&per_page=20" --jq '.[].sha' | sort -u); do
+            statut=$(gh api "repos/$GITHUB_REPOSITORY/pages/deployments/$sha" --jq '.status' 2>/dev/null) || continue
+            # Seuls les états « en cours » connus sont annulés ; un état vide ou inconnu est laissé tel quel
+            case "$statut" in
+              deployment_queued|deployment_in_progress|syncing_files|finished_file_sync|updating_pages|purging_cdn)
+                echo "Déploiement $sha resté « $statut » : annulation."
+                gh api -X POST "repos/$GITHUB_REPOSITORY/pages/deployments/$sha/cancel" || true
+                ;;
+            esac
+          done
       - id: deploiement
         uses: actions/deploy-pages@v4
