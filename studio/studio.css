@@ -609,6 +609,30 @@ button.lieu-erreur:hover {
   gap: 0.5rem;
 }
 
+/* Réglages → Page : JavaScript avant / après script.js */
+.editeur-page {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.editeur-page .cm-editor {
+  height: 8.5rem;
+  font-size: 0.8125rem;
+}
+
+.editeur-page .cm-editor.cm-focused {
+  outline: none;
+}
+
+.editeur-page:focus-within {
+  border-color: var(--ring);
+}
+
+.champ-dialogue .label code {
+  font-size: 0.75rem;
+}
+
 .input.mono {
   font: 0.8125rem var(--font-mono);
 }

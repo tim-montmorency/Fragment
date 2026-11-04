@@ -104,13 +104,28 @@
         <label class="champ-dialogue"><span class="label">Attributs de &lt;body&gt;</span>
           <input id="attrs-body" class="input mono" placeholder='class="bg-base-200"' spellcheck="false" autocomplete="off">
         </label>
+        <div class="champ-dialogue">
+          <span class="label" id="libelle-avant">JavaScript exécuté avant <code>script.js</code></span>
+          <div class="editeur-page" id="editeur-avant"></div>
+        </div>
+        <div class="champ-dialogue">
+          <span class="label" id="libelle-apres">JavaScript exécuté après <code>script.js</code></span>
+          <div class="editeur-page" id="editeur-apres"></div>
+        </div>
+        <p class="aide description">
+          Code caché : enregistré dans <code>avant.js</code> et <code>apres.js</code>, exécuté dans l'aperçu, la visionneuse
+          et les intégrations, mais jamais affiché dans les onglets. Ordre : bibliothèques, <code>avant.js</code>,
+          <code>script.js</code>, <code>apres.js</code>. Les <code>const</code>, <code>let</code> et <code>function</code>
+          déclarés dans <code>avant.js</code> sont accessibles dans <code>script.js</code>, sauf en mode module
+          (<code>import</code>) : passer alors par <code>window</code>.
+        </p>
       </section>
 
       <section class="panneau-dialogue" id="p-editeur" role="tabpanel" aria-labelledby="t-editeur" hidden>
         <div class="bloc-reglage bloc-option">
           <label for="formater-enregistrement">
             <span class="label">Formater à l'enregistrement</span>
-            <span class="aide description">Le code des onglets HTML, CSS et JS est mis en forme (Prettier) juste avant chaque enregistrement.
+            <span class="aide description">Le code des onglets HTML, CSS et JS (ainsi que <code>avant.js</code> et <code>apres.js</code>) est mis en forme (Prettier) juste avant chaque enregistrement.
               Une erreur de syntaxe n'empêche pas d'enregistrer : le code est alors enregistré tel quel.</span>
           </label>
           <input type="checkbox" class="checkbox" id="formater-enregistrement">
