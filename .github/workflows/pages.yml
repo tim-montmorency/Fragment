@@ -1,0 +1,44 @@
+# Publication de Fragment sur GitHub Pages.
+#
+# Remplace le « pages-build-deployment » automatique (Source : Deploy from a branch),
+# qui échoue quand plusieurs enregistrements du Studio arrivent à quelques secondes
+# d'intervalle : un déploiement démarre pendant qu'un autre est en cours et GitHub
+# le refuse. Le site reste alors sur une version antérieure.
+#
+# Ici, une seule publication à la fois (groupe « pages »). Si plusieurs commits
+# arrivent pendant une publication, seuls le déploiement en cours et le plus récent
+# en attente sont conservés : les intermédiaires sont annulés (gris, pas rouge),
+# et la dernière version enregistrée finit toujours en ligne.
+#
+# Activation : Settings → Pages → Build and deployment → Source : « GitHub Actions ».
+
+name: Publication
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  publier:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploiement.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: .
+      - id: deploiement
+        uses: actions/deploy-pages@v4
