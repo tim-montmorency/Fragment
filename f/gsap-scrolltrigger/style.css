@@ -1,4 +1,57 @@
+/* --- Base commune aux exemples --- */
+* { box-sizing: border-box; margin: 0; }
+
 body {
-  margin: 0;
   font-family: system-ui, sans-serif;
+  background: #0e100f;
+  color: #fffce1;
+  overflow-x: hidden;
+}
+
+.espace {
+  height: 100vh;
+  display: grid;
+  place-items: center;
+  font-size: 1.25rem;
+  opacity: 0.6;
+}
+
+/* --- Propre à cet exemple --- */
+
+.carte {
+  width: 100%;
+  margin: 0;
+  padding: 2rem;
+  border-radius: 1rem;
+  position: relative;
+  z-index: 1;
+  
+  background: rgb(10, 228, 72);
+  color: #0e100f;
+
+}
+
+.carte h2 { margin-bottom: 0.5rem; }
+
+.carte-zone {
+  position: relative;
+  width: min(90%, 400px);
+  margin: 0 auto;
+}
+
+.carte-phantom {
+  position: absolute;
+  inset: 0;
+  padding: 2rem;
+  border-radius: 1rem;
+  z-index: 0;
+  transform: translateY(50px);
+  pointer-events: none;
+
+  border: 3px dashed rgba(10, 228, 72, 0.25);
+}
+
+.gsap-marker-end,
+.gsap-marker-scroller-end {
+  opacity: 0.2;
 }

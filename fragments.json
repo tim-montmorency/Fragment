@@ -12,7 +12,10 @@
     {
       "nom": "gsap-scrolltrigger",
       "titre": "GSAP - Scrolltrigger",
-      "tags": [],
+      "tags": [
+        "web3",
+        "gsap"
+      ],
       "modifie": "2026-11-04"
     },
     {
