@@ -31,7 +31,8 @@ body {
   place-content: center;
   justify-items: center;
   gap: 1.5rem;
-  background: #16161A;
+  background: #220033;
+  border: 4px dashed #FF2B47;
 }
 
 .box {
