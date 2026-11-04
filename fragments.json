@@ -46,6 +46,12 @@
       "modifie": "2026-11-04"
     },
     {
+      "nom": "gsap-timeline",
+      "titre": "GSAP - Timeline",
+      "tags": [],
+      "modifie": "2026-11-04"
+    },
+    {
       "nom": "w5-gsap-proprietes",
       "titre": "Web 5 - GSAP : propriétés et paramètres",
       "tags": [
