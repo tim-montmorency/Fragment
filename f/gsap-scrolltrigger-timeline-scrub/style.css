@@ -14,8 +14,8 @@
 .boite2,
 .cercle,
 .triangle {
-  width: 60px;
-  height: 60px;
+  width: min(20dvw, 20dvh);
+  height: min(20dvw, 20dvh);
 }
 
 .boite1 {
