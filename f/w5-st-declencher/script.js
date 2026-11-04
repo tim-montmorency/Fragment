@@ -4,7 +4,7 @@ gsap.from(".box", {
   x: -320,
   rotation: -360,
   opacity: 0,
-  duration: 2,
+  duration: 3,
   scrollTrigger: {
     // l'élément observé
     trigger: ".stage",
