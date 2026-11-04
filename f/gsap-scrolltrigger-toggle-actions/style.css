@@ -1,0 +1,76 @@
+* { box-sizing: border-box; margin: 0; }
+
+body {
+  font-family: system-ui, sans-serif;
+  background: #0e100f;
+  color: #fffce1;
+  overflow-x: hidden;
+}
+
+.espace {
+  height: 100vh;
+  display: grid;
+  place-items: center;
+  font-size: 1.25rem;
+  opacity: 0.6;
+}
+
+/* --- Propre à cet exemple --- */
+
+.carte {
+  width: min(90%, 400px);
+  margin: 0 auto;
+  padding: 2rem;
+  border-radius: 1rem;
+  background: #ff8709;
+  color: #0e100f;
+}
+
+.carte h2 { margin-bottom: 0.5rem; }
+
+/* Tableau de bord fixé en bas de l'écran */
+.moments {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 10;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.5rem;
+  padding: 0.75rem;
+  background: rgba(14, 16, 15, 0.9);
+  border-top: 1px solid #333;
+  font-size: 0.85rem;
+}
+
+.moment {
+  display: grid;
+  gap: 0.25rem;
+  padding: 0.5rem;
+  border: 1px solid #444;
+  border-radius: 0.5rem;
+  text-align: center;
+  opacity: 0.4;
+  transition: opacity 0.2s, background 0.2s;
+}
+
+.moment span { font-size: 0.75rem; }
+.moment code { font-size: 1rem; color: #0ae448; }
+
+/* Le dernier moment survenu */
+.moment.actif {
+  opacity: 1;
+  background: #fffce1;
+  color: #0e100f;
+}
+
+.moment.actif code {
+  color: #0e100f;
+  font-weight: bold;
+}
+
+@media (max-width: 600px) {
+  .moments { font-size: 0.7rem; }
+  .moment span { display: none; }
+}
