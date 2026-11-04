@@ -22,15 +22,15 @@ body {
 }
 
 .stage {
-  height: 60vh;
+  height: 130px;
   display: grid;
   place-items: center;
   border-block: 1px dashed #333;
 }
 
 .box {
-  width: 110px;
-  height: 110px;
+  width: 90px;
+  height: 90px;
   border-radius: 16px;
   background: #FF2B47;
 }
