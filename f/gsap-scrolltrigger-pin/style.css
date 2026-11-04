@@ -1,0 +1,53 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+}
+
+body {
+  font-family: system-ui, sans-serif;
+  background: #0e100f;
+  color: #fffce1;
+  overflow-x: hidden;
+}
+
+.espace {
+  height: 100vh;
+  display: grid;
+  place-items: center;
+  font-size: 1.25rem;
+  opacity: 0.6;
+}
+
+/* --- Pin de panneaux --- */
+
+.section {
+  overflow: hidden; /* cache les panneaux qui dépassent à droite */
+}
+
+.contenu {
+  display: flex;
+  width: 400%; /* 4 panneaux côte à côte */
+  height: 100vh;
+}
+
+.panneau {
+  width: 25%; /* chaque panneau = une largeur d'écran */
+  display: grid;
+  place-items: center;
+  font-size: clamp(4rem, 15vw, 10rem);
+  font-weight: bold;
+  color: #0e100f;
+}
+
+.panneau:nth-child(1) {
+  background: #0ae448;
+}
+.panneau:nth-child(2) {
+  background: #9d95ff;
+}
+.panneau:nth-child(3) {
+  background: #ff8709;
+}
+.panneau:nth-child(4) {
+  background: #fec5fb;
+}

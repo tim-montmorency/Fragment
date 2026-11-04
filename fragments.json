@@ -19,8 +19,17 @@
       "modifie": "2026-11-04"
     },
     {
+      "nom": "gsap-scrolltrigger-pin",
+      "titre": "GSAP - Scrolltrigger pin",
+      "tags": [
+        "web3",
+        "gsap"
+      ],
+      "modifie": "2026-11-04"
+    },
+    {
       "nom": "gsap-scrolltrigger-scrub",
-      "titre": "GSAP - Scrolltrigger scrub",
+      "titre": "GSAP - Scrolltrigger Scrub true",
       "tags": [
         "web3",
         "gsap"
@@ -29,7 +38,7 @@
     },
     {
       "nom": "gsap-scrolltrigger-scrub-alt",
-      "titre": "GSAP - Scrolltrigger scrub alt",
+      "titre": "GSAP - Scrolltrigger Scrub 1",
       "tags": [
         "web3",
         "gsap"
@@ -46,6 +55,24 @@
       "modifie": "2026-11-04"
     },
     {
+      "nom": "gsap-timeline",
+      "titre": "Web5 - GSAP - Timeline",
+      "tags": [
+        "web5",
+        "gsap"
+      ],
+      "modifie": "2026-11-04"
+    },
+    {
+      "nom": "w5-gsap-timeline",
+      "titre": "Web 5 - GSAP : timeline et position",
+      "tags": [
+        "web5",
+        "gsap"
+      ],
+      "modifie": "2026-11-04"
+    },
+    {
       "nom": "w5-gsap-proprietes",
       "titre": "Web 5 - GSAP : propriétés et paramètres",
       "tags": [
@@ -57,15 +84,6 @@
     {
       "nom": "w5-gsap-reduced-motion",
       "titre": "Web 5 - GSAP : prefers-reduced-motion avec matchMedia",
-      "tags": [
-        "web5",
-        "gsap"
-      ],
-      "modifie": "2026-11-03"
-    },
-    {
-      "nom": "w5-gsap-timeline",
-      "titre": "Web 5 - GSAP : timeline et position",
       "tags": [
         "web5",
         "gsap"

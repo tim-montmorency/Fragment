@@ -1,14 +1,14 @@
-gsap.registerPlugin(ScrollTrigger)
+gsap.registerPlugin(ScrollTrigger);
 
 gsap.from(".barre", {
   scaleX: 1,
-  ease: 'linear',
-  
+  ease: "linear",
+
   scrollTrigger: {
-    trigger: "#main",   
-    start: "top 10%",    
-    end: "bottom 90%",  
+    trigger: "#main",
+    start: "top 10%",
+    end: "bottom 90%",
     scrub: 1,
-    markers: true  
-  }
-})
+    markers: true,
+  },
+});
