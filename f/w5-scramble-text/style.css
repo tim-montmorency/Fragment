@@ -1,0 +1,28 @@
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: #0A0A0A;
+  color: #F2F2F2;
+  font-family: system-ui, sans-serif;
+}
+
+.scene {
+  padding: 40px;
+}
+
+.chapitre {
+  margin: 0 0 0.5rem;
+  color: #9A9AA2;
+  font-family: ui-monospace, Consolas, monospace;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+.titre {
+  margin: 0;
+  font-size: 2.6rem;
+  color: #FF2B47;
+  font-family: ui-monospace, Consolas, monospace;
+}

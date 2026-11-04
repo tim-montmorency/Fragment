@@ -1,0 +1,41 @@
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: #0A0A0A;
+  color: #F2F2F2;
+  font-family: system-ui, sans-serif;
+}
+
+.nav {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  display: flex;
+  gap: 0.5rem;
+}
+
+.nav button {
+  width: 2.5rem;
+  height: 2.5rem;
+  border: 2px solid #FF2B47;
+  border-radius: 50%;
+  background: #0A0A0A;
+  color: #F2F2F2;
+  font: inherit;
+  cursor: pointer;
+}
+
+.chapitre {
+  min-height: 100vh;
+  padding: 40px;
+  border-bottom: 1px dashed #333;
+}
+
+.chapitre h2 {
+  margin: 0;
+}
+
+#ch-2 { background: #14161c; }
+#ch-3 { background: #1c1012; }

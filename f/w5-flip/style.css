@@ -1,0 +1,51 @@
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: #0A0A0A;
+  color: #F2F2F2;
+  font-family: system-ui, sans-serif;
+}
+
+.scene {
+  padding: 30px;
+}
+
+.bouton {
+  margin-bottom: 1.5rem;
+  padding: 0.6rem 1rem;
+  border: 0;
+  border-radius: 6px;
+  background: #FF2B47;
+  color: #fff;
+  font: inherit;
+  cursor: pointer;
+}
+
+/* Disposition 1 : une grille de 3 */
+.grille {
+  display: grid;
+  grid-template-columns: repeat(3, 70px);
+  gap: 12px;
+}
+
+/* Disposition 2 : une seule rangée */
+.grille.en-ligne {
+  grid-template-columns: repeat(6, 40px);
+}
+
+.carte {
+  aspect-ratio: 1;
+  display: grid;
+  place-items: center;
+  border-radius: 8px;
+  background: #F2F2F2;
+  color: #0A0A0A;
+  font-weight: 700;
+}
+
+.carte:first-child {
+  background: #FF2B47;
+  color: #fff;
+}
