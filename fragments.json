@@ -19,6 +19,15 @@
       "modifie": "2026-11-04"
     },
     {
+      "nom": "gsap-scrolltrigger-pin",
+      "titre": "GSAP - Scrolltrigger pin",
+      "tags": [
+        "web3",
+        "gsap"
+      ],
+      "modifie": "2026-11-04"
+    },
+    {
       "nom": "gsap-scrolltrigger-scrub",
       "titre": "GSAP - Scrolltrigger scrub",
       "tags": [
