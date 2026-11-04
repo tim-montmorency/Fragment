@@ -1,12 +1,17 @@
 gsap.registerPlugin(ScrollTrigger);
 
-gsap.from(".carte", {
-  y: 50,
-  opacity: 0,
-  duration: 1,
-  scrollTrigger: {
-    trigger: ".carte", // l'élément qui déclenche
-    start: "top 60%", // quand le haut de .carte croise la ligne à 60 % de l'écran
-    markers: true, // repères visuels (à retirer en production)
-  },
-});
+gsap
+  .timeline({
+    scrollTrigger: {
+      trigger: ".scene",
+      start: "top top",
+      end: "+=3000", // la séquence s'étale sur 3000 px de défilement
+      scrub: 1,
+      pin: true, // garde la scène à l'écran pendant la séquence (voir « Épingler une section »)
+      markers: true,
+    },
+  })
+  .to(".boite1", { x: 100 })
+  .to(".boite2", { x: -100 }, "<")
+  .to(".cercle", { scale: 2 })
+  .to(".triangle", { rotation: 360 });
