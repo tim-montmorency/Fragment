@@ -53,5 +53,5 @@ body {
 
 .gsap-marker-end,
 .gsap-marker-scroller-end {
-  opacity: 0;
+  /* opacity: 0; */
 }
