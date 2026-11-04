@@ -1,8 +1,8 @@
 gsap.registerPlugin(ScrollTrigger);
 
 gsap.from(".box", {
-  x: -120,
-  rotation: -180,
+  x: -320,
+  rotation: -360,
   opacity: 0,
   duration: 2,
   scrollTrigger: {
