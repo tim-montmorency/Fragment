@@ -6,7 +6,7 @@ gsap.to(".contenu", {
   scrollTrigger: {
     trigger: ".section",
     start: "top top",
-    end: "+=10000", // dure sur 2000 px de défilement
+    end: "+=3333", // l'animation termine quand 3333px ont été scrollé
     pin: true,
     scrub: 1,
     markers: true,
