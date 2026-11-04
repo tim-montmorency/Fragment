@@ -6,8 +6,8 @@ gsap.from(".barre", {
   
   scrollTrigger: {
     trigger: "#main",   
-    start: "top top",    
-    end: "bottom bottom",  
+    start: "top 10%",    
+    end: "bottom 90%",  
     scrub: 1,
     markers: true  
   }
