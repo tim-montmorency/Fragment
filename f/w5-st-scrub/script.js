@@ -1,15 +1,20 @@
 gsap.registerPlugin(ScrollTrigger);
 
-// La barre suit TOUTE la page, sans délai
+// La barre suit TOUTE la page
 gsap.to(".progress", {
   scaleX: 1,
   ease: "none",
-  scrollTrigger: { start: 0, end: "max", scrub: true },
+  scrollTrigger: {
+    start: 0,
+    end: "max",
+    scrub: true,
+  },
 });
 
-// scrub: true : l'animation colle exactement au défilement
+// scrub: true : colle exactement
+// au défilement
 gsap.to(".box--true", {
-  x: "70vw",
+  x: "60vw",
   rotation: 360,
   ease: "none",
   scrollTrigger: {
@@ -20,9 +25,10 @@ gsap.to(".box--true", {
   },
 });
 
-// scrub: 1 : elle rattrape le défilement en 1 seconde (plus doux)
+// scrub: 1 : rattrape le défilement
+// en 1 seconde (plus doux)
 gsap.to(".box--one", {
-  x: "70vw",
+  x: "60vw",
   rotation: 360,
   ease: "none",
   scrollTrigger: {
