@@ -270,9 +270,17 @@
     return b;
   }
 
-  function creerGroupe(cles, panneauxCode, resultat, outilsCode) {
+  /**
+   * Groupe d'onglets avec sa barre et ses panneaux.
+   * options.classe     : classe ajoutée au groupe (groupe-code, groupe-resultat)
+   * options.surClic    : (cle) => true si le clic est pris en charge ailleurs (agrandissement)
+   * options.surRejouer : appelé par le bouton Rejouer
+   * options.outils     : boutons ajoutés à la fin de la barre
+   * Le groupe retourné expose groupe.api = { activer, actif, onglet }.
+   */
+  function creerGroupe(cles, panneauxCode, resultat, outilsCode, options = {}) {
     const groupe = document.createElement("section");
-    groupe.className = "groupe";
+    groupe.className = `groupe ${options.classe || ""}`.trim();
 
     const barre = document.createElement("div");
     barre.className = "barre";
@@ -302,13 +310,15 @@
       panneau.setAttribute("role", "tabpanel");
       panneau.append(cle === "resultat" ? resultat.element : panneauxCode[cle].element);
 
-      b.addEventListener("click", () => activer(cle));
+      b.addEventListener("click", () => { if (!options.surClic?.(cle)) activer(cle); });
       onglets.append(b);
       panneaux.append(panneau);
       elements[cle] = { bouton: b, panneau };
     });
 
+    let courant = null;
     function activer(cible) {
+      courant = cible;
       cles.forEach((cle) => {
         const actif = cle === cible;
         elements[cle].bouton.setAttribute("aria-selected", actif);
@@ -327,7 +337,7 @@
 
     if (cles.includes("resultat") && boutons.has("rejouer")) {
       outils.append(
-        bouton("rotate-cw", "Rejouer", () => { activer("resultat"); resultat.rejouer(); })
+        bouton("rotate-cw", "Rejouer", () => { activer("resultat"); options.surRejouer?.(); resultat.rejouer(); })
       );
     }
 
@@ -344,12 +354,92 @@
       );
     }
 
+    (options.outils || []).forEach((o) => outils.append(o));
+
     barre.append(onglets, outils);
     groupe.append(barre, panneaux);
 
     const demande = P.get("actif");
     activer(cles.includes(demande) ? demande : cles[0]);
+    groupe.api = { activer, actif: () => courant, onglet: (cle) => elements[cle].bouton };
     return groupe;
+  }
+
+  /**
+   * Dispositions « cote » et « pile » : agrandir le code ou le résultat.
+   *   - côte à côte : clic sur l'onglet de code actif → résultat seul ; clic sur Résultat → code seul
+   *   - agrandi : une seule barre d'onglets (comme la disposition « onglets ») ;
+   *     clic sur l'onglet déjà affiché, ou bouton « côte à côte », → retour aux deux panneaux
+   */
+  function creerDisposition(codesPresents, panneauxCode, resultat, outilsCode) {
+    let agrandi = null; // null (les deux), "resultat" ou "code"
+    let groupeCode;
+    let groupeResultat;
+
+    const libelleRetour = dispositionDemandee === "pile" ? "Code et résultat superposés" : "Code et résultat côte à côte";
+    const retour = bouton(dispositionDemandee === "pile" ? "rows-2" : "columns-2", libelleRetour, () => agrandir(null));
+    retour.classList.add("retour-disposition");
+    retour.hidden = true;
+
+    const infobulle = (el, texte) => {
+      el.removeAttribute("title");
+      if (texte) el.dataset.infobulle = texte;
+      else delete el.dataset.infobulle;
+    };
+
+    function agrandir(mode) {
+      agrandi = mode;
+      app.classList.toggle("agrandi", Boolean(mode));
+      app.classList.toggle("agrandi-resultat", mode === "resultat");
+      app.classList.toggle("agrandi-code", mode === "code");
+      retour.hidden = !mode;
+
+      // Onglets sélectionnés : ceux dont le panneau est visible
+      const actif = groupeCode.api.actif();
+      codesPresents.forEach((cle) => {
+        const b = groupeCode.api.onglet(cle);
+        b.setAttribute("aria-selected", String(cle === actif && mode !== "resultat"));
+        infobulle(b, cle !== actif ? "" : mode === null ? "Agrandir le résultat" : mode === "code" ? libelleRetour : "");
+      });
+      const r = groupeResultat.api.onglet("resultat");
+      r.setAttribute("aria-selected", String(mode !== "code"));
+      infobulle(r, mode === null ? "Agrandir le code" : mode === "resultat" ? libelleRetour : "");
+
+      // Le résultat démarre s'il devient visible ; CodeMirror se remesure après un changement de taille
+      if (mode !== "code") resultat.afficher(groupeResultat.querySelector(".panneau-resultat"));
+      if (mode !== "resultat") panneauxCode[actif]?.rafraichir?.();
+    }
+
+    groupeCode = creerGroupe(codesPresents, panneauxCode, resultat, outilsCode, {
+      classe: "groupe-code",
+      surClic(cle) {
+        if (agrandi === "resultat") {            // résultat seul : afficher ce code seul
+          groupeCode.api.activer(cle);
+          agrandir("code");
+          return true;
+        }
+        if (cle === groupeCode.api.actif()) {    // onglet déjà affiché
+          agrandir(agrandi === "code" ? null : "resultat");
+          return true;
+        }
+        groupeCode.api.activer(cle);             // autre onglet de code : simple changement d'onglet
+        agrandir(agrandi);
+        return true;
+      },
+    });
+
+    groupeResultat = creerGroupe(["resultat"], panneauxCode, resultat, outilsCode, {
+      classe: "groupe-resultat",
+      surClic() {
+        agrandir(agrandi === null ? "code" : agrandi === "code" ? "resultat" : null);
+        return true;
+      },
+      surRejouer() { if (agrandi === "code") agrandir("resultat"); },
+      outils: [retour],
+    });
+
+    agrandir(null);
+    return [groupeCode, groupeResultat];
   }
 
   // ---------- Démarrage ----------
@@ -437,10 +527,7 @@
     app.className = `disposition-${separe ? dispositionDemandee : "onglets"}`;
 
     if (separe) {
-      app.append(
-        creerGroupe(codesPresents, panneauxCode, resultat, outilsCode),
-        creerGroupe(["resultat"], panneauxCode, resultat, outilsCode)
-      );
+      app.append(...creerDisposition(codesPresents, panneauxCode, resultat, outilsCode));
     } else {
       const cles = ongletsDemandes.filter((c) => c === "resultat" || panneauxCode[c]);
       app.append(creerGroupe(cles, panneauxCode, resultat, outilsCode));

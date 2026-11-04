@@ -82,6 +82,39 @@ body {
   }
 }
 
+/* Code ou résultat agrandi (clic sur l'onglet affiché) : une seule rangée d'onglets, un seul panneau */
+#app.agrandi {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  grid-template-rows: auto minmax(0, 1fr);
+}
+
+#app.agrandi .groupe {
+  display: contents;
+}
+
+#app.agrandi .groupe-code > .barre {
+  grid-area: 1 / 1;
+}
+
+#app.agrandi .groupe-resultat > .barre {
+  grid-area: 1 / 2;
+  border-left: 1px solid var(--bordure);
+}
+
+#app.agrandi .panneaux {
+  grid-area: 2 / 1 / 3 / 3;
+}
+
+#app.agrandi-resultat .groupe-code > .panneaux,
+#app.agrandi-code .groupe-resultat > .panneaux {
+  display: none;
+}
+
+.retour-disposition[hidden] {
+  display: none;
+}
+
 /* ---------- Barre d'onglets ---------- */
 
 .barre {

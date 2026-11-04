@@ -34,7 +34,7 @@ Dans le pied de page : **Dupliquer**, **Voir**, **Intégrer**. La suppression se
 | `f` | Nom du fragment (obligatoire) |
 | `onglets` | Onglets visibles : `html,css,js,resultat` |
 | `actif` | Onglet ouvert au départ |
-| `disposition` | `onglets`, `cote` (code à côté du résultat) ou `pile` |
+| `disposition` | `onglets`, `cote` (code à côté du résultat) ou `pile` ; en `cote` / `pile`, un clic sur l'onglet affiché agrandit l'autre côté |
 | `modifiable=1` | Code modifiable avec aperçu en direct |
 | `theme=clair` | Code sur fond clair |
 | `numeros=1` | Numéros de ligne |
