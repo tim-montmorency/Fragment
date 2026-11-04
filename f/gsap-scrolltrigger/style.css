@@ -30,8 +30,3 @@
 
   border: 3px dashed rgba(10, 228, 72, 0.125);
 }
-
-.gsap-marker-end,
-.gsap-marker-scroller-end {
-  /* opacity: 0; */
-}
