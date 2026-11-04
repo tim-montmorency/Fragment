@@ -48,7 +48,10 @@
     {
       "nom": "gsap-timeline",
       "titre": "GSAP - Timeline",
-      "tags": [],
+      "tags": [
+        "web5",
+        "gsap"
+      ],
       "modifie": "2026-11-04"
     },
     {

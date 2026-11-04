@@ -1,6 +1,9 @@
 {
   "titre": "GSAP - Timeline",
-  "tags": [],
+  "tags": [
+    "web5",
+    "gsap"
+  ],
   "cree": "2026-11-04",
   "modifie": "2026-11-04"
 }
