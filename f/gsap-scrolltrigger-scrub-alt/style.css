@@ -3,10 +3,7 @@
 * { box-sizing: border-box; margin: 0; }
 
 body {
-  font-family: "Assistant", sans-serif;
-  font-optical-sizing: auto;
-  font-style: normal;
-  
+  font-family: system-ui, sans-serif;
   background: #0e100f;
   color: #fffce1;
   overflow-x: hidden;
@@ -41,6 +38,10 @@ body {
 }
 
 p { 
+  font-family: "Assistant", sans-serif;
+  font-optical-sizing: auto;
+  font-style: normal;
+  
   line-height: 1.6; 
   margin-bottom: 2rem;
 }
