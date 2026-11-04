@@ -7,7 +7,7 @@ gsap.to(".contenu", {
     trigger: ".section",
     start: "top top",
     end: "+=2000", // dure sur 2000 px de défilement
-    pin: true, // fige la section pendant ce temps
+    // pin: true, // fige la section pendant ce temps
     scrub: 1,
     markers: true,
   },
