@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Kanchenjunga&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Comforter&display=swap');
 
 * { box-sizing: border-box; margin: 0; }
 
@@ -34,14 +34,14 @@ body {
 #main {
   width: min(90%, 600px);
   margin: 0 auto;
-  padding: 2rem 0 0;
+  padding: 10vh 0 0;
 }
 
 p { 
-  font-family: "Kanchenjunga", sans-serif;
+  font-family: "Comforter", sans-serif;
   font-optical-sizing: auto;
   font-style: normal;
   
   line-height: 1.6; 
-  margin-bottom: 2rem;
+  margin-bottom: 10vh;
 }
