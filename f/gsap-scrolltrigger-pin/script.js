@@ -8,7 +8,7 @@ gsap.to(".contenu", {
     start: "top top",
     end: "+=3333", // l'animation termine quand 3333px ont été scrollé
     pin: true,
-    //scrub: 1,
+    scrub: 1,
     markers: true,
   },
 });
