@@ -5,7 +5,7 @@ gsap.from(".barre", {
   ease: 'linear',
   
   scrollTrigger: {
-    trigger: "main",   
+    trigger: "#main",   
     start: "top top",    
     end: "bottom bottom",  
     scrub: 1,
