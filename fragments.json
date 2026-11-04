@@ -10,6 +10,12 @@
       "modifie": "2026-11-04"
     },
     {
+      "nom": "gsap-scrolltrigger",
+      "titre": "GSAP - Scrolltrigger",
+      "tags": [],
+      "modifie": "2026-11-04"
+    },
+    {
       "nom": "w5-gsap-proprietes",
       "titre": "Web 5 - GSAP : propriétés et paramètres",
       "tags": [
