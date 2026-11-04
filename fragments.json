@@ -46,6 +46,15 @@
       "modifie": "2026-11-04"
     },
     {
+      "nom": "gsap-scrolltrigger-timeline-scrub",
+      "titre": "GSAP - Scrolltrigger Timeline Scrub",
+      "tags": [
+        "web3",
+        "gsap"
+      ],
+      "modifie": "2026-11-04"
+    },
+    {
       "nom": "gsap-scrolltrigger-toggle-actions",
       "titre": "GSAP - Scrolltrigger toggle actions",
       "tags": [
