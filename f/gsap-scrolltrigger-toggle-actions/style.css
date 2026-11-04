@@ -1,4 +1,7 @@
-* { box-sizing: border-box; margin: 0; }
+* {
+  box-sizing: border-box;
+  margin: 0;
+}
 
 body {
   font-family: system-ui, sans-serif;
@@ -26,7 +29,9 @@ body {
   color: #0e100f;
 }
 
-.carte h2 { margin-bottom: 0.5rem; }
+.carte h2 {
+  margin-bottom: 0.5rem;
+}
 
 /* Tableau de bord fixé en bas de l'écran */
 .moments {
@@ -52,11 +57,18 @@ body {
   border-radius: 0.5rem;
   text-align: center;
   opacity: 0.4;
-  transition: opacity 0.2s, background 0.2s;
+  transition:
+    opacity 0.2s,
+    background 0.2s;
 }
 
-.moment span { font-size: 0.75rem; }
-.moment code { font-size: 1rem; color: #0ae448; }
+.moment span {
+  font-size: 0.75rem;
+}
+.moment code {
+  font-size: 1rem;
+  color: #0ae448;
+}
 
 /* Le dernier moment survenu */
 .moment.actif {
@@ -71,6 +83,10 @@ body {
 }
 
 @media (max-width: 600px) {
-  .moments { font-size: 0.7rem; }
-  .moment span { display: none; }
+  .moments {
+    font-size: 0.7rem;
+  }
+  .moment span {
+    display: none;
+  }
 }
