@@ -33,14 +33,10 @@ body {
 #main {
   width: min(90%, 600px);
   margin: 0 auto;
-  padding: 4rem 0;
+  padding: 2rem 0 0;
 }
 
-
-
-#main h2 {
-  margin-top: 60vh; /* de l'espace pour pouvoir défiler */
-  color: #0ae448;
+p { 
+  line-height: 1.6; 
+  margin-bottom: 2rem;
 }
-
-#main p { line-height: 1.6; }
