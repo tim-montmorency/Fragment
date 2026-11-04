@@ -23,9 +23,10 @@ body {
 
 .stage {
   height: 130px;
+  margin: 0 20px;
   display: grid;
   place-items: center;
-  border-block: 1px dashed #333;
+  border: 4px dashed #FF2B47;
 }
 
 .box {

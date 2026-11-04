@@ -91,6 +91,15 @@
       "modifie": "2026-11-04"
     },
     {
+      "nom": "w5-st-declencher",
+      "titre": "Web 5 - ScrollTrigger : start, markers et toggleActions",
+      "tags": [
+        "web5",
+        "gsap"
+      ],
+      "modifie": "2026-11-04"
+    },
+    {
       "nom": "w5-gsap-proprietes",
       "titre": "Web 5 - GSAP : propriétés et paramètres",
       "tags": [
@@ -114,15 +123,6 @@
       "tags": [
         "web5",
         "js"
-      ],
-      "modifie": "2026-11-03"
-    },
-    {
-      "nom": "w5-st-declencher",
-      "titre": "Web 5 - ScrollTrigger : start, markers et toggleActions",
-      "tags": [
-        "web5",
-        "gsap"
       ],
       "modifie": "2026-11-03"
     },
