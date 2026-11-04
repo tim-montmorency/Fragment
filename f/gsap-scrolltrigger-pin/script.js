@@ -7,7 +7,7 @@ gsap.to(".contenu", {
     trigger: ".section",
     start: "top top",
     end: "+=3333", // l'animation termine quand 3333px ont été scrollé
-    pin: true,
+    //pin: true,
     scrub: 1,
     markers: true,
   },
