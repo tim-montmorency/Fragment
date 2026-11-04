@@ -394,6 +394,7 @@ ${corps.map((l) => "  " + l).join("\n")}
   // ---------- Aperçu en direct ----------
 
   let activerOnglet = () => {};
+  let ongletActif = "html";
   let apercu;   // CadreDouble : nouvelle version chargée en arrière-plan, sans flash blanc
   let minuterie;
   function planifierApercu() {
@@ -414,6 +415,7 @@ ${corps.map((l) => "  " + l).join("\n")}
     const cles = [["html", "HTML", CM.html], ["css", "CSS", CM.css], ["js", "JS", CM.javascript]];
 
     const activer = (cible) => {
+      ongletActif = cible;
       cles.forEach(([cle]) => {
         $(`onglet-${cle}`).classList.toggle("actif", cle === cible);
         $(`onglet-${cle}`).setAttribute("aria-selected", cle === cible);
@@ -651,6 +653,103 @@ ${corps.map((l) => "  " + l).join("\n")}
   function sourceModifiee() {
     indiquerReglages();
     marquerModifie();
+  }
+
+  // ---------- Formatage (Prettier) ----------
+
+  const PARSEURS = { html: "html", css: "css", js: "babel" };
+  const NOMS_ONGLETS = { html: "HTML", css: "CSS", js: "JS" };
+  let chargementPrettier = null;
+
+  /** Prettier (vendor/prettier.js, voir outils/prettier) n'est chargé qu'au premier formatage. */
+  function chargerPrettier() {
+    if (window.Prettier) return Promise.resolve(window.Prettier);
+    if (!chargementPrettier) {
+      chargementPrettier = new Promise((resoudre, rejeter) => {
+        const s = document.createElement("script");
+        s.src = "vendor/prettier.js";
+        s.onload = () => (window.Prettier ? resoudre(window.Prettier) : rejeter(new Error("Prettier introuvable")));
+        s.onerror = () => rejeter(new Error("Prettier n'a pas pu être chargé"));
+        document.head.append(s);
+      }).catch((e) => {
+        chargementPrettier = null; // nouvel essai au prochain formatage
+        throw e;
+      });
+    }
+    return chargementPrettier;
+  }
+
+  /**
+   * Met en forme le code d'un éditeur ; retourne true si le code a changé.
+   * Seule la partie modifiée est remplacée : le curseur et le défilement restent en place,
+   * et un seul Ctrl + Z annule le formatage.
+   */
+  async function formaterEditeur(cle) {
+    const P = await chargerPrettier();
+    const v = editeurs[cle];
+    const avant = v.state.doc.toString();
+    if (!avant.trim()) return false;
+
+    const { formatted, cursorOffset } = await P.formatWithCursor(avant, {
+      parser: PARSEURS[cle],
+      plugins: P.plugins,
+      cursorOffset: v.state.selection.main.head,
+      printWidth: 80,
+      tabWidth: 2,
+    });
+    const apres = formatted.replace(/\n$/, "");
+    if (apres === avant) return false;
+    if (v.state.doc.toString() !== avant) throw new Error("code modifié pendant le formatage, réessayer");
+
+    let debut = 0;
+    while (debut < avant.length && debut < apres.length && avant[debut] === apres[debut]) debut++;
+    let finAvant = avant.length;
+    let finApres = apres.length;
+    while (finAvant > debut && finApres > debut && avant[finAvant - 1] === apres[finApres - 1]) { finAvant--; finApres--; }
+
+    v.dispatch({
+      changes: { from: debut, to: finAvant, insert: apres.slice(debut, finApres) },
+      selection: { anchor: Math.min(Math.max(cursorOffset, 0), apres.length) },
+      userEvent: "input.format",
+    });
+    return true;
+  }
+
+  function erreurFormatage(cle, e) {
+    const ligne = e?.loc?.start?.line;
+    const lieu = ligne ? `${NOMS_ONGLETS[cle]}, ligne ${ligne}` : NOMS_ONGLETS[cle];
+    return e?.loc || e?.name === "SyntaxError" ? `erreur de syntaxe (${lieu})` : `${e.message} (${lieu})`;
+  }
+
+  /** Bouton Formater et Maj + Alt + F : l'onglet affiché. */
+  async function formaterOnglet() {
+    const cle = ongletActif;
+    const bouton = $("btn-formater");
+    if (bouton.disabled) return;
+    bouton.disabled = true;
+    try {
+      const change = await formaterEditeur(cle);
+      statut(change ? `Code ${NOMS_ONGLETS[cle]} formaté.` : `Code ${NOMS_ONGLETS[cle]} déjà formaté.`, change ? "succes" : "");
+    } catch (e) {
+      statut(`Formatage impossible : ${erreurFormatage(cle, e)}.`, "erreur");
+    } finally {
+      bouton.disabled = false;
+      editeurs[cle].focus();
+    }
+  }
+
+  /** Formatage à l'enregistrement (les trois onglets). Ne bloque jamais l'enregistrement ; retourne le problème éventuel. */
+  async function formaterTout() {
+    try {
+      await chargerPrettier();
+    } catch (e) {
+      return e.message;
+    }
+    const problemes = [];
+    for (const cle of Object.keys(PARSEURS)) {
+      try { await formaterEditeur(cle); } catch (e) { problemes.push(erreurFormatage(cle, e)); }
+    }
+    return problemes.length ? `formatage impossible : ${problemes.join(", ")}` : "";
   }
 
   // ---------- Fenêtre Réglages : onglets ----------
@@ -923,6 +1022,9 @@ ${corps.map((l) => "  " + l).join("\n")}
     bouton.querySelector(".icone").classList.add("tourne");
     statut("Enregistrement…");
     try {
+      // Option « Formater à l'enregistrement » (Réglages → Éditeur)
+      const problemeFormat = reglages.formaterEnregistrement ? await formaterTout() : "";
+
       // Index à jour, lu juste avant l'écriture
       const index = await lireJson("fragments.json");
       const actuels = index && Array.isArray(index.fragments) ? index.fragments : etat.fragments;
@@ -958,6 +1060,7 @@ ${corps.map((l) => "  " + l).join("\n")}
       majAdresse();
       afficherListe();
       suivrePublication(nom, titre, fichiers);
+      if (problemeFormat) statut(`« ${titre} » enregistré sans formatage (${problemeFormat}). Publication en cours…`, "erreur");
     } catch (e) {
       accesRefuse(e);
       statut(`Échec de l'enregistrement : ${MESSAGES_ERREUR[e.status] || e.message}.`, "erreur");
@@ -1247,6 +1350,12 @@ ${corps.map((l) => "  " + l).join("\n")}
     });
 
     $("btn-enregistrer").addEventListener("click", enregistrer);
+    $("btn-formater").addEventListener("click", formaterOnglet);
+    $("formater-enregistrement").checked = Boolean(reglages.formaterEnregistrement);
+    $("formater-enregistrement").addEventListener("change", (e) => {
+      reglages.formaterEnregistrement = e.target.checked;
+      ecrireReglages(reglages);
+    });
     $("btn-erreurs").addEventListener("click", () => { $("console").hidden = !$("console").hidden; });
     $("btn-fermer-console").addEventListener("click", () => { $("console").hidden = true; });
     $("btn-rejouer").addEventListener("click", () => {
@@ -1275,11 +1384,16 @@ ${corps.map((l) => "  " + l).join("\n")}
       $("etat-jeton").textContent = "Jeton effacé de ce navigateur.";
     });
 
-    // Cmd/Ctrl + S
+    // Cmd/Ctrl + S, Maj + Alt + F
     document.addEventListener("keydown", (e) => {
       if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "s") {
         e.preventDefault();
         enregistrer();
+      }
+      // Maj + Alt + F (comme VS Code) ; e.code, car Alt modifie e.key sur macOS
+      if (e.shiftKey && e.altKey && !e.metaKey && !e.ctrlKey && e.code === "KeyF" && !document.querySelector("dialog[open]")) {
+        e.preventDefault();
+        formaterOnglet();
       }
     });
 

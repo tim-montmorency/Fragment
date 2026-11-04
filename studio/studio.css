@@ -406,6 +406,16 @@ button.onglet:focus-visible {
   color: var(--foreground);
 }
 
+/* Onglets HTML / CSS / JS et bouton Formater (à droite) */
+.barre .onglets {
+  display: flex;
+  align-items: stretch;
+}
+
+#btn-formater {
+  margin-left: auto;
+}
+
 /* Pousse « erreurs » et « Rejouer » à droite */
 .barre .erreurs,
 .barre .erreurs[hidden] + .outil {
@@ -658,6 +668,25 @@ button.lieu-erreur:hover {
 
 .bloc-reglage .label {
   margin: 0 0 0.25rem;
+}
+
+/* Onglet Éditeur : option à cocher (tout le texte est cliquable) */
+.bloc-option > label {
+  display: grid;
+  gap: 0.25rem;
+  cursor: pointer;
+}
+
+.bloc-option > label .label {
+  margin: 0;
+}
+
+kbd {
+  font: 0.75rem var(--font-mono);
+  padding: 0.0625rem 0.3125rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  white-space: nowrap;
 }
 
 .bloc-danger {

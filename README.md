@@ -55,5 +55,7 @@ Si un fragment est introuvable, l'iframe affiche un simple message : les notes n
   `fragment-connexion` (`relais/worker.js`, compte Cloudflare TIM). Client ID et adresse du relais : `studio/config.js`.
   Le client secret n'est que dans Cloudflare.
 - **Éditeur de code** (CodeMirror) : `cd outils/codemirror && npm install && npm run build`.
+- **Formatage** (Prettier, bouton « Formater » du studio) : `cd outils/prettier && npm install && npm run build`
+  → `studio/vendor/prettier.js`, chargé seulement au premier formatage.
 - **Test local** : servir le dossier (Go Live, ou `python3 -m http.server`).
-- Licences : icônes Lucide (ISC), polices Geist (OFL).
+- Licences : icônes Lucide (ISC), polices Geist (OFL), Prettier (MIT).

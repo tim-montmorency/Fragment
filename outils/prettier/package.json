@@ -1,0 +1,12 @@
+{
+  "name": "fragment-prettier",
+  "private": true,
+  "description": "Prettier auto-hébergé pour le bouton « Formater » du studio",
+  "scripts": {
+    "build": "esbuild entree.js --bundle --minify --format=iife --outfile=../../studio/vendor/prettier.js"
+  },
+  "devDependencies": {
+    "esbuild": "^0.25.0",
+    "prettier": "3.9.10"
+  }
+}

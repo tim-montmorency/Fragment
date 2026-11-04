@@ -34,7 +34,10 @@
 
   <main class="espace">
     <section class="groupe">
-      <div class="barre" role="tablist" id="onglets"></div>
+      <div class="barre">
+        <div class="onglets" role="tablist" id="onglets"></div>
+        <button type="button" id="btn-formater" class="btn btn-ghost btn-sm outil" title="Formater le code de l'onglet (Maj + Alt + F)"><svg class="icone" aria-hidden="true"><use href="../commun/icones.svg#wand-sparkles"/></svg><span>Formater</span></button>
+      </div>
       <div class="panneaux" id="editeurs"></div>
     </section>
     <section class="groupe">
@@ -76,6 +79,7 @@
       <div class="onglets-dialogue" role="tablist" aria-label="Sections">
         <button type="button" role="tab" id="t-bibliotheques" aria-controls="p-bibliotheques" aria-selected="true" autofocus>Bibliothèques</button>
         <button type="button" role="tab" id="t-page" aria-controls="p-page" aria-selected="false" tabindex="-1">Page</button>
+        <button type="button" role="tab" id="t-editeur" aria-controls="p-editeur" aria-selected="false" tabindex="-1">Éditeur</button>
         <button type="button" role="tab" id="t-fragment" aria-controls="p-fragment" aria-selected="false" tabindex="-1">Fragment</button>
       </div>
 
@@ -100,6 +104,21 @@
         <label class="champ-dialogue"><span class="label">Attributs de &lt;body&gt;</span>
           <input id="attrs-body" class="input mono" placeholder='class="bg-base-200"' spellcheck="false" autocomplete="off">
         </label>
+      </section>
+
+      <section class="panneau-dialogue" id="p-editeur" role="tabpanel" aria-labelledby="t-editeur" hidden>
+        <div class="bloc-reglage bloc-option">
+          <label for="formater-enregistrement">
+            <span class="label">Formater à l'enregistrement</span>
+            <span class="aide description">Le code des onglets HTML, CSS et JS est mis en forme (Prettier) juste avant chaque enregistrement.
+              Une erreur de syntaxe n'empêche pas d'enregistrer : le code est alors enregistré tel quel.</span>
+          </label>
+          <input type="checkbox" class="checkbox" id="formater-enregistrement">
+        </div>
+        <p class="aide description">
+          Formatage ponctuel : bouton <strong>Formater</strong> au-dessus du code, ou <kbd>Maj + Alt + F</kbd>, pour l'onglet affiché.
+          Ce réglage est conservé dans ce navigateur et s'applique à tous les fragments.
+        </p>
       </section>
 
       <section class="panneau-dialogue" id="p-fragment" role="tabpanel" aria-labelledby="t-fragment" hidden>
