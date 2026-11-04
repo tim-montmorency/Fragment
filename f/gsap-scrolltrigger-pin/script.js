@@ -6,7 +6,7 @@ gsap.to(".contenu", {
   scrollTrigger: {
     trigger: ".section",
     start: "top top",
-    end: "+=2000", // dure sur 2000 px de défilement
+    end: "+=3000", // dure sur 2000 px de défilement
     pin: true,
     scrub: 1,
     markers: true,
