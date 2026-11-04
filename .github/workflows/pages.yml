@@ -17,6 +17,10 @@
 # et toutes les suivantes échouent (« due to in progress deployment »). L'étape « Débloquer »
 # annule ce déploiement avant de publier : grâce au groupe « pages », aucune autre publication
 # ne tourne à ce moment, donc tout déploiement encore en cours est forcément coincé.
+#
+# Nouvelles tentatives : si GitHub refuse quand même la publication (déploiement précédent
+# encore coincé de son côté, panne de Pages), elle est relancée après 2 minutes, puis après 5.
+# GitHub finit par libérer un déploiement coincé : la version la plus récente passe alors.
 
 name: Publication
 
@@ -40,7 +44,7 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: github-pages
-      url: ${{ steps.deploiement.outputs.page_url }}
+      url: ${{ steps.deploiement.outputs.page_url || steps.essai2.outputs.page_url || steps.essai3.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/configure-pages@v5
@@ -63,4 +67,20 @@ jobs:
             esac
           done
       - id: deploiement
+        continue-on-error: true
+        uses: actions/deploy-pages@v4
+
+      - name: Attendre 2 minutes avant un nouvel essai
+        if: steps.deploiement.outcome == 'failure'
+        run: sleep 120
+      - id: essai2
+        if: steps.deploiement.outcome == 'failure'
+        continue-on-error: true
+        uses: actions/deploy-pages@v4
+
+      - name: Attendre 5 minutes avant un dernier essai
+        if: steps.essai2.outcome == 'failure'
+        run: sleep 300
+      - id: essai3
+        if: steps.essai2.outcome == 'failure'
         uses: actions/deploy-pages@v4
