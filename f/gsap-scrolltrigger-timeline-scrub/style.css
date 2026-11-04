@@ -18,11 +18,11 @@
   height: min(10dvw, 10dvh);
 }
 
-.boite1 {
+.boite1,
+.boite2 {
   background: #0ae448;
 }
 .boite2 {
-  background: #0ae448;
   position: absolute;
   top: 0%;
   left: 0%;
