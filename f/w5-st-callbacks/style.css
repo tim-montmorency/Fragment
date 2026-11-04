@@ -45,7 +45,8 @@ body {
   height: 80vh;
   display: grid;
   place-items: center;
-  border: 2px dashed #FF2B47;
+  margin: 0 10px;
+  border: 4px dashed #FF2B47;
   font-size: 1.5rem;
   transition: background 0.3s;
 }

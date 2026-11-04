@@ -16,18 +16,13 @@ ScrollTrigger.create({
   markers: true,
   onEnter: () => show("onEnter"),
   onLeave: () => show("onLeave"),
-  onEnterBack: () =>
-    show("onEnterBack"),
-  onLeaveBack: () =>
-    show("onLeaveBack"),
+  onEnterBack: () => show("onEnterBack"),
+  onLeaveBack: () => show("onLeaveBack"),
+  
   // self : l'objet ScrollTrigger
   onUpdate: (self) => {
-    progressLabel.textContent =
-      self.progress.toFixed(2);
-    directionLabel.textContent =
-      self.direction === 1
-        ? "1 (bas)"
-        : "-1 (haut)";
+    progressLabel.textContent = self.progress.toFixed(2);
+    directionLabel.textContent = self.direction === 1 ? "1 (bas)" : "-1 (haut)";
   },
   // la classe, pendant que
   // la zone est active
