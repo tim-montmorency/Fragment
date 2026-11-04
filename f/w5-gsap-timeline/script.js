@@ -1,31 +1,27 @@
-// Une timeline : les tweens
-// s'enchaînent, dans l'ordre
+// Une timeline : 4 tweens identiques.
+// Seule la POSITION change.
 const tl = gsap.timeline({
   repeat: -1,
   repeatDelay: 1,
 });
 
-tl.from(".box", {
-    x: -300,
-    opacity: 0,
-    duration: 1,
-  })
-  // "-=0.5" : 0,5 s AVANT
-  // la fin du précédent
-  .from(".circle", {
-    scale: 0,
-    duration: 0.6,
+// 1 : rien, il commence à 0 s
+tl.to(".b1", { x: 200, duration: 1 })
+
+  // 2 : "-=0.5", commence 0,5 s
+  // AVANT la fin de 1 (chevauche)
+  .to(".b2", {
+    x: 200, duration: 1,
   }, "-=0.5")
-  // "<" : en même temps que
-  // le DÉBUT du précédent
-  .to(".box", {
-    rotation: 360,
-    duration: 0.6,
+
+  // 3 : "<", commence en MÊME
+  // temps que 2
+  .to(".b3", {
+    x: 200, duration: 1,
   }, "<")
-  // "+=0.3" : 0,3 s APRÈS
-  // la fin du précédent
-  .from(".title", {
-    y: 40,
-    opacity: 0,
-    duration: 0.5,
-  }, "+=0.3");
+
+  // 4 : "+=0.5", attend 0,5 s
+  // APRÈS la fin de 3
+  .to(".b4", {
+    x: 200, duration: 1,
+  }, "+=0.5");
