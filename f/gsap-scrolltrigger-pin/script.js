@@ -1,12 +1,14 @@
 gsap.registerPlugin(ScrollTrigger);
 
-gsap.from(".carte", {
-  y: 50,
-  opacity: 0,
-  duration: 1,
+gsap.to(".contenu", {
+  xPercent: -75, // 4 panneaux : on recule de 3 panneaux sur 4, soit 75 %
+  ease: "none", // mouvement linéaire, collé au défilement
   scrollTrigger: {
-    trigger: ".carte", // l'élément qui déclenche
-    start: "top 60%", // quand le haut de .carte croise la ligne à 60 % de l'écran
-    markers: true, // repères visuels (à retirer en production)
+    trigger: ".section",
+    start: "top top",
+    end: "+=2000", // dure sur 2000 px de défilement
+    pin: true, // fige la section pendant ce temps
+    scrub: 1,
+    markers: true,
   },
 });
