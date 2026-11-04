@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Web 5 - ScrollTrigger : scrub</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <p class="hint">Défilez dans le cadre ↓</p>
+  <div class="progress"></div>
+  <section class="space"></section>
+  <section class="stage">
+    <div class="lane">
+      <span>scrub: true</span>
+      <div class="box box--true"></div>
+    </div>
+    <div class="lane">
+      <span>scrub: 1</span>
+      <div class="box box--one"></div>
+    </div>
+  </section>
+  <section class="space"></section>
+
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>

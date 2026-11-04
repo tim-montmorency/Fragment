@@ -1,6 +1,78 @@
 {
   "fragments": [
     {
+      "nom": "w5-gsap-proprietes",
+      "titre": "Web 5 - GSAP : propriétés et paramètres",
+      "tags": [
+        "web5",
+        "gsap"
+      ],
+      "modifie": "2026-11-03"
+    },
+    {
+      "nom": "w5-gsap-timeline",
+      "titre": "Web 5 - GSAP : timeline et position",
+      "tags": [
+        "web5",
+        "gsap"
+      ],
+      "modifie": "2026-11-03"
+    },
+    {
+      "nom": "w5-gsap-reduced-motion",
+      "titre": "Web 5 - GSAP : prefers-reduced-motion avec matchMedia",
+      "tags": [
+        "web5",
+        "gsap"
+      ],
+      "modifie": "2026-11-03"
+    },
+    {
+      "nom": "w5-st-declencher",
+      "titre": "Web 5 - ScrollTrigger : start, markers et toggleActions",
+      "tags": [
+        "web5",
+        "gsap"
+      ],
+      "modifie": "2026-11-03"
+    },
+    {
+      "nom": "w5-st-scrub",
+      "titre": "Web 5 - ScrollTrigger : scrub",
+      "tags": [
+        "web5",
+        "gsap"
+      ],
+      "modifie": "2026-11-03"
+    },
+    {
+      "nom": "w5-st-pin-timeline",
+      "titre": "Web 5 - ScrollTrigger : timeline épinglée (pin + scrub)",
+      "tags": [
+        "web5",
+        "gsap"
+      ],
+      "modifie": "2026-11-03"
+    },
+    {
+      "nom": "w5-st-callbacks",
+      "titre": "Web 5 - ScrollTrigger : callbacks",
+      "tags": [
+        "web5",
+        "gsap"
+      ],
+      "modifie": "2026-11-03"
+    },
+    {
+      "nom": "w5-intersection-observer",
+      "titre": "Web 5 - IntersectionObserver : déclencher une fois",
+      "tags": [
+        "web5",
+        "js"
+      ],
+      "modifie": "2026-11-03"
+    },
+    {
       "nom": "exerc-abc-marie-mi",
       "titre": "Démo ABC Marie-Mi",
       "tags": [
