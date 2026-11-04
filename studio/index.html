@@ -105,6 +105,14 @@
           <input id="attrs-body" class="input mono" placeholder='class="bg-base-200"' spellcheck="false" autocomplete="off">
         </label>
         <div class="champ-dialogue">
+          <span class="label" id="libelle-avantCss">CSS chargé avant <code>style.css</code></span>
+          <div class="editeur-page" id="editeur-avantCss"></div>
+        </div>
+        <div class="champ-dialogue">
+          <span class="label" id="libelle-apresCss">CSS chargé après <code>style.css</code></span>
+          <div class="editeur-page" id="editeur-apresCss"></div>
+        </div>
+        <div class="champ-dialogue">
           <span class="label" id="libelle-avant">JavaScript exécuté avant <code>script.js</code></span>
           <div class="editeur-page" id="editeur-avant"></div>
         </div>
@@ -113,9 +121,11 @@
           <div class="editeur-page" id="editeur-apres"></div>
         </div>
         <p class="aide description">
-          Code caché : enregistré dans <code>avant.js</code> et <code>apres.js</code>, exécuté dans l'aperçu, la visionneuse
-          et les intégrations, mais jamais affiché dans les onglets. Ordre : bibliothèques, <code>avant.js</code>,
-          <code>script.js</code>, <code>apres.js</code>. Les <code>const</code>, <code>let</code> et <code>function</code>
+          Code caché : enregistré dans <code>avant.css</code>, <code>apres.css</code>, <code>avant.js</code> et
+          <code>apres.js</code>, utilisé dans l'aperçu, la visionneuse et les intégrations, mais jamais affiché dans les onglets.
+          Ordre : bibliothèques, puis <code>avant.css</code>, <code>style.css</code>, <code>apres.css</code>
+          (<code>apres.css</code> l'emporte à spécificité égale) et <code>avant.js</code>, <code>script.js</code>,
+          <code>apres.js</code>. Les <code>const</code>, <code>let</code> et <code>function</code>
           déclarés dans <code>avant.js</code> sont accessibles dans <code>script.js</code>, sauf en mode module
           (<code>import</code>) : passer alors par <code>window</code>.
         </p>
@@ -125,7 +135,7 @@
         <div class="bloc-reglage bloc-option">
           <label for="formater-enregistrement">
             <span class="label">Formater à l'enregistrement</span>
-            <span class="aide description">Le code des onglets HTML, CSS et JS (ainsi que <code>avant.js</code> et <code>apres.js</code>) est mis en forme (Prettier) juste avant chaque enregistrement.
+            <span class="aide description">Le code des onglets HTML, CSS et JS (ainsi que le code caché de l'onglet Page) est mis en forme (Prettier) juste avant chaque enregistrement.
               Une erreur de syntaxe n'empêche pas d'enregistrer : le code est alors enregistré tel quel.</span>
           </label>
           <input type="checkbox" class="checkbox" id="formater-enregistrement">

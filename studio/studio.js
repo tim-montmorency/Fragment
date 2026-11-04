@@ -7,6 +7,7 @@
  * Chaque fragment est généré dans f/<nom>/ :
  *   index.html, style.css, script.js et fragment.json (titre, tags, dates)
  *   avant.js et apres.js (facultatifs) : code caché exécuté avant / après script.js (Réglages → Page)
+ *   avant.css et apres.css (facultatifs) : styles cachés chargés avant / après style.css (Réglages → Page)
  * L'index central fragments.json (galerie) est mis à jour dans le même commit.
  */
 (() => {
@@ -41,13 +42,16 @@
     modifie: false,         // différent de la référence (dernière version ouverte ou enregistrée)
     reference: null,        // signature de cette version ; null = copie pas encore enregistrée
     avertissement: "",      // problème de lecture de la liste, réaffiché après le chargement
-    existants: { avant: false, apres: false }, // avant.js / apres.js présents dans le dossier du fragment
+    existants: {},          // avant.js, apres.js, avant.css, apres.css présents dans le dossier du fragment
     lignes: {},             // lignes de script.js, avant.js et apres.js dans l'aperçu (numéros des erreurs)
   };
 
   const editeurs = {};      // html, css, js → EditorView
-  const editeursPage = {};  // avant, apres → EditorView (Réglages → Page)
-  const FICHIERS_PAGE = { avant: "avant.js", apres: "apres.js" };
+  const editeursPage = {};  // avant, apres, avantCss, apresCss → EditorView (Réglages → Page)
+  const FICHIERS_PAGE = { avantCss: "avant.css", apresCss: "apres.css", avant: "avant.js", apres: "apres.js" };
+  /** Fichiers cachés présents (true) ou non, d'après le contenu des champs de Réglages → Page. */
+  const fichiersPagePresents = (present = (cle) => pageDefinie(cle)) =>
+    Object.fromEntries(Object.keys(FICHIERS_PAGE).map((cle) => [cle, present(cle)]));
   const lirePage = (cle) => (editeursPage[cle] ? editeursPage[cle].state.doc.toString() : "");
   const pageDefinie = (cle) => Boolean(lirePage(cle).trim());
 
@@ -157,6 +161,7 @@
     const modules = [];
     [...doc.head.children].forEach((el) => {
       if (el.matches('meta[charset], meta[name="viewport"], title, link[href$="style.css"]')) return;
+      if (el.matches("link[href]") && /^(\.\/)?(avant|apres)\.css$/i.test(el.getAttribute("href"))) return; // Réglages → Page
       if (el.matches('link[rel="stylesheet"][href]') && attributsSimples(el, ["rel", "href"])) {
         tete.push({ type: "css", url: el.getAttribute("href") });
       } else if (el.matches("script[src]") && attributsSimples(el, ["src"])) {
@@ -209,12 +214,16 @@
     compteur.textContent = biblios.length;
     const avant = pageDefinie("avant");
     const apres = pageDefinie("apres");
-    b.classList.toggle("defini", Boolean(html || body || avant || apres) && !biblios.length);
+    const avantCss = pageDefinie("avantCss");
+    const apresCss = pageDefinie("apresCss");
+    b.classList.toggle("defini", Boolean(html || body || avant || apres || avantCss || apresCss) && !biblios.length);
     const lignes = ["Réglages du fragment"];
     if (biblios.length) lignes.push(biblios.map((r) => (r.type === "module" ? r.cle : CDN.libelle(r))).join("\n"));
     if (html) lignes.push(`<html ${html}>`);
     if (body) lignes.push(`<body ${body}>`);
-    if (avant || apres) lignes.push(`JS ${avant && apres ? "avant et après" : avant ? "avant" : "après"} script.js`);
+    const quand = (av, ap) => (av && ap ? "avant et après" : av ? "avant" : "après");
+    if (avantCss || apresCss) lignes.push(`CSS ${quand(avantCss, apresCss)} style.css`);
+    if (avant || apres) lignes.push(`JS ${quand(avant, apres)} script.js`);
     b.dataset.infobulle = lignes.join("\n");
     b.removeAttribute("title");
     b.setAttribute("aria-label", "Réglages du fragment");
@@ -259,7 +268,10 @@
       '<meta name="viewport" content="width=device-width, initial-scale=1">',
       `<title>${echapper(titre)}</title>`,
       ...tete,
+      // Ordre : bibliothèques, avant.css, style.css, apres.css
+      ...(pageDefinie("avantCss") ? ['<link rel="stylesheet" href="avant.css">'] : []),
       '<link rel="stylesheet" href="style.css">',
+      ...(pageDefinie("apresCss") ? ['<link rel="stylesheet" href="apres.css">'] : []),
     ];
 
     const attrsHtml = nettoyerAttributs($("attrs-html").value);
@@ -321,7 +333,7 @@ ${corps.map((l) => "  " + l).join("\n")}
     // script.js, avant.js et apres.js en ligne ; data-fragment-* repère leurs lignes (numéros des erreurs)
     const SCRIPTS = { script: "js", avant: "avant", apres: "apres" };
     let doc = f["index.html"]
-      .replace(/<link rel="stylesheet" href="style\.css">/, () => `<style>\n${f["style.css"]}</style>`)
+      .replace(/<link rel="stylesheet" href="(style|avant|apres)\.css">/g, (m, nomStyle) => `<style>\n${f[`${nomStyle}.css`] || ""}</style>`)
       .replace(/<script( type="module")? src="(script|avant|apres)\.js"><\/script>/g, (m, type, nomScript) =>
         `<script data-fragment-${SCRIPTS[nomScript]}${type || ""}>\n${(f[`${nomScript}.js`] || "").replace(/<\/script/gi, "<\\/script")}</script>`);
     // Capteur d'erreurs en premier ; chemins relatifs (images, etc.) résolus dans le dossier du fragment
@@ -512,15 +524,15 @@ ${corps.map((l) => "  " + l).join("\n")}
     activer("html");
   }
 
-  /** Réglages → Page : code JavaScript exécuté avant et après script.js. */
+  /** Réglages → Page : CSS chargé avant / après style.css, JavaScript exécuté avant / après script.js. */
   function creerEditeursPage() {
-    Object.keys(FICHIERS_PAGE).forEach((cle) => {
+    Object.entries(FICHIERS_PAGE).forEach(([cle, fichier]) => {
       editeursPage[cle] = new CM.EditorView({
         doc: "",
         parent: $(`editeur-${cle}`),
         extensions: [
           CM.configuration({ numeros: true }),
-          CM.javascript(),
+          fichier.endsWith(".css") ? CM.css() : CM.javascript(),
           CM.githubSombre,
           CM.EditorView.contentAttributes.of({ "aria-labelledby": `libelle-${cle}` }),
           CM.EditorView.updateListener.of((maj) => { if (maj.docChanged) sourceModifiee(); }),
@@ -731,8 +743,8 @@ ${corps.map((l) => "  " + l).join("\n")}
 
   // ---------- Formatage (Prettier) ----------
 
-  const PARSEURS = { html: "html", css: "css", js: "babel", avant: "babel", apres: "babel" };
-  const NOMS_ONGLETS = { html: "HTML", css: "CSS", js: "JS", avant: "avant.js", apres: "apres.js" };
+  const PARSEURS = { html: "html", css: "css", js: "babel", avantCss: "css", apresCss: "css", avant: "babel", apres: "babel" };
+  const NOMS_ONGLETS = { html: "HTML", css: "CSS", js: "JS", ...FICHIERS_PAGE };
   let chargementPrettier = null;
 
   /** Prettier (vendor/prettier.js, voir outils/prettier) n'est chargé qu'au premier formatage. */
@@ -812,7 +824,7 @@ ${corps.map((l) => "  " + l).join("\n")}
     }
   }
 
-  /** Formatage à l'enregistrement (onglets HTML, CSS, JS, et avant.js / apres.js). Ne bloque jamais l'enregistrement ; retourne le problème éventuel. */
+  /** Formatage à l'enregistrement (onglets HTML, CSS, JS, et fichiers cachés de Réglages → Page). Ne bloque jamais l'enregistrement ; retourne le problème éventuel. */
   async function formaterTout() {
     try {
       await chargerPrettier();
@@ -1002,7 +1014,7 @@ ${corps.map((l) => "  " + l).join("\n")}
   const lireTags = (texte) =>
     [...new Set(texte.split(",").map((t) => t.trim().toLowerCase().replace(/\s+/g, "-")).filter(Boolean))];
 
-  function remplir({ ex, titre, tags, html, css, js, avant = "", apres = "", analyse, meta }) {
+  function remplir({ ex, titre, tags, html, css, js, page = {}, analyse, meta }) {
     etat.ex = ex;
     etat.meta = meta || {};
     etat.ressources = analyse ? analyse.ressources : [];
@@ -1013,11 +1025,12 @@ ${corps.map((l) => "  " + l).join("\n")}
     $("tags").value = (tags || []).join(", ");
     $("attrs-html").value = analyse?.attrsHtml || "";
     $("attrs-body").value = analyse?.attrsBody || "";
-    [["avant", avant], ["apres", apres]].forEach(([cle, texte]) => {
+    // Réglages → Page : { avant, apres, avantCss, apresCss } → texte
+    Object.keys(FICHIERS_PAGE).forEach((cle) => {
       const v = editeursPage[cle];
-      v.dispatch({ changes: { from: 0, to: v.state.doc.length, insert: texte } });
+      v.dispatch({ changes: { from: 0, to: v.state.doc.length, insert: page[cle] || "" } });
     });
-    etat.existants = { avant: Boolean(ex && avant.trim()), apres: Boolean(ex && apres.trim()) };
+    etat.existants = fichiersPagePresents((cle) => Boolean(ex && (page[cle] || "").trim()));
     indiquerReglages();
     remplacerEditeur("html", html);
     remplacerEditeur("css", css);
@@ -1048,14 +1061,15 @@ ${corps.map((l) => "  " + l).join("\n")}
 
   async function ouvrirExemple(nom) {
     statut("Ouverture…");
-    const [html, css, js, meta, avant, apres] = await Promise.all([
+    const clesPage = Object.keys(FICHIERS_PAGE);
+    const [html, css, js, meta, ...textesPage] = await Promise.all([
       lireTexte(`f/${nom}/index.html`),
       lireTexte(`f/${nom}/style.css`),
       lireTexte(`f/${nom}/script.js`),
       lireJson(`f/${nom}/fragment.json`),
-      lireTexte(`f/${nom}/avant.js`),
-      lireTexte(`f/${nom}/apres.js`),
+      ...clesPage.map((cle) => lireTexte(`f/${nom}/${FICHIERS_PAGE[cle]}`)),
     ]);
+    const page = Object.fromEntries(clesPage.map((cle, i) => [cle, (textesPage[i] || "").replace(/\s+$/, "")]));
     if (html === null) return statut("Impossible d'ouvrir ce fragment.", "erreur");
     const analyse = analyserIndex(html);
     remplir({
@@ -1065,8 +1079,7 @@ ${corps.map((l) => "  " + l).join("\n")}
       html: analyse.corps,
       css: (css || "").replace(/\s+$/, ""),
       js: (js || "").replace(/\s+$/, ""),
-      avant: (avant || "").replace(/\s+$/, ""),
-      apres: (apres || "").replace(/\s+$/, ""),
+      page,
       analyse,
       meta,
     });
@@ -1133,7 +1146,7 @@ ${corps.map((l) => "  " + l).join("\n")}
       const fichiers = {};
       Object.entries(genererFichiers()).forEach(([f, contenu]) => { fichiers[`f/${nom}/${f}`] = contenu; });
       fichiers[`f/${nom}/fragment.json`] = json(meta);
-      // avant.js / apres.js vidés : fichier retiré du dossier
+      // Fichiers cachés (Réglages → Page) vidés : retirés du dossier
       Object.entries(FICHIERS_PAGE).forEach(([cle, f]) => {
         if (existe && etat.existants[cle] && !pageDefinie(cle)) fichiers[`f/${nom}/${f}`] = null;
       });
@@ -1148,7 +1161,7 @@ ${corps.map((l) => "  " + l).join("\n")}
       etat.ex = nom;
       etat.copieDe = null;
       etat.meta = meta;
-      etat.existants = { avant: pageDefinie("avant"), apres: pageDefinie("apres") };
+      etat.existants = fichiersPagePresents();
       etat.reference = signatureEnvoyee;
       majAdresse();
       afficherListe();
@@ -1241,7 +1254,7 @@ ${corps.map((l) => "  " + l).join("\n")}
     etat.copieDe = etat.ex;
     etat.ex = null;
     etat.meta = {};
-    etat.existants = { avant: false, apres: false };
+    etat.existants = fichiersPagePresents(() => false);
     etat.reference = null; // nouveau dossier : à enregistrer même sans autre modification
     $("titre").value = titre || `${actuel} (copie)`;
     majAdresse();

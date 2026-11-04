@@ -48,8 +48,8 @@ Si un fragment est introuvable, l'iframe affiche un simple message : les notes n
 - Chaque enregistrement est un commit : tout reste récupérable dans l'historique.
 - Un fragment est un simple dossier `f/<nom>/` (`index.html`, `style.css`, `script.js`) : il peut aussi être modifié dans VS Code,
   puis poussé. Dans ce cas, **Réglages → Fragment → Jeton personnel, répertoire et index… → Reconstruire l'index** met la galerie à jour.
-- `avant.js` et `apres.js` (facultatifs, **Réglages → Page**) : code exécuté avant / après `script.js`, jamais affiché dans les onglets
-  (mise en place, fonctions utilitaires, etc.).
+- `avant.css` / `apres.css` et `avant.js` / `apres.js` (facultatifs, **Réglages → Page**) : styles chargés avant / après `style.css`
+  et code exécuté avant / après `script.js`, jamais affichés dans les onglets (mise en place, fonctions utilitaires, etc.).
 
 ## Maintenance
 
