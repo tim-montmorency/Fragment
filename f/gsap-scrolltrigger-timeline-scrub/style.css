@@ -1,37 +1,37 @@
-.carte {
-  width: 100%;
-  margin: 0;
-  padding: 2rem;
-  border-radius: 1rem;
+.scene {
+  height: 100vh;
+  display: grid;
+  align-content: center;
+  justify-content: center;
+  gap: 4rem;
+}
+
+.boites {
   position: relative;
-  z-index: 1;
-  background: rgb(10, 228, 72);
-  color: #0e100f;
 }
 
-.carte h2 {
-  margin-bottom: 0.5rem;
+.boite1,
+.boite2,
+.cercle,
+.triangle {
+  width: 60px;
+  height: 60px;
 }
 
-.carte-zone {
-  position: relative;
-  width: min(90%, 400px);
-  margin: 0 auto;
+.boite1 {
+  background: #0ae448;
 }
-
-.carte-phantom {
+.boite2 {
+  background: #0ae448;
   position: absolute;
-  inset: 0;
-  padding: 2rem;
-  border-radius: 1rem;
-  z-index: 0;
-  transform: translateY(50px);
-  pointer-events: none;
-
-  border: 3px dashed rgba(10, 228, 72, 0.125);
+  top: 0%;
+  left: 0%;
 }
-
-.gsap-marker-end,
-.gsap-marker-scroller-end {
-  /* opacity: 0; */
+.cercle {
+  background: #9d95ff;
+  border-radius: 50%;
+}
+.triangle {
+  background: #ff8709;
+  clip-path: polygon(50% 0, 100% 100%, 0 100%);
 }
