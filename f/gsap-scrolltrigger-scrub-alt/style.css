@@ -1,0 +1,46 @@
+/* --- Base commune aux exemples --- */
+* { box-sizing: border-box; margin: 0; }
+
+body {
+  font-family: system-ui, sans-serif;
+  background: #0e100f;
+  color: #fffce1;
+  overflow-x: hidden;
+}
+
+.espace {
+  height: 100vh;
+  display: grid;
+  place-items: center;
+  font-size: 1.25rem;
+  opacity: 0.6;
+}
+
+/* --- Propre à cet exemple --- */
+
+.barre {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 10;
+  width: 100%;
+  height: 10px;
+  background: #0ae448;
+  transform-origin: left center; /* grandit à partir de la gauche */
+  transform: scaleX(0);          /* état de départ : barre vide */
+}
+
+.section {
+  width: min(90%, 600px);
+  margin: 0 auto;
+  padding: 4rem 0;
+}
+
+.section h1 { margin-bottom: 1rem; }
+
+.section h2 {
+  margin-top: 60vh; /* de l'espace pour pouvoir défiler */
+  color: #0ae448;
+}
+
+.section p { line-height: 1.6; }
