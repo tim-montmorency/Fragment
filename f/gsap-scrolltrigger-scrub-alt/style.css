@@ -1,6 +1,9 @@
-@import url('https://fonts.googleapis.com/css2?family=Comforter&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Comforter&display=swap");
 
-* { box-sizing: border-box; margin: 0; }
+* {
+  box-sizing: border-box;
+  margin: 0;
+}
 
 body {
   font-family: system-ui, sans-serif;
@@ -28,7 +31,7 @@ body {
   height: 10px;
   background: #0ae448;
   transform-origin: left center; /* grandit à partir de la gauche */
-  transform: scaleX(0);          /* barre vide par défaut */
+  transform: scaleX(0); /* barre vide par défaut */
 }
 
 #main {
@@ -37,12 +40,12 @@ body {
   padding: 10vh 0 0;
 }
 
-p { 
+p {
   font-family: "Comforter", sans-serif;
   font-optical-sizing: auto;
   font-style: normal;
   color: #ffffff33;
-  
-  line-height: 2; 
+
+  line-height: 2;
   margin-bottom: 10vh;
 }
