@@ -18,7 +18,7 @@ body {
   opacity: 0.6;
 }
 
-/* --- Propre à cet exemple --- */
+/* --- Pin de panneaux --- */
 
 .section {
   overflow: hidden; /* cache les panneaux qui dépassent à droite */
