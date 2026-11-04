@@ -27,8 +27,8 @@ function allumer(i) {
 }
 ScrollTrigger.create({
   trigger: ".carte",
-  start: "top 80%",
-  end: "bottom 20%",
+  start: "top 66%",
+  end: "bottom 33%",
   onEnter: () => allumer(0),
   onLeave: () => allumer(1),
   onEnterBack: () => allumer(2),
