@@ -6,10 +6,10 @@ const tl = gsap.timeline({
 });
 
 tl.from(".box", {
-  x: -300,
-  opacity: 0,
-  duration: 1,
-})
+    x: -300,
+    opacity: 0,
+    duration: 1,
+  })
   // "-=0.5" : 0,5 s AVANT
   // la fin du précédent
   .from(".circle", {
