@@ -406,6 +406,12 @@ button.onglet:focus-visible {
   color: var(--foreground);
 }
 
+/* Enregistrer sans modification : grisé, mais infobulle et focus clavier conservés */
+#btn-enregistrer[aria-disabled="true"] {
+  opacity: 0.5;
+  cursor: default;
+}
+
 /* Onglets HTML / CSS / JS et bouton Formater (à droite) */
 .barre .onglets {
   display: flex;

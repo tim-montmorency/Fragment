@@ -38,7 +38,8 @@
     module: false,          // script.js chargé en type="module"
     extraTete: [],          // balises de <head> non reconnues, conservées telles quelles
     extraCorps: [],         // <script> non reconnus, conservés tels quels
-    modifie: false,
+    modifie: false,         // différent de la référence (dernière version ouverte ou enregistrée)
+    reference: null,        // signature de cette version ; null = copie pas encore enregistrée
     avertissement: "",      // problème de lecture de la liste, réaffiché après le chargement
     existants: { avant: false, apres: false }, // avant.js / apres.js présents dans le dossier du fragment
     lignes: {},             // lignes de script.js, avant.js et apres.js dans l'aperçu (numéros des erreurs)
@@ -432,8 +433,35 @@ ${corps.map((l) => "  " + l).join("\n")}
   }
 
   function marquerModifie() {
-    etat.modifie = true;
+    majEnregistrable();
     planifierApercu();
+  }
+
+  // ---------- Modifications à enregistrer ----------
+
+  /**
+   * Tout ce qu'un enregistrement écrirait (fichiers générés, titre compris, et tags).
+   * Comparée à la référence, elle indique s'il y a quelque chose à enregistrer :
+   * un retour à l'état d'origine (Ctrl + Z) désactive de nouveau le bouton.
+   */
+  const signature = () => JSON.stringify({ fichiers: genererFichiers(), tags: lireTags($("tags").value) });
+
+  const TEXTE_ENREGISTRER = "Enregistrer (Ctrl + S)";
+  const TEXTE_RIEN = "Aucune modification à enregistrer";
+
+  /** Met à jour etat.modifie et l'état du bouton Enregistrer (grisé, mais infobulle et clavier conservés). */
+  function majEnregistrable() {
+    etat.modifie = etat.reference === null || signature() !== etat.reference;
+    const b = $("btn-enregistrer");
+    b.setAttribute("aria-disabled", String(!etat.modifie));
+    b.removeAttribute("title");
+    b.dataset.infobulle = etat.modifie ? TEXTE_ENREGISTRER : TEXTE_RIEN;
+  }
+
+  /** La version affichée devient la référence (après ouverture ou enregistrement). */
+  function fixerReference(sig = signature()) {
+    etat.reference = sig;
+    majEnregistrable();
   }
 
   // ---------- Interface : éditeurs et bibliothèques ----------
@@ -996,7 +1024,7 @@ ${corps.map((l) => "  " + l).join("\n")}
     remplacerEditeur("js", js);
     afficherBibliotheques();
     majAdresse();
-    etat.modifie = false;
+    fixerReference();
     clearTimeout(minuterie);
     rafraichirApercu();
   }
@@ -1062,6 +1090,8 @@ ${corps.map((l) => "  " + l).join("\n")}
     [...liste].sort((a, b) => (b.modifie || "").localeCompare(a.modifie || "") || a.nom.localeCompare(b.nom));
 
   async function enregistrer() {
+    if ($("btn-enregistrer").disabled) return; // enregistrement déjà en cours
+    if (!etat.modifie) return statut(`${TEXTE_RIEN}.`);
     if (!$("titre").value.trim()) {
       $("titre").focus();
       return statut("Un titre est nécessaire pour enregistrer.", "erreur");
@@ -1098,6 +1128,8 @@ ${corps.map((l) => "  " + l).join("\n")}
       const liste = actuels.filter((f) => f.nom !== nom);
       liste.push({ nom, titre, tags, modifie: date });
 
+      // Version envoyée : devient la référence (une frappe pendant l'envoi reste « à enregistrer »)
+      const signatureEnvoyee = signature();
       const fichiers = {};
       Object.entries(genererFichiers()).forEach(([f, contenu]) => { fichiers[`f/${nom}/${f}`] = contenu; });
       fichiers[`f/${nom}/fragment.json`] = json(meta);
@@ -1117,7 +1149,7 @@ ${corps.map((l) => "  " + l).join("\n")}
       etat.copieDe = null;
       etat.meta = meta;
       etat.existants = { avant: pageDefinie("avant"), apres: pageDefinie("apres") };
-      etat.modifie = false;
+      etat.reference = signatureEnvoyee;
       majAdresse();
       afficherListe();
       suivrePublication(nom, titre, fichiers);
@@ -1129,6 +1161,7 @@ ${corps.map((l) => "  " + l).join("\n")}
       bouton.disabled = false;
       bouton.querySelector("use").setAttribute("href", "../commun/icones.svg#save");
       bouton.querySelector(".icone").classList.remove("tourne");
+      majEnregistrable();
     }
   }
 
@@ -1209,6 +1242,7 @@ ${corps.map((l) => "  " + l).join("\n")}
     etat.ex = null;
     etat.meta = {};
     etat.existants = { avant: false, apres: false };
+    etat.reference = null; // nouveau dossier : à enregistrer même sans autre modification
     $("titre").value = titre || `${actuel} (copie)`;
     majAdresse();
     marquerModifie();
