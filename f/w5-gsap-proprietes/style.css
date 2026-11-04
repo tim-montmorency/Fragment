@@ -10,13 +10,14 @@ body {
 
 .scene {
   min-height: 100vh;
+  padding: 60px;
   display: grid;
-  place-items: center;
+  place-items: left;
 }
 
 .box {
-  width: 90px;
-  height: 90px;
-  border-radius: 14px;
+  width: 70px;
+  height: 70px;
+  border-radius: 10px;
   background: #FF2B47;
 }
