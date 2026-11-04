@@ -28,7 +28,7 @@ body {
   height: 10px;
   background: #0ae448;
   transform-origin: left center; /* grandit à partir de la gauche */
-  transform: scaleX(0);          /* état de départ : barre vide */
+  transform: scaleX(0);          /* barre vide par défaut */
 }
 
 #main {
