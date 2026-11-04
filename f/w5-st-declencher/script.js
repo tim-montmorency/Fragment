@@ -3,7 +3,7 @@ gsap.registerPlugin(ScrollTrigger);
 gsap.from(".box", {
   x: -320,
   rotation: -360,
-  opacity: 0,
+  opacity: 0.3,
   duration: 3,
   scrollTrigger: {
     // l'élément observé
@@ -14,8 +14,7 @@ gsap.from(".box", {
     end: "bottom 35%",
     // les repères : à retirer à la fin
     markers: true,
-    // onEnter onLeave
-    // onEnterBack onLeaveBack
+    // onEnter onLeaveonEnterBack onLeaveBack
     toggleActions:
       "play complete reverse reset",
   },
