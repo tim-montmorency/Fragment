@@ -14,8 +14,11 @@ gsap.from(".box", {
     end: "bottom 35%",
     // les repères : à retirer à la fin
     markers: true,
-    // onEnter onLeaveonEnterBack onLeaveBack
+    
+    
     toggleActions:
-      "play complete reverse reset",
+    "play complete reverse reset",
+  // onEnter | onLeave | onEnterBack | onLeaveBack
+  // jouer | compléter | à l'envers | réinitialiser
   },
 });
