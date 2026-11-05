@@ -1,0 +1,31 @@
+.scene {
+  height: 100vh;
+  display: grid;
+  place-items: center;
+}
+
+.piste {
+  position: relative;
+  width: 80%;
+  height: 4px;
+  background: #444;
+}
+
+/* Les 3 points d'arrêt de snap: 0.5 */
+.arret {
+  position: absolute;
+  top: 2.5rem;
+  transform: translateX(-50%);
+  opacity: 0.6;
+}
+
+.boite {
+  position: absolute;
+  top: 50%;
+  left: 0%;
+  width: 60px;
+  height: 60px;
+  border-radius: 0.5rem;
+  background: #0ae448;
+  transform: translate(-50%, -50%); /* centre la boîte sur sa position */
+}
