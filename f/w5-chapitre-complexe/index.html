@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Web 5 - Un chapitre complexe : pin, calques, personnages</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="espace">Défilez ↓</div>
+
+  <!-- Le HTML que createMedia() construirait -->
+  <section class="chapitre" id="la-clairiere">
+    <h2>La clairière</h2>
+    <p>Au cœur de la forêt, la clairière s'ouvre.</p>
+    <div class="scene">
+      <img class="calque calque--ciel" alt=""
+           src="https://tim-montmorency.com/compendium/582-511-web5/js/assets/chapitre-complexe/ciel.svg">
+      <img class="calque calque--montagnes" alt=""
+           src="https://tim-montmorency.com/compendium/582-511-web5/js/assets/chapitre-complexe/montagnes.svg">
+      <img class="calque calque--foret-loin" alt=""
+           src="https://tim-montmorency.com/compendium/582-511-web5/js/assets/chapitre-complexe/foret-loin.svg">
+      <img class="calque calque--foret-proche" alt=""
+           src="https://tim-montmorency.com/compendium/582-511-web5/js/assets/chapitre-complexe/foret-proche.svg">
+      <img class="calque calque--herbes" alt=""
+           src="https://tim-montmorency.com/compendium/582-511-web5/js/assets/chapitre-complexe/herbes.svg">
+      <div class="voile"></div>
+      <img class="explosion" alt=""
+           src="https://tim-montmorency.com/compendium/582-511-web5/js/assets/chapitre-complexe/explosion.svg">
+      <img class="perso perso--gauche" alt="Le Chaperon rouge"
+           src="https://tim-montmorency.com/compendium/582-511-web5/js/assets/chapitre-complexe/chaperon.svg">
+      <img class="perso perso--droite" alt="Le loup"
+           src="https://tim-montmorency.com/compendium/582-511-web5/js/assets/chapitre-complexe/loup.svg">
+    </div>
+  </section>
+
+  <div class="espace">Fin du chapitre</div>
+
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
