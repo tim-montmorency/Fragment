@@ -12,38 +12,22 @@
     {
       "nom": "w5-split-text",
       "titre": "Web 5 - GSAP : SplitText",
+      "nom": "gsap-scrolltrigger-snap-tag",
+      "titre": "GSAP - Scrolltrigger Snap + Tag",
       "tags": [
-        "web5",
+        "web3",
         "gsap"
       ],
-      "modifie": "2026-11-04"
+      "modifie": "2026-11-05"
     },
     {
-      "nom": "w5-scramble-text",
-      "titre": "Web 5 - GSAP : ScrambleText",
+      "nom": "w5-st-declencher",
+      "titre": "Web 5 - ScrollTrigger : start, markers et toggleActions",
       "tags": [
         "web5",
         "gsap"
       ],
-      "modifie": "2026-11-04"
-    },
-    {
-      "nom": "w5-flip",
-      "titre": "Web 5 - GSAP : Flip",
-      "tags": [
-        "web5",
-        "gsap"
-      ],
-      "modifie": "2026-11-04"
-    },
-    {
-      "nom": "w5-scroll-to",
-      "titre": "Web 5 - GSAP : ScrollTo",
-      "tags": [
-        "web5",
-        "gsap"
-      ],
-      "modifie": "2026-11-04"
+      "modifie": "2026-11-05"
     },
     {
       "nom": "gsap-fromto",
@@ -127,6 +111,15 @@
       "modifie": "2026-11-04"
     },
     {
+      "nom": "w5-flip",
+      "titre": "Web 5 - GSAP : Flip",
+      "tags": [
+        "web5",
+        "gsap"
+      ],
+      "modifie": "2026-11-04"
+    },
+    {
       "nom": "w5-gsap-timeline",
       "titre": "Web 5 - GSAP : timeline et position",
       "tags": [
@@ -136,8 +129,8 @@
       "modifie": "2026-11-04"
     },
     {
-      "nom": "w5-st-callbacks",
-      "titre": "Web 5 - ScrollTrigger : callbacks",
+      "nom": "w5-scramble-text",
+      "titre": "Web 5 - GSAP : ScrambleText",
       "tags": [
         "web5",
         "gsap"
@@ -145,8 +138,26 @@
       "modifie": "2026-11-04"
     },
     {
-      "nom": "w5-st-declencher",
-      "titre": "Web 5 - ScrollTrigger : start, markers et toggleActions",
+      "nom": "w5-scroll-to",
+      "titre": "Web 5 - GSAP : ScrollTo",
+      "tags": [
+        "web5",
+        "gsap"
+      ],
+      "modifie": "2026-11-04"
+    },
+    {
+      "nom": "w5-split-text",
+      "titre": "Web 5 - GSAP : SplitText",
+      "tags": [
+        "web5",
+        "gsap"
+      ],
+      "modifie": "2026-11-04"
+    },
+    {
+      "nom": "w5-st-callbacks",
+      "titre": "Web 5 - ScrollTrigger : callbacks",
       "tags": [
         "web5",
         "gsap"
