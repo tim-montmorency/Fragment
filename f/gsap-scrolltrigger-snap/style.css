@@ -11,7 +11,6 @@
   background: #444;
 }
 
-/* Les 3 points d'arrêt de snap: 0.5 */
 .arret {
   position: absolute;
   top: 2.5rem;
@@ -27,5 +26,5 @@
   height: 60px;
   border-radius: 0.5rem;
   background: #0ae448;
-  transform: translate(-50%, -50%); /* centre la boîte sur sa position */
+  transform: translate(-50%, -50%);
 }
