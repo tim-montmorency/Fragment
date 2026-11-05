@@ -12,7 +12,7 @@ function animate(section) {
         scrollTrigger: {
           trigger: section,
           start: "top top",
-          end: "+=300%",
+          end: "+=600%",
           pin: true,
           scrub: 1,
         },
@@ -25,25 +25,32 @@ function animate(section) {
         scale: (i) => 1 + i * 0.2,
         duration: 3,
       })
-        // 2. Entre par la gauche
+        // 2. Entre par la gauche,
+        //    lentement
         .from(q(".perso--gauche"), {
           x: "-100vw",
-          duration: 1,
+          duration: 2,
         })
-        // 3. Entre par la droite...
+        // 3. Une pause ("+=1"), puis
+        //    entre par la droite...
         .from(q(".perso--droite"), {
           x: "100vw",
-          duration: 1,
-        })
+          duration: 3,
+        }, "+=1")
         // ... en même temps :
         // l'explosion et le noir
         .from(q(".explosion"), {
           scale: 0,
           opacity: 0,
+          duration: 1,
         }, "<")
         .to(q(".voile"), {
           opacity: 1,
-        }, "<");
+          duration: 3,
+        }, "<")
+        // 4. Une pause à la fin,
+        //    avant de libérer la scène
+        .to({}, { duration: 1.5 });
     }
   );
 }
