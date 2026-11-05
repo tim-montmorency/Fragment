@@ -27,12 +27,12 @@ function animate(section) {
       })
         // 2. Entre par la gauche
         .from(q(".perso--gauche"), {
-          x: "-50vw",
+          x: "-100vw",
           duration: 1,
         })
         // 3. Entre par la droite...
         .from(q(".perso--droite"), {
-          x: "50vw",
+          x: "100vw",
           duration: 1,
         })
         // ... en même temps :

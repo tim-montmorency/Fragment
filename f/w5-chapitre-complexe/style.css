@@ -69,4 +69,7 @@ body {
 }
 
 .perso--gauche { left: 12%; }
-.perso--droite { right: 12%; }
+.perso--droite {
+  right: 8%;
+  height: 26vh;  /* le loup : plus large que haut */
+}
