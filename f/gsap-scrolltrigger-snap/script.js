@@ -9,6 +9,6 @@ gsap.to(".boite", {
     end: "+=1000",
     pin: true,
     scrub: true,
-    snap: 0.5, // s'aimante à 0, 0.5 ou 1 : le début, le milieu ou la fin
+    snap: 0.5, // 0 = start, 0.5 = mi-chemin, 1 = end
   },
 });
