@@ -1,21 +1,28 @@
 {
   "fragments": [
     {
-      "nom": "w5-chapitre-complexe",
-      "titre": "Web 5 - Un chapitre, plusieurs médias en timeline",
+      "nom": "w5-scroll-to",
+      "titre": "Web 5 - GSAP : ScrollTo",
       "tags": [
         "web5",
+        "gsap"
+      ],
+      "modifie": "2026-11-06"
+    },
+    {
+      "nom": "gsap-scrolltrigger-snap-tag",
+      "titre": "GSAP - Scrolltrigger Snap + Tag",
+      "tags": [
+        "web3",
         "gsap"
       ],
       "modifie": "2026-11-05"
     },
     {
-      "nom": "w5-split-text",
-      "titre": "Web 5 - GSAP : SplitText",
-      "nom": "gsap-scrolltrigger-snap-tag",
-      "titre": "GSAP - Scrolltrigger Snap + Tag",
+      "nom": "w5-chapitre-complexe",
+      "titre": "Web 5 - Un chapitre, plusieurs médias en timeline",
       "tags": [
-        "web3",
+        "web5",
         "gsap"
       ],
       "modifie": "2026-11-05"
@@ -131,15 +138,6 @@
     {
       "nom": "w5-scramble-text",
       "titre": "Web 5 - GSAP : ScrambleText",
-      "tags": [
-        "web5",
-        "gsap"
-      ],
-      "modifie": "2026-11-04"
-    },
-    {
-      "nom": "w5-scroll-to",
-      "titre": "Web 5 - GSAP : ScrollTo",
       "tags": [
         "web5",
         "gsap"
