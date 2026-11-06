@@ -36,18 +36,16 @@ body {
   padding: 90vh 1.5rem 60vh;
 }
 
+/* Avant : une carte grise, bien visible */
 .card {
   padding: 2rem;
   border-radius: 12px;
-  background: #16161A;
+  background: #3A3A42;
   font-size: 1.25rem;
-  opacity: 0.2;
-  transition: opacity 0.6s, transform 0.6s;
-  transform: translateY(30px);
+  transition: background-color 0.6s;
 }
 
+/* Après : la carte devient rouge */
 .card.is-loaded {
-  opacity: 1;
-  transform: none;
-  border-left: 6px solid #FF2B47;
+  background: #FF2B47;
 }

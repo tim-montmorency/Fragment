@@ -1,37 +1,28 @@
-const countLabel =
-  document.querySelector(".count");
+// Le compteur « Chargés : 0 / 3 » (propre à la démo)
+const countLabel = document.querySelector(".count");
 let count = 0;
 
-// Appelée quand la visibilité
-// d'une carte change
-function onChange(entries) {
+const observer = new IntersectionObserver((entries) => {
   entries.forEach((entry) => {
+    // Pas encore visible : on ne fait rien
     if (!entry.isIntersecting) return;
 
-    // Ici : un fetch, une animation...
-    const card = entry.target;
-    card.classList.add("is-loaded");
+    // L'action : ici, une classe. Dans votre récit : un fetch, une animation...
+    entry.target.classList.add("is-loaded");
+
+    // Le compteur de la démo
     count++;
     countLabel.textContent = count;
 
-    // Une seule fois : on arrête
-    // d'observer cette carte
-    observer.unobserve(card);
+    // Une seule fois : on arrête de surveiller cette carte
+    observer.unobserve(entry.target);
   });
-}
+}, {
+  // 1 : la carte doit être visible à 100 %
+  threshold: 1,
+});
 
-// 20 % avant le bas de l'écran
-const options = {
-  rootMargin: "0px 0px -20% 0px",
-};
-
-const observer = new IntersectionObserver(
-  onChange,
-  options
-);
-
-document
-  .querySelectorAll(".card")
-  .forEach((card) => {
-    observer.observe(card);
-  });
+// On surveille chaque carte
+document.querySelectorAll(".card").forEach((card) => {
+  observer.observe(card);
+});
