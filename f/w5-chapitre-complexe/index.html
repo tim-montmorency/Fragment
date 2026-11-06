@@ -25,8 +25,29 @@
       <img class="calque calque--herbes" alt=""
            src="https://tim-montmorency.com/compendium/582-511-web5/js/assets/chapitre-complexe/herbes.svg">
       <div class="voile"></div>
-      <img class="explosion" alt=""
-           src="https://tim-montmorency.com/compendium/582-511-web5/js/assets/chapitre-complexe/explosion.svg">
+      <!-- MorphSVG : la tête du Chaperon devient une gueule.
+           Un SVG dans la page (pas une <img>) : GSAP doit
+           pouvoir modifier ses tracés. -->
+      <svg class="morph" viewBox="0 0 400 400" aria-hidden="true">
+        <!-- Départ : la capuche, le visage, les yeux -->
+        <path class="morph__capuche" d="M200,30 C250,70 340,120
+          340,230 C340,320 280,375 200,375 C120,375 60,320
+          60,230 C60,120 150,70 200,30 Z"/>
+        <path class="morph__visage" d="M200,160 C245,160 270,195
+          270,240 C270,285 245,315 200,315 C155,315 130,285
+          130,240 C130,195 155,160 200,160 Z"/>
+        <circle class="morph__oeil" cx="178" cy="235" r="6"/>
+        <circle class="morph__oeil" cx="222" cy="235" r="6"/>
+        <!-- Arrivée : les deux mâchoires, cachées en CSS -->
+        <path class="morph__haut" d="M30,190 C70,60 330,60
+          370,190 L340,184 L322,232 L300,188 L280,240 L258,190
+          L236,246 L214,192 L200,250 L186,192 L164,246 L142,190
+          L120,240 L100,188 L78,232 L60,184 Z"/>
+        <path class="morph__bas" d="M50,262 L72,300 L90,264
+          L112,312 L134,268 L156,318 L178,270 L200,322 L222,270
+          L244,318 L266,268 L288,312 L310,264 L328,300 L350,262
+          C330,370 70,370 50,262 Z"/>
+      </svg>
       <img class="perso perso--gauche" alt="Le Chaperon rouge"
            src="https://tim-montmorency.com/compendium/582-511-web5/js/assets/chapitre-complexe/chaperon.svg">
       <img class="perso perso--droite" alt="Le loup"
@@ -38,6 +59,7 @@
 
   <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/MorphSVGPlugin.min.js"></script>
   <script src="script.js"></script>
 </body>
 </html>

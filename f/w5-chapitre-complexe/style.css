@@ -54,12 +54,28 @@ body {
   opacity: 0;
 }
 
-.explosion {
+/* Le morph : du trait seulement (line art) */
+.morph {
   position: absolute;
   left: 50%;
   top: 35%;
   width: 40vh;
   translate: -50% -50%;
+  fill: none;
+  stroke: #E0233F;
+  stroke-width: 5;
+  stroke-linejoin: round;
+}
+
+.morph__oeil {
+  fill: #E0233F;
+  stroke: none;
+}
+
+/* Les formes d'arrivée : des modèles, invisibles */
+.morph__haut,
+.morph__bas {
+  visibility: hidden;
 }
 
 .perso {

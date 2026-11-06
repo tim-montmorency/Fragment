@@ -1,4 +1,4 @@
-gsap.registerPlugin(ScrollTrigger);
+gsap.registerPlugin(ScrollTrigger, MorphSVGPlugin);
 
 // Le même animate() que dans ch-05.js
 function animate(section) {
@@ -37,16 +37,32 @@ function animate(section) {
           x: "100vw",
           duration: 3,
         }, "+=1")
-        // ... en même temps :
-        // l'explosion et le noir
-        .from(q(".explosion"), {
-          scale: 0,
-          opacity: 0,
-          duration: 1,
-        }, "<")
+        // ... en même temps, le noir
         .to(q(".voile"), {
           opacity: 1,
           duration: 3,
+        }, "<")
+        // et la tête du Chaperon
+        // apparaît...
+        .from(q(".morph"), {
+          opacity: 0,
+          duration: 1,
+        }, "<")
+        // ... puis, 1 part plus tard ("<1"),
+        // devient une gueule
+        .to(q(".morph__capuche"), {
+          morphSVG: q(".morph__haut")[0],
+          stroke: "#F2F2F2",
+          duration: 2,
+        }, "<1")
+        .to(q(".morph__visage"), {
+          morphSVG: q(".morph__bas")[0],
+          stroke: "#F2F2F2",
+          duration: 2,
+        }, "<")
+        .to(q(".morph__oeil"), {
+          opacity: 0,
+          duration: 0.5,
         }, "<")
         // 4. Une pause à la fin,
         //    avant de libérer la scène
