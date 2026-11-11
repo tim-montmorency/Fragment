@@ -1,7 +1,7 @@
 document.querySelector("#scramble").addEventListener("click", () => {
   gsap.to("#classic", {
     duration: 3,
-    text: "Un brouillard étrange recouvre l'archipel...",
+    text: "Connais-toi toi-même",
     ease: "none",
   });
 });
