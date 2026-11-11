@@ -5,7 +5,51 @@
       "titre": "Web 5 - Vue : les personnages d'une API",
       "tags": [
         "web5",
-        "vue"
+        "vue"],
+      "modifie": "2026-11-11"
+    },
+    {
+      "nom": "gsap-drawsvgplugin",
+      "titre": "GSAP - DrawSVGPlugin",
+      "tags": [
+        "web3",
+        "gsap"
+      ],
+      "modifie": "2026-11-11"
+    },
+    {
+      "nom": "gsap-drawsvgplugin-scrolltrigger",
+      "titre": "GSAP - DrawSVGPlugin + ScrollTrigger",
+      "tags": [
+        "web3",
+        "gsap"
+      ],
+      "modifie": "2026-11-11"
+    },
+    {
+      "nom": "gsap-scrambletextplugin",
+      "titre": "GSAP - ScrambleTextPlugin",
+      "tags": [
+        "web3",
+        "gsap"
+      ],
+      "modifie": "2026-11-11"
+    },
+    {
+      "nom": "gsap-splittext",
+      "titre": "GSAP - SplitText",
+      "tags": [
+        "web3",
+        "gsap"
+      ],
+      "modifie": "2026-11-11"
+    },
+    {
+      "nom": "gsap-textplugin",
+      "titre": "GSAP - TextPlugin",
+      "tags": [
+        "web3",
+        "gsap"
       ],
       "modifie": "2026-11-11"
     },

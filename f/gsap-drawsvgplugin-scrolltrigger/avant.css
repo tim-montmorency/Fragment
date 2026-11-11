@@ -1,0 +1,19 @@
+body {
+  min-height: 100vh;
+  background: repeating-linear-gradient(
+    -45deg,
+    oklch(26.2% 0.051 172.552),
+    oklch(26.2% 0.051 172.552) 5px,
+    #0e100f 5px,
+    #0e100f 25px
+  );
+}
+
+.espace {
+  height: 100vh;
+  display: grid;
+  place-items: center;
+  color: white;
+  font-size: 1.25rem;
+  opacity: 0.6;
+}
