@@ -5,7 +5,7 @@ gsap.to("#car", {
   motionPath: {
     path: "#route", // un <path> SVG
     align: "#route", // place l'élément sur le tracé
-    alignOrigin: [0.5, 1], // le point de l'élément posé sur le tracé (ici, son centre)
+    alignOrigin: [0.5, 1], // le transformOrigin de l'auto posé sur le tracé
     autoRotate: true, // oriente l'élément selon la direction
   },
 });
