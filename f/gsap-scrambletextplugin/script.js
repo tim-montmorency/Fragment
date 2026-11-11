@@ -1,5 +1,5 @@
 document.querySelector("#scramble").addEventListener("click", () => {
-  gsap.to("#text", {
+  gsap.to("#classic", {
     duration: 1.5,
     scrambleText: {
       text: "Appuyez sur Start", // le texte final
