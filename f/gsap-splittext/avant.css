@@ -1,0 +1,45 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+}
+
+body {
+  font-family: system-ui, sans-serif;
+  color: #fffce1;
+  overflow-x: hidden;
+  background-color: #e5e5f7;
+  opacity: 0.8;
+  background:
+    radial-gradient(
+      circle,
+      transparent 20%,
+      #0e100f 20%,
+      #0e100f 80%,
+      transparent 80%,
+      transparent
+    ),
+    radial-gradient(
+        circle,
+        transparent 20%,
+        #0e100f 20%,
+        #0e100f 80%,
+        transparent 80%,
+        transparent
+      )
+      3vw 3vw,
+    linear-gradient(#21244f 2px, transparent 2px) 0 -1px,
+    linear-gradient(90deg, #21244f 2px, #0e100f 2px) -1px 0;
+  background-size:
+    6vw 6vw,
+    6vw 6vw,
+    3vw 3vw,
+    3vw 3vw;
+}
+
+.espace {
+  height: 100vh;
+  display: grid;
+  place-items: center;
+  font-size: 1.25rem;
+  opacity: 0.6;
+}

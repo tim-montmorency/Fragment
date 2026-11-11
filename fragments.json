@@ -1,6 +1,15 @@
 {
   "fragments": [
     {
+      "nom": "gsap-splittext",
+      "titre": "GSAP - SplitText",
+      "tags": [
+        "web3",
+        "gsap"
+      ],
+      "modifie": "2026-11-11"
+    },
+    {
       "nom": "w5-vue-oubli-actif",
       "titre": "Web 5 - Vue : l'oubli de la classe actif",
       "tags": [
