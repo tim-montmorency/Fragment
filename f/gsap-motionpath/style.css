@@ -1,11 +1,7 @@
 svg {
-  /* Affiche ce qui déborde du viewbox */
-  overflow: visible;
-
-  /* Prends la valeur la plus petite du 50% du viewport, soit verticalement ou horizontalement*/
-  width: 80vmin;
+  width: 90vw;
 }
 
 #car {
-  width: 8vmin;
+  width: 9vw;
 }
