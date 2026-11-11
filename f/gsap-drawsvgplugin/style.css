@@ -2,7 +2,9 @@ svg {
   /* Affiche ce qui déborde du viewbox */
   overflow: visible;
 
-  width: 50vw;
+  /* Dynamic Viewport Minimum
+  S'ajuste dynamiquement lorsque les barres d'outils du navigateur se déplient et se rétractent. */
+  width: 50vmin;
 }
 
 #catToDraw {
