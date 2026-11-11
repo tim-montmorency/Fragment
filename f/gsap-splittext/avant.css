@@ -1,12 +1,4 @@
-* {
-  box-sizing: border-box;
-  margin: 0;
-}
-
 body {
-  font-family: system-ui, sans-serif;
-  color: #fffce1;
-  overflow-x: hidden;
   min-height: 100vh;
   background: repeating-linear-gradient(
     -45deg,
