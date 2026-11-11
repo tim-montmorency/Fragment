@@ -1,0 +1,43 @@
+body {
+  min-height: 100vh;
+  background: repeating-linear-gradient(
+    -45deg,
+    oklch(26.2% 0.051 172.552),
+    oklch(26.2% 0.051 172.552) 5px,
+    #0e100f 5px,
+    #0e100f 25px
+  );
+  color: white;
+}
+
+.content {
+  margin: 20px;
+  padding-top: 4rem;
+  width: 100%;
+  max-width: 80ch;
+}
+
+nav {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  background: var(--color-just-black);
+  margin: 0;
+  padding: 1rem 10px;
+  display: flex;
+  justify-content: space-around;
+}
+
+h2 {
+  color: var(--color-surface-white);
+  font-size: 2rem;
+  margin-top: 4rem;
+}
+
+button {
+  border-color: transparent;
+}
+
+button:hover {
+  border-color: transparent;
+}
