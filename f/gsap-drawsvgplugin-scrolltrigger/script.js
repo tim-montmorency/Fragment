@@ -12,7 +12,6 @@ gsap.fromTo(
       trigger: "#miaw",
       start: "top 50%",
       end: "bottom 50%",
-      pin: true,
       scrub: 1,
       markers: true,
     },
