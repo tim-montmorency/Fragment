@@ -12,6 +12,7 @@ gsap.fromTo(
       end: "+=1500",
       pin: true,
       scrub: 1,
+      markers: true,
     },
   },
 );
