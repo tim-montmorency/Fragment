@@ -8,8 +8,8 @@ gsap.fromTo(
     drawSVG: "100%",
     scrollTrigger: {
       trigger: "#miaw",
-      start: "top 50%",
-      end: "bottom 50%",
+      start: "center 66%",
+      end: "center 33%",
       scrub: 1,
       markers: true,
     },
