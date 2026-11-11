@@ -1,7 +1,7 @@
 const tl = gsap.timeline({
   repeat: -1,
   yoyo: true,
-  defaults: { duration: 5, ease: "none" },
+  defaults: { duration: 3, ease: "none" },
 });
 
 tl.fromTo(
@@ -9,7 +9,8 @@ tl.fromTo(
   { drawSVG: "0%", visibility: "visible" },
   { drawSVG: "100%" },
   0,
-).to(
+);
+tl.to(
   "#car",
   {
     motionPath: {
@@ -19,5 +20,5 @@ tl.fromTo(
       autoRotate: true,
     },
   },
-  0,
+  "<",
 );
