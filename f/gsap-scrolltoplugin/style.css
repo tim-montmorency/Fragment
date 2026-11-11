@@ -1,6 +1,4 @@
-.content {
-  margin: 20px;
-  padding-top: 4rem;
-  width: 100%;
-  max-width: 80ch;
+p {
+  margin: 1rem 0;
+  opacity: 0.1;
 }
