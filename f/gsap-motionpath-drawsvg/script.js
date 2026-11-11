@@ -10,6 +10,7 @@ tl.fromTo(
   { drawSVG: "100%" },
   0,
 );
+
 tl.to(
   "#car",
   {
