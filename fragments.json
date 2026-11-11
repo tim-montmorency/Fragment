@@ -1,6 +1,15 @@
 {
   "fragments": [
     {
+      "nom": "gsap-draggable-inertiaplugin",
+      "titre": "GSAP - Draggable + InertiaPlugin",
+      "tags": [
+        "web3",
+        "gsap"
+      ],
+      "modifie": "2026-11-11"
+    },
+    {
       "nom": "gsap-drawsvgplugin",
       "titre": "GSAP - DrawSVGPlugin",
       "tags": [
