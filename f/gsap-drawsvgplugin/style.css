@@ -1,6 +1,9 @@
 svg {
   /* Affiche ce qui déborde du viewbox */
   overflow: visible;
+
+  width: 50vw;
+  margin: 0 auto;
 }
 
 #catToDraw {
