@@ -4,7 +4,7 @@ document.querySelector("#scramble").addEventListener("click", () => {
     scrambleText: {
       text: "All your base are belong to us", // le texte final
       chars: "upperAndLowerCase",
-      revealDelay: 0.5, // brouille x secondes avant de révéler
+      revealDelay: 0.25, // brouille x secondes avant de révéler
     },
   });
 });
