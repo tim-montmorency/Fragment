@@ -100,6 +100,15 @@
       "modifie": "2026-11-11"
     },
     {
+      "nom": "w5-gsap-reduced-motion",
+      "titre": "Web 5 - GSAP : prefers-reduced-motion avec matchMedia",
+      "tags": [
+        "web5",
+        "gsap"
+      ],
+      "modifie": "2026-11-11"
+    },
+    {
       "nom": "w5-vue-oubli-actif",
       "titre": "Web 5 - Vue : l'oubli de la classe actif",
       "tags": [
@@ -291,15 +300,6 @@
     {
       "nom": "w5-gsap-proprietes",
       "titre": "Web 5 - GSAP : propriétés et paramètres",
-      "tags": [
-        "web5",
-        "gsap"
-      ],
-      "modifie": "2026-11-03"
-    },
-    {
-      "nom": "w5-gsap-reduced-motion",
-      "titre": "Web 5 - GSAP : prefers-reduced-motion avec matchMedia",
       "tags": [
         "web5",
         "gsap"
