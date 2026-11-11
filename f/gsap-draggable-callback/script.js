@@ -4,8 +4,8 @@ Draggable.create("#el1", {
   inertia: true,
   onDragEnd() {
     // Si 50% de l'image draggé chevauche la zone
-    if (this.hitTest("#zone", "50%")) {
-      gsap.to("body", { backgroundColor: "red" });
+    if (this.hitTest("#zone", "90%")) {
+      gsap.to("body", { background: "black" });
     } else {
       gsap.to(this.target, { x: 0, y: 0 }); // retour à la case départ
     }
