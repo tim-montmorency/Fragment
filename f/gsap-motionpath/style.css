@@ -3,9 +3,9 @@ svg {
   overflow: visible;
 
   /* Prends la valeur la plus petite du 50% du viewport, soit verticalement ou horizontalement*/
-  width: 50vmin;
+  width: 80vmin;
 }
 
 #car {
-  width: 5vmin;
+  width: 8vmin;
 }
