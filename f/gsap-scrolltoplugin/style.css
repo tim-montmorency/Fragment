@@ -1,5 +1,18 @@
-document.querySelectorAll("nav button").forEach((btn, index) => {
-  btn.addEventListener("click", () => {
-    gsap.to(window, {duration: 1, scrollTo:{y:"#section" + (index + 1), offsetY:120}});
-  });
-});
+.content {
+  margin: 20px;
+  padding-top: 4rem;
+  width: 100%;
+  max-width: 80ch;
+}
+
+nav {
+  position: fixed;
+  top: 0;
+  z-index: 1000;
+  width: 100%;
+  background: var(--color-just-black);
+  margin: 0;
+  padding: 1rem 10px;
+  display: flex;
+  justify-content: space-around;
+}
