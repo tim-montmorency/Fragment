@@ -7,7 +7,7 @@ gsap.to("#car", {
     align: "#route", // place l'élément sur le tracé
     alignOrigin: [0.5, 1], // le transformOrigin de l'auto posé sur le tracé
     autoRotate: true, // oriente l'élément selon la direction
-    start: 0.2,
-    end: 0.8,
+    start: 0.1,
+    end: 0.9,
   },
 });
