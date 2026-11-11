@@ -20,6 +20,7 @@ body {
 nav {
   position: fixed;
   top: 0;
+  z-index: 1000;
   width: 100%;
   background: var(--color-just-black);
   margin: 0;
