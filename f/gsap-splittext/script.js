@@ -8,7 +8,7 @@ document.querySelector("#chars").addEventListener("click", () => {
     opacity: 0,
     duration: 0.7,
     ease: "power4",
-    // stagger: 0.04,
+    stagger: 0.04,
   });
 });
 
