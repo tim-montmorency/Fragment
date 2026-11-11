@@ -1,32 +1,18 @@
-.scene {
-  height: 100vh;
-  display: grid;
-  place-items: center;
-  border-top: 1px dashed purple;
-  border-bottom: 1px dashed purple;
+.text {
+  color: #dfdcff;
+  font-size: clamp(2rem, 12rem, 5vw);
+  line-height: 1.2;
+  box-sizing: border-box;
+  padding: 5%;
+  width: 100%;
+  text-align: center;
+  perspective: 500px;
 }
 
-.piste {
-  position: relative;
-  width: 80%;
-  height: 4px;
-  background: #444;
-}
-
-.arret {
-  position: absolute;
-  top: 2.5rem;
-  transform: translateX(-50%);
-  opacity: 0.6;
-}
-
-.boite {
-  position: absolute;
-  top: 50%;
-  left: 0%;
-  width: 60px;
-  height: 60px;
-  border-radius: 0.5rem;
-  background: #0ae448;
-  transform: translate(-50%, -50%);
+.button-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
 }

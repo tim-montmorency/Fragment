@@ -7,33 +7,16 @@ body {
   font-family: system-ui, sans-serif;
   color: #fffce1;
   overflow-x: hidden;
+  min-height: 100vh;
   background-color: #e5e5f7;
   opacity: 0.8;
-  background:
-    radial-gradient(
-      circle,
-      transparent 20%,
-      #0e100f 20%,
-      #0e100f 80%,
-      transparent 80%,
-      transparent
-    ),
-    radial-gradient(
-        circle,
-        transparent 20%,
-        #0e100f 20%,
-        #0e100f 80%,
-        transparent 80%,
-        transparent
-      )
-      3vw 3vw,
-    linear-gradient(#21244f 2px, transparent 2px) 0 -1px,
-    linear-gradient(90deg, #21244f 2px, #0e100f 2px) -1px 0;
-  background-size:
-    6vw 6vw,
-    6vw 6vw,
-    3vw 3vw,
-    3vw 3vw;
+  background: repeating-linear-gradient(
+    -45deg,
+    #21244f,
+    #21244f 5px,
+    #0e100f 5px,
+    #0e100f 25px
+  );
 }
 
 .espace {
