@@ -37,6 +37,15 @@
       "modifie": "2026-11-11"
     },
     {
+      "nom": "gsap-motionpath-drawsvg",
+      "titre": "GSAP - MotionPath + DrawSVG",
+      "tags": [
+        "web3",
+        "gsap"
+      ],
+      "modifie": "2026-11-11"
+    },
+    {
       "nom": "gsap-scrambletextplugin",
       "titre": "GSAP - ScrambleTextPlugin",
       "tags": [
