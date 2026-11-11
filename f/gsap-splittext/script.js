@@ -1,5 +1,3 @@
-gsap.registerPlugin(SplitText);
-
 let split = SplitText.create(".text", { type: "chars,words,lines" });
 
 document.querySelector("#chars").addEventListener("click", () => {
