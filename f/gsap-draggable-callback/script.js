@@ -3,7 +3,7 @@ Draggable.create("#el1", {
   bounds: ".container",
   inertia: true,
   onDragEnd() {
-    if (this.hitTest(".zone", "50%")) {
+    if (this.hitTest("#zone", "50%")) {
       // 50 % de la clé chevauche le coffre
       ouvrirCoffre();
     } else {
