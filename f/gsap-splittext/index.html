@@ -1,18 +1,20 @@
 <!doctype html>
-<html lang="fr">
+<html lang="fr" data-theme="black">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>GSAP - SplitText</title>
-  <link rel="stylesheet" href="avant.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daisyui@5.7.50/daisyui.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.3.5/dist/index.global.min.js"></script>
   <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="apres.css">
 </head>
 <body>
-  <div class="container">
-    <div class="button-wrapper">
-      <button id="chars" class="button">Lettres</button>
-      <button id="words" class="button">Mots</button>
-      <button id="lines" class="button">Lignes</button>
+  <div class="w-xl mx-auto text-center">
+    <div class="mb-5">
+      <button id="chars" class="btn">Lettres</button>
+      <button id="words" class="btn">Mots</button>
+      <button id="lines" class="btn">Lignes</button>
     </div>
     <div class="text">
       Ah ! comme la neige a neigé ! Ma vitre est un jardin de givre. Ah ! comme la

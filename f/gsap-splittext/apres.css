@@ -8,8 +8,6 @@ body {
   color: #fffce1;
   overflow-x: hidden;
   min-height: 100vh;
-  background-color: #e5e5f7;
-  opacity: 0.8;
   background: repeating-linear-gradient(
     -45deg,
     #21244f,
@@ -17,12 +15,4 @@ body {
     #0e100f 5px,
     #0e100f 25px
   );
-}
-
-.espace {
-  height: 100vh;
-  display: grid;
-  place-items: center;
-  font-size: 1.25rem;
-  opacity: 0.6;
 }
