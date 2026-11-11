@@ -1,7 +1,7 @@
 const tl = gsap.timeline({
   repeat: -1,
-
-  defaults: { duration: 10, ease: "none", yoyo: true },
+  yoyo: true,
+  defaults: { duration: 10, ease: "none" },
 });
 
 tl.fromTo(
