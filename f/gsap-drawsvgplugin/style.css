@@ -7,7 +7,6 @@ svg {
 }
 
 #catToDraw {
-  /* Cache au chargement de la page.
-     Sera affiché via GSAP */
+  /* Cache au chargement de la page. Sera affiché via GSAP */
   visibility: hidden;
 }
