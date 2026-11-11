@@ -10,6 +10,15 @@
       "modifie": "2026-11-11"
     },
     {
+      "nom": "gsap-drawsvgplugin-scrolltrigger",
+      "titre": "GSAP - DrawSVGPlugin + ScrollTrigger",
+      "tags": [
+        "web3",
+        "gsap"
+      ],
+      "modifie": "2026-11-11"
+    },
+    {
       "nom": "gsap-scrambletextplugin",
       "titre": "GSAP - ScrambleTextPlugin",
       "tags": [
