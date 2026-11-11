@@ -1,5 +1,6 @@
 const tl = gsap.timeline({
   repeat: -1,
+  yoyo: true,
   defaults: { duration: 10, ease: "none" },
 });
 
