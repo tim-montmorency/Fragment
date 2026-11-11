@@ -4,15 +4,3 @@
   width: 100%;
   max-width: 80ch;
 }
-
-nav {
-  position: fixed;
-  top: 0;
-  z-index: 1000;
-  width: 100%;
-  background: black;
-  margin: 0;
-  padding: 1rem 10px;
-  display: flex;
-  justify-content: space-around;
-}
