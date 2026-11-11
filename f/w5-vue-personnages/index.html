@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Web 5 - Vue : les personnages d'une API</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main id="app">
+    <!-- La recherche : v-model relie le champ à la donnée « name » -->
+    <form class="search" @submit.prevent="loadCharacters">
+      <input v-model="name" placeholder="Rechercher un nom (ex. Rick)"
+             aria-label="Rechercher un nom">
+      <button>Chercher</button>
+    </form>
+
+    <!-- Les filtres : un bouton par statut, l'actif en rouge -->
+    <div class="filters">
+      <button v-for="option in statuses" :key="option.value"
+              :class="{ actif: option.value === status }"
+              @click="setStatus(option.value)">
+        {{ option.label }}
+      </button>
+    </div>
+
+    <p class="message" v-if="message">{{ message }}</p>
+
+    <!-- Une carte par personnage reçu de l'API -->
+    <ul class="cards">
+      <li class="card" v-for="character in characters" :key="character.id">
+        <img :src="character.image" :alt="character.name" loading="lazy">
+        <h2>{{ character.name }}</h2>
+        <p class="status" :class="'status--' + character.status.toLowerCase()">
+          {{ labels[character.status] }}
+        </p>
+      </li>
+    </ul>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/vue@3.5.13/dist/vue.global.prod.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>

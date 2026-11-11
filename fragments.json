@@ -1,6 +1,15 @@
 {
   "fragments": [
     {
+      "nom": "w5-vue-personnages",
+      "titre": "Web 5 - Vue : les personnages d'une API",
+      "tags": [
+        "web5",
+        "vue"
+      ],
+      "modifie": "2026-11-11"
+    },
+    {
       "nom": "w5-vue-oubli-actif",
       "titre": "Web 5 - Vue : l'oubli de la classe actif",
       "tags": [

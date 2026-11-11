@@ -1,0 +1,99 @@
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  padding: 1.25rem;
+  background: #0A0A0A;
+  color: #F2F2F2;
+  font-family: system-ui, sans-serif;
+}
+
+.search {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+input {
+  flex: 1;
+  padding: 0.55rem 0.8rem;
+  border: 1px solid #3A3A42;
+  border-radius: 8px;
+  background: #1A1A1F;
+  color: #F2F2F2;
+  font: inherit;
+}
+
+button {
+  padding: 0.55rem 1rem;
+  border: 0;
+  border-radius: 8px;
+  background: #3A3A42;
+  color: #F2F2F2;
+  font: 600 0.95rem system-ui, sans-serif;
+  cursor: pointer;
+}
+
+.search button {
+  background: #F2F2F2;
+  color: #0A0A0A;
+}
+
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+/* Le filtre actif : en rouge */
+.filters .actif {
+  background: #FF2B47;
+}
+
+.message {
+  color: #9A9AA2;
+}
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 0.75rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.card {
+  overflow: hidden;
+  border-radius: 12px;
+  background: #1A1A1F;
+}
+
+.card img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: cover;
+}
+
+.card h2 {
+  margin: 0.5rem 0.75rem 0.25rem;
+  font-size: 0.95rem;
+}
+
+.status {
+  margin: 0 0.75rem 0.75rem;
+  font-size: 0.8rem;
+}
+
+/* La couleur selon le statut */
+.status::before {
+  content: "●";
+  margin-right: 0.35rem;
+}
+
+.status--alive::before { color: #3DDC84; }
+.status--dead::before { color: #FF2B47; }
+.status--unknown::before { color: #9A9AA2; }
