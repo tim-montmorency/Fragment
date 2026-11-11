@@ -7,9 +7,9 @@ gsap.fromTo(
     ease: "power1.inOut",
 
     scrollTrigger: {
-      trigger: "#catToDraw",
-      start: "top top",
-      end: "+=1500",
+      trigger: "#miaw",
+      start: "top 50%",
+      end: "bottom 50%",
       pin: true,
       scrub: 1,
       markers: true,
