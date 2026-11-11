@@ -10,7 +10,7 @@ nav {
   top: 0;
   z-index: 1000;
   width: 100%;
-  background: var(--color-just-black);
+  background: black;
   margin: 0;
   padding: 1rem 10px;
   display: flex;
