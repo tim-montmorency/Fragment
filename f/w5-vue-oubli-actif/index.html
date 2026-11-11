@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Web 5 - Vue : l'oubli de la classe actif</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <button class="next">Chapitre suivant →</button>
+
+  <main class="panels">
+    <!-- À gauche : JavaScript seul -->
+    <section class="panel vanilla">
+      <h2>JavaScript seul</h2>
+      <p class="actuel"></p>
+      <ol>
+        <li><a>La forêt</a></li>
+        <li><a>La maison</a></li>
+        <li><a>Le loup</a></li>
+        <li><a>La fin</a></li>
+      </ol>
+    </section>
+
+    <!-- À droite : Vue -->
+    <section class="panel vue">
+      <h2>Avec Vue</h2>
+      <p class="actuel">{{ chapters[activeIndex].titre }}</p>
+      <ol>
+        <li v-for="(chapter, index) in chapters" :key="chapter.id">
+          <a :class="{ actif: index === activeIndex }">{{ chapter.titre }}</a>
+        </li>
+      </ol>
+    </section>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/vue@3.5.13/dist/vue.global.prod.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>

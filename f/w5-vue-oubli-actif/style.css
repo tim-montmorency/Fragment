@@ -1,0 +1,65 @@
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  padding: 1.25rem;
+  background: #0A0A0A;
+  color: #F2F2F2;
+  font-family: system-ui, sans-serif;
+}
+
+.next {
+  display: block;
+  margin: 0 auto 1.25rem;
+  padding: 0.6rem 1.2rem;
+  border: 0;
+  border-radius: 8px;
+  background: #F2F2F2;
+  color: #0A0A0A;
+  font: 600 1rem system-ui, sans-serif;
+  cursor: pointer;
+}
+
+.panels {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.panel {
+  padding: 1rem 1.25rem;
+  border-radius: 12px;
+  background: #1A1A1F;
+}
+
+h2 {
+  margin: 0 0 0.5rem;
+  font-size: 0.85rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #9A9AA2;
+}
+
+.actuel {
+  margin: 0 0 0.75rem;
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+ol {
+  margin: 0;
+  padding-left: 1.25rem;
+  line-height: 2;
+}
+
+a {
+  color: #9A9AA2;
+  transition: color 0.3s;
+}
+
+/* Le chapitre actif : en rouge */
+a.actif {
+  color: #FF2B47;
+  font-weight: 700;
+}
