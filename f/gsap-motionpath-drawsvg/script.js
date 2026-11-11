@@ -10,11 +10,15 @@ tl.fromTo(
   { drawSVG: "100%" },
   0,
 );
-tl.to("#car", {
-  motionPath: {
-    path: "#route",
-    align: "#route",
-    alignOrigin: [0.5, 1],
-    autoRotate: true,
+tl.to(
+  "#car",
+  {
+    motionPath: {
+      path: "#route",
+      align: "#route",
+      alignOrigin: [0.5, 1],
+      autoRotate: true,
+    },
   },
-});
+  "<",
+);
