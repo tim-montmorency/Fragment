@@ -1,6 +1,15 @@
 {
   "fragments": [
     {
+      "nom": "gsap-scrambletextplugin",
+      "titre": "GSAP - ScrambleTextPlugin",
+      "tags": [
+        "web3",
+        "gsap"
+      ],
+      "modifie": "2026-11-11"
+    },
+    {
       "nom": "gsap-splittext",
       "titre": "GSAP - SplitText",
       "tags": [
