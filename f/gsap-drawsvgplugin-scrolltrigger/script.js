@@ -6,7 +6,6 @@ gsap.fromTo(
   },
   {
     drawSVG: "100%",
-    duration: 3,
     scrollTrigger: {
       trigger: "#miaw",
       start: "top 50%",
