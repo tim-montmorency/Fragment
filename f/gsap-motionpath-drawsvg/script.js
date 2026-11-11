@@ -17,7 +17,7 @@ tl.to(
     motionPath: {
       path: "#route",
       align: "#route",
-      alignOrigin: [0.5, 1],
+      alignOrigin: [0, 1],
       autoRotate: true,
     },
   },
