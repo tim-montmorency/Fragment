@@ -1,6 +1,15 @@
 {
   "fragments": [
     {
+      "nom": "gsap-draggable-callback",
+      "titre": "GSAP - Draggable + callback",
+      "tags": [
+        "web3",
+        "gsap"
+      ],
+      "modifie": "2026-11-11"
+    },
+    {
       "nom": "gsap-draggable-inertiaplugin",
       "titre": "GSAP - Draggable + InertiaPlugin",
       "tags": [
