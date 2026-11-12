@@ -1,0 +1,93 @@
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  padding: 1.25rem;
+  background: #0A0A0A;
+  color: #F2F2F2;
+  font-family: system-ui, sans-serif;
+}
+
+.form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: end;
+}
+
+label {
+  display: grid;
+  gap: 0.3rem;
+  color: #9A9AA2;
+  font-size: 0.8rem;
+}
+
+.wide { flex: 1; min-width: 16rem; }
+
+input {
+  padding: 0.55rem 0.8rem;
+  border: 1px solid #3A3A42;
+  border-radius: 8px;
+  background: #1A1A1F;
+  color: #F2F2F2;
+  font: 0.95rem ui-monospace, monospace;
+}
+
+button {
+  padding: 0.55rem 1rem;
+  border: 0;
+  border-radius: 8px;
+  background: #F2F2F2;
+  color: #0A0A0A;
+  font: 600 0.95rem system-ui, sans-serif;
+  cursor: pointer;
+}
+
+.examples {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 0.9rem 0;
+}
+
+.examples button {
+  background: #1A1A1F;
+  color: #9A9AA2;
+  font: 0.8rem ui-monospace, monospace;
+}
+
+.steps {
+  margin: 0 0 1rem;
+  padding-left: 1.4rem;
+  font: 0.9rem ui-monospace, monospace;
+  line-height: 1.9;
+}
+
+.steps code { color: #F2F2F2; }
+.type { color: #9A9AA2; }
+.ok::marker { color: #3DDC84; }
+.erreur::marker,
+.erreur { color: #FF2B47; }
+.conseil { display: block; color: #F2F2F2; font-family: system-ui, sans-serif; }
+
+.result img {
+  width: 160px;
+  image-rendering: pixelated;
+  background: #1A1A1F;
+  border-radius: 12px;
+}
+
+.result pre {
+  max-height: 260px;
+  overflow: auto;
+  padding: 0.75rem;
+  border-radius: 8px;
+  background: #1A1A1F;
+  font-size: 0.8rem;
+}
+
+.valeur {
+  font: 1.5rem ui-monospace, monospace;
+  color: #FF2B47;
+}

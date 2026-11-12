@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Web 5 - JSON : trouver le chemin vers une donnée</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <form class="form">
+    <label>
+      Pokémon
+      <input class="name" value="pikachu" aria-label="Nom du Pokémon">
+    </label>
+    <label class="wide">
+      Le chemin
+      <input class="path" value="data.sprites.front_default"
+             aria-label="Chemin vers la donnée" spellcheck="false">
+    </label>
+    <button>Essayer</button>
+  </form>
+
+  <!-- Des chemins à essayer, du plus simple au plus difficile -->
+  <div class="examples">
+    <button data-path="data.name">data.name</button>
+    <button data-path="data.sprites.front_default">data.sprites.front_default</button>
+    <button data-path="data.types[0].type.name">data.types[0].type.name</button>
+    <button data-path="data.sprites.other.official-artwork.front_default">avec un tiret?</button>
+  </div>
+
+  <ol class="steps"></ol>
+  <div class="result"></div>
+
+  <script src="script.js"></script>
+</body>
+</html>

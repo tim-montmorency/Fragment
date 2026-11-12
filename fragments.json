@@ -1,6 +1,15 @@
 {
   "fragments": [
     {
+      "nom": "w5-json-chemin",
+      "titre": "Web 5 - JSON : trouver le chemin vers une donnée",
+      "tags": [
+        "web5",
+        "js"
+      ],
+      "modifie": "2026-11-12"
+    },
+    {
       "nom": "gsap-draggable-callback",
       "titre": "GSAP - Draggable + callback",
       "tags": [
