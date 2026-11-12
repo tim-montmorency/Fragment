@@ -30,10 +30,16 @@ function splitPath(path) {
   while (rest.length > 0) {
     const match = rest.match(pattern);
     if (!match) {
-      throw new Error(rest.startsWith("-")
-        ? "Une clé avec un tiret s'écrit entre crochets et guillemets :"
-          + ' ["official-artwork"]'
-        : "Je ne comprends pas cette partie : " + rest);
+      if (rest.startsWith("-") && steps.length > 0) {
+        // Le tiret : JavaScript y voit une soustraction
+        const before = steps[steps.length - 1].key;
+        const after = rest.slice(1).match(/^[\w-]*/)[0].split("-")[0];
+        const key = before + "-" + after;
+        throw new Error(`JavaScript lit le tiret comme une soustraction :
+          ${before} moins ${after}. Une clé avec un tiret s'écrit entre
+          crochets et guillemets : ["${key}"]`);
+      }
+      throw new Error("Je ne comprends pas cette partie : " + rest);
     }
     if (match[1] !== undefined) steps.push({ key: match[1], text: "." + match[1] });
     if (match[2] !== undefined) steps.push({ index: Number(match[2]), text: "[" + match[2] + "]" });

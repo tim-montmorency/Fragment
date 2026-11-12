@@ -25,7 +25,19 @@
     <button data-path="data.name">data.name</button>
     <button data-path="data.sprites.front_default">data.sprites.front_default</button>
     <button data-path="data.types[0].type.name">data.types[0].type.name</button>
-    <button data-path="data.sprites.other.official-artwork.front_default">avec un tiret?</button>
+  </div>
+
+  <!-- Le piège : une clé avec un tiret -->
+  <div class="examples piege">
+    <span>Une clé avec un tiret :</span>
+    <button class="faux"
+            data-path="data.sprites.other.official-artwork.front_default">
+      ✗ .official-artwork
+    </button>
+    <button class="bon"
+            data-path='data.sprites.other["official-artwork"].front_default'>
+      ✓ ["official-artwork"]
+    </button>
   </div>
 
   <ol class="steps"></ol>

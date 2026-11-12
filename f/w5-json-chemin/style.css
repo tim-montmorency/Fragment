@@ -57,6 +57,16 @@ button {
   font: 0.8rem ui-monospace, monospace;
 }
 
+.piege {
+  align-items: center;
+  margin-top: -0.4rem;
+  color: #9A9AA2;
+  font-size: 0.8rem;
+}
+
+.piege .faux { border: 1px solid #FF2B47; color: #FF2B47; }
+.piege .bon { border: 1px solid #3DDC84; color: #3DDC84; }
+
 .steps {
   margin: 0 0 1rem;
   padding-left: 1.4rem;
