@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Web 5 - API : site multipage ou application web</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Le choix du mode -->
+  <div class="modes" role="group" aria-label="Façon de construire le site">
+    <button class="mode" data-mode="mpa">
+      Site multipage <small>web classique</small>
+    </button>
+    <button class="mode" data-mode="app">
+      Application web <small>web moderne</small>
+    </button>
+  </div>
+  <p class="explain"></p>
+
+  <div class="layout">
+    <!-- Un faux navigateur, avec sa barre d'adresse -->
+    <div class="browser">
+      <div class="bar">
+        <span class="dots"><i></i><i></i><i></i></span>
+        <span class="address"></span>
+      </div>
+      <div class="progress"></div>
+
+      <!-- La page du musée -->
+      <div class="page">
+        <header class="site-header">
+          <strong>Musée</strong>
+          <nav>Collection · Expositions · Visiter</nav>
+        </header>
+
+        <form class="search">
+          <input class="query" autocomplete="off" spellcheck="false"
+                 placeholder="Un artiste, un sujet…" aria-label="Rechercher une œuvre">
+          <button>Rechercher</button>
+          <ul class="suggestions" hidden></ul>
+          <p class="hint"></p>
+        </form>
+
+        <p class="count"></p>
+        <ul class="grid"></ul>
+        <button class="more"></button>
+
+        <footer class="site-footer">Pied de page · Heures · Accès · Infolettre</footer>
+      </div>
+    </div>
+
+    <!-- Ce qui voyage entre le navigateur et le serveur -->
+    <aside class="log">
+      <h2>Ce qui voyage <span class="total"></span></h2>
+      <ol class="requests"></ol>
+      <p class="source"></p>
+    </aside>
+  </div>
+
+  <script src="donnees-figees.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>

@@ -1,6 +1,15 @@
 {
   "fragments": [
     {
+      "nom": "w5-api-galerie",
+      "titre": "Web 5 - API : site multipage ou application web",
+      "tags": [
+        "web5",
+        "js"
+      ],
+      "modifie": "2026-11-12"
+    },
+    {
       "nom": "w5-json-chemin",
       "titre": "Web 5 - JSON : trouver le chemin vers une donnée",
       "tags": [
