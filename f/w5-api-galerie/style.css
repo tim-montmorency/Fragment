@@ -97,7 +97,7 @@ body {
 }
 
 .page {
-  height: 500px;
+  height: 420px;
   overflow: auto;
   padding: 0 1rem 1rem;
   transition: opacity 0.15s;
