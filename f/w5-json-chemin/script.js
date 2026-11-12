@@ -25,25 +25,16 @@ function splitPath(path) {
   }
   const steps = [];
   let rest = path.slice(4);
-  const pattern = /^(?:\.([A-Za-z_$][\w$]*)|\[(\d+)\]|\[["']([^"']+)["']\])/;
+  // .cle-avec-tiret (le piège), .cle, [0] ou ["cle"]
+  const pattern = /^(?:\.([A-Za-z_$][\w$]*(?:-[\w$]+)+)|\.([A-Za-z_$][\w$]*)|\[(\d+)\]|\[["']([^"']+)["']\])/;
 
   while (rest.length > 0) {
     const match = rest.match(pattern);
-    if (!match) {
-      if (rest.startsWith("-") && steps.length > 0) {
-        // Le tiret : JavaScript y voit une soustraction
-        const before = steps[steps.length - 1].key;
-        const after = rest.slice(1).match(/^[\w-]*/)[0].split("-")[0];
-        const key = before + "-" + after;
-        throw new Error(`JavaScript lit le tiret comme une soustraction :
-          ${before} moins ${after}. Une clé avec un tiret s'écrit entre
-          crochets et guillemets : ["${key}"]`);
-      }
-      throw new Error("Je ne comprends pas cette partie : " + rest);
-    }
-    if (match[1] !== undefined) steps.push({ key: match[1], text: "." + match[1] });
-    if (match[2] !== undefined) steps.push({ index: Number(match[2]), text: "[" + match[2] + "]" });
-    if (match[3] !== undefined) steps.push({ key: match[3], text: '["' + match[3] + '"]' });
+    if (!match) throw new Error("Je ne comprends pas cette partie : " + rest);
+    if (match[1] !== undefined) steps.push({ key: match[1], dash: true, text: "." + match[1] });
+    if (match[2] !== undefined) steps.push({ key: match[2], text: "." + match[2] });
+    if (match[3] !== undefined) steps.push({ index: Number(match[3]), text: "[" + match[3] + "]" });
+    if (match[4] !== undefined) steps.push({ key: match[4], text: '["' + match[4] + '"]' });
     rest = rest.slice(match[0].length);
   }
   return steps;
@@ -72,8 +63,22 @@ function follow(path) {
     return;
   }
 
-  for (const step of steps) {
+  for (const [i, step] of steps.entries()) {
     soFar += step.text;
+
+    // Le piège du tiret : on montre aussi les étapes suivantes, qui échouent
+    if (step.dash) {
+      const [before, after] = step.key.split("-");
+      addStep(`<code>${soFar}</code> <span class="conseil">échoue : JavaScript
+        lit le tiret comme une soustraction (${before} moins ${after}).
+        Écrivez plutôt <code>["${step.key}"]</code>.</span>`, "erreur");
+      for (const next of steps.slice(i + 1)) {
+        soFar += next.text;
+        addStep(`<code>${soFar}</code> <span class="conseil">échoue aussi :
+          l'étape précédente a échoué.</span>`, "erreur");
+      }
+      return;
+    }
 
     // Un tableau demande un index, un objet demande une clé
     if (Array.isArray(current) && step.key !== undefined) {
