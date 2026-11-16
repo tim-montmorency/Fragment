@@ -1,21 +1,21 @@
 gsap.registerPlugin(Flip);
 
-const grille =
+const grid =
   document.querySelector(".grille");
-const bouton =
+const button =
   document.querySelector(".bouton");
 
-bouton.addEventListener("click", () => {
+button.addEventListener("click", () => {
   // 1. Mémoriser où sont les cartes
-  const etat = Flip.getState(".carte");
+  const state = Flip.getState(".carte");
 
   // 2. Changer la mise en page
   //    (ici : une classe CSS)
-  grille.classList.toggle("en-ligne");
+  grid.classList.toggle("en-ligne");
 
   // 3. Animer de l'ancienne
   //    position à la nouvelle
-  Flip.from(etat, {
+  Flip.from(state, {
     duration: 0.8,
     ease: "power2.inOut",
     stagger: 0.05,
