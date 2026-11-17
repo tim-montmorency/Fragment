@@ -1,0 +1,10 @@
+body {
+  min-height: 100vh;
+  background: repeating-linear-gradient(
+    -45deg,
+    oklch(26.2% 0.051 172.552),
+    oklch(26.2% 0.051 172.552) 5px,
+    #0e100f 5px,
+    #0e100f 25px
+  );
+}

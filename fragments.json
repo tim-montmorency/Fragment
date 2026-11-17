@@ -1,6 +1,15 @@
 {
   "fragments": [
     {
+      "nom": "gsap-splittext-selector",
+      "titre": "GSAP - SplitText Selector",
+      "tags": [
+        "web3",
+        "gsap"
+      ],
+      "modifie": "2026-11-17"
+    },
+    {
       "nom": "w5-api-galerie",
       "titre": "Web 5 - API : site multipage ou application web",
       "tags": [
