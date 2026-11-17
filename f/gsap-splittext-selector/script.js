@@ -3,6 +3,7 @@ let tableau = SplitText.create(".text", { type: "chars,words,lines" });
 document.querySelector("#chars").addEventListener("click", () => {
   gsap.from(tableau.chars[2], {
     opacity: 0,
+    rotation: 180,
     duration: 0.5,
     ease: "power4",
   });
