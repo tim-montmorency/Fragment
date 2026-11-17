@@ -1,12 +1,11 @@
 let split = SplitText.create(".text", { type: "chars,words,lines" });
 
 document.querySelector("#chars").addEventListener("click", () => {
-  gsap.from(split.chars, {
+  gsap.from(split.chars[2], {
     x: 150,
     opacity: 0,
     duration: 0.7,
     ease: "power4",
-    stagger: 0.04,
   });
 });
 
