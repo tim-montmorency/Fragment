@@ -25,7 +25,6 @@ document.querySelector("#lines").addEventListener("click", () => {
     {
       opacity: 1,
       duration: 1,
-      ease: "power3",
     },
   );
 });
