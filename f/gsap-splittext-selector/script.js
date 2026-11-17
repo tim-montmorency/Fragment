@@ -11,9 +11,8 @@ document.querySelector("#chars").addEventListener("click", () => {
 
 document.querySelector("#words").addEventListener("click", () => {
   gsap.from(tableau.words[2], {
-    y: -100,
+    x: -100,
     opacity: 0,
-    rotation: "random(-80, 80)",
     duration: 0.5,
     ease: "back",
   });
