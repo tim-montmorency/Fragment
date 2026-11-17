@@ -1,7 +1,7 @@
-let a = SplitText.create(".text", { type: "chars" });
+let tableau = SplitText.create(".text", { type: "chars,words,lines" });
 
 document.querySelector("#chars").addEventListener("click", () => {
-  gsap.from(a.chars[2], {
+  gsap.from(tableau.chars[2], {
     x: 150,
     opacity: 0,
     duration: 0.7,
@@ -9,10 +9,8 @@ document.querySelector("#chars").addEventListener("click", () => {
   });
 });
 
-let b = SplitText.create(".text", { type: "words" });
-
 document.querySelector("#words").addEventListener("click", () => {
-  gsap.from(b.words[2], {
+  gsap.from(tableau.words[2], {
     y: -100,
     opacity: 0,
     rotation: "random(-80, 80)",
@@ -21,10 +19,8 @@ document.querySelector("#words").addEventListener("click", () => {
   });
 });
 
-let c = SplitText.create(".text", { type: "lines" });
-
 document.querySelector("#lines").addEventListener("click", () => {
-  gsap.from(c.lines[2], {
+  gsap.from(tableau.lines[2], {
     rotationX: -100,
     transformOrigin: "50% 50% -160px",
     opacity: 0,
