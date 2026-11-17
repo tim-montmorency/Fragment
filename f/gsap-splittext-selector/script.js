@@ -20,8 +20,6 @@ document.querySelector("#words").addEventListener("click", () => {
 
 document.querySelector("#lines").addEventListener("click", () => {
   gsap.from(tableau.lines[2], {
-    rotationX: -100,
-    transformOrigin: "50% 50% -160px",
     opacity: 0,
     duration: 0.5,
     ease: "power3",
