@@ -19,9 +19,13 @@ document.querySelector("#words").addEventListener("click", () => {
 });
 
 document.querySelector("#lines").addEventListener("click", () => {
-  gsap.fromTo(tableau.lines[2], {opacity: 1}{
-    opacity: 0,
-    duration: 1,
-    ease: "power3",
-  });
+  gsap.fromTo(
+    tableau.lines[2],
+    { opacity: 1 },
+    {
+      opacity: 0,
+      duration: 1,
+      ease: "power3",
+    },
+  );
 });
