@@ -1,6 +1,15 @@
 {
   "fragments": [
     {
+      "nom": "gsap-scrambletextplugin",
+      "titre": "GSAP - ScrambleTextPlugin",
+      "tags": [
+        "web3",
+        "gsap"
+      ],
+      "modifie": "2026-11-20"
+    },
+    {
       "nom": "gsap-splittext",
       "titre": "GSAP - SplitText",
       "tags": [
@@ -93,15 +102,6 @@
     {
       "nom": "gsap-motionpath-drawsvg",
       "titre": "GSAP - MotionPath + DrawSVG",
-      "tags": [
-        "web3",
-        "gsap"
-      ],
-      "modifie": "2026-11-11"
-    },
-    {
-      "nom": "gsap-scrambletextplugin",
-      "titre": "GSAP - ScrambleTextPlugin",
       "tags": [
         "web3",
         "gsap"
