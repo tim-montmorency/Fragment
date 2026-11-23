@@ -3,8 +3,10 @@ const bouton = document.querySelector("#lecture");
 
 bouton.addEventListener("click", () => {
   if (video.paused) {
+    bouton.innerHTML = "Pause";
     video.play();
   } else {
+    bouton.innerHTML = "Jouer";
     video.pause();
   }
 });
