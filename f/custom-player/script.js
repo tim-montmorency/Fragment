@@ -16,3 +16,7 @@ video.addEventListener("timeupdate", () => {
   const pourcent = (video.currentTime / video.duration) * 100;
   document.querySelector("#barre").style.width = pourcent + "%";
 });
+
+video.addEventListener("ended", () => {
+  bouton.innerHTML = "Rejouer";
+});
