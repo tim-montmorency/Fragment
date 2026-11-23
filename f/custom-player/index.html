@@ -10,21 +10,36 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body class="flex items-center justify-center">
-  <main class="lecteur">
-    <video id="film">
-      <source
-        src="https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.webm"
-        type="video/webm"
-      />
-    </video>
+  <div class="min-h-screen grid place-items-center font-sans">
+    <main class="w-[90vw] max-w-2xl">
+      <video
+        id="film"
+        class="block w-full rounded-t-lg"
+        poster="https://interactive-examples.mdn.mozilla.net/media/examples/flower.jpg"
+      >
+        <source
+          src="https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.webm"
+          type="video/webm"
+        />
+        <source
+          src="https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4"
+          type="video/mp4"
+        />
+      </video>
 
-    <div class="controles">
-      <button id="lecture">Jouer</button>
-      <div class="piste">
-        <div id="barre"></div>
+      <div class="flex items-center gap-4 p-3 bg-neutral-800 rounded-b-lg">
+        <button
+          id="lecture"
+          class="px-4 py-2 rounded bg-red-600 hover:bg-red-700 text-white font-bold cursor-pointer"
+        >
+          Lecture / Pause
+        </button>
+        <div class="flex-1 h-2 bg-neutral-600 rounded overflow-hidden">
+          <div id="barre" class="w-0 h-full bg-red-600"></div>
+        </div>
       </div>
-    </div>
-  </main>
+    </main>
+  </div>
 
   <script src="https://cdn.jsdelivr.net/npm/gsap@3.15.1/dist/gsap.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/gsap@3.15.1/dist/ScrambleTextPlugin.min.js"></script>
