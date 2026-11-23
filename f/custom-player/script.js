@@ -1,10 +1,16 @@
-document.querySelector("#scramble").addEventListener("click", () => {
-  gsap.to("#classic", {
-    duration: 1.5,
-    scrambleText: {
-      text: "All your base are belong to us", // le texte final
-      chars: "upperAndLowerCase",
-      revealDelay: 1, // brouille x secondes avant de révéler
-    },
-  });
+const video = document.querySelector("#film");
+const bouton = document.querySelector("#lecture");
+
+bouton.addEventListener("click", () => {
+  if (video.paused) {
+    video.play();
+  } else {
+    video.pause();
+  }
+});
+
+// Barre de progression
+video.addEventListener("timeupdate", () => {
+  const pourcent = (video.currentTime / video.duration) * 100;
+  document.querySelector("#barre").style.width = pourcent + "%";
 });
