@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="fr" data-theme="black">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Lecteur video</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daisyui@5.7.50/daisyui.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.3.5/dist/index.global.min.js"></script>
+  <link rel="stylesheet" href="avant.css">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="flex items-center justify-center">
+  <div class="min-h-screen grid place-items-center font-sans">
+    <main class="w-[90vw] max-w-2xl">
+      <video id="film" class="block w-full rounded-t-lg">
+        <source
+          src="https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.webm"
+          type="video/webm"
+        />
+      </video>
+    </main>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
