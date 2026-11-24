@@ -25,6 +25,16 @@ label {
 
 .wide { flex: 1; min-width: 16rem; }
 
+/* Le champ Pokémon : juste assez large pour « pikachu » */
+.name { width: 9ch; box-sizing: content-box; }
+
+/* « Tester ce chemin » sur 2 lignes : un bouton plus étroit */
+.tester {
+  padding-top: 0.25rem;
+  padding-bottom: 0.25rem;
+  line-height: 1;
+}
+
 input {
   padding: 0.55rem 0.8rem;
   border: 1px solid #3A3A42;
