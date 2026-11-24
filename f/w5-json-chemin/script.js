@@ -80,7 +80,7 @@ function follow(path) {
       return;
     }
 
-    // Un tableau demande un index, un objet demande une clé
+    // Un tableau demande un index, un objet demande une propriété
     if (Array.isArray(current) && step.key !== undefined) {
       addStep(`<code>${soFar}</code> <span class="conseil">C'est un tableau :
         il faut un index, comme [0].</span>`, "erreur");
@@ -88,7 +88,7 @@ function follow(path) {
     }
     if (!Array.isArray(current) && step.index !== undefined) {
       addStep(`<code>${soFar}</code> <span class="conseil">Ce n'est pas un
-        tableau : il faut une clé, comme .name.</span>`, "erreur");
+        tableau : il faut une propriété, comme .name.</span>`, "erreur");
       return;
     }
 
@@ -96,7 +96,7 @@ function follow(path) {
 
     if (current === undefined) {
       addStep(`<code>${soFar}</code> <span class="conseil">undefined : cette
-        clé ou cet index n'existe pas ici. Vérifiez l'orthographe.</span>`,
+        propriété ou cet index n'existe pas ici. Vérifiez l'orthographe.</span>`,
         "erreur");
       return;
     }
