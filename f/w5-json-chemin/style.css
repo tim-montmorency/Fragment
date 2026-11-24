@@ -57,30 +57,38 @@ button {
   margin-bottom: 0.4rem;
 }
 
-/* Les 5 chemins : de vrais boutons, tous pareils */
+/* Les 5 chemins : des boutons blancs, comme « Tester ce chemin » */
 .examples button {
-  border: 1px solid #3A3A42;
-  background: #1A1A1F;
-  color: #F2F2F2;
-  font: 0.85rem ui-monospace, monospace;
-  transition: border-color 0.15s, background 0.15s;
+  background: #F2F2F2;
+  color: #0A0A0A;
+  font: 600 0.85rem ui-monospace, monospace;
 }
 
-.examples button:hover,
-.examples button:focus-visible {
-  border-color: #F2F2F2;
-  background: #26262D;
+/* Survol : tous les boutons, y compris « Tester ce chemin » */
+button {
+  transition: background 0.15s, transform 0.15s;
 }
 
-/* Le chemin en cours */
+button:hover,
+button:focus-visible {
+  background: #CFCFD4;
+  transform: translateY(-1px);
+}
+
+/* Le chemin en cours : vert, sauf le chemin qui échoue (rouge) */
 .examples button.actif {
-  border-color: #FF2B47;
+  outline: 3px solid #3DDC84;
+  outline-offset: 2px;
+}
+
+.examples button.actif:has(.faux) {
+  outline-color: #FF2B47;
 }
 
 /* Seul le symbole est en couleur */
 .marque { font-weight: 700; }
-.faux { color: #FF2B47; }
-.bon { color: #3DDC84; }
+.faux { color: #D61F3A; }
+.bon { color: #13884B; }
 
 .steps {
   margin: 1.2rem 0 1rem;
