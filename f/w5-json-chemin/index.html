@@ -21,6 +21,7 @@
   </form>
 
   <!-- Des chemins à essayer, du plus simple au plus difficile -->
+  <p class="groupe">Des chemins à essayer</p>
   <div class="examples">
     <button data-path="data.name">data.name</button>
     <button data-path="data.sprites.front_default">data.sprites.front_default</button>
@@ -28,15 +29,13 @@
   </div>
 
   <!-- Le piège : une clé avec un tiret -->
-  <div class="examples piege">
-    <span>Une clé avec un tiret :</span>
-    <button class="faux"
-            data-path="data.sprites.other.official-artwork.front_default">
-      ✗ .official-artwork
+  <p class="groupe">Une clé avec un tiret</p>
+  <div class="examples">
+    <button data-path="data.sprites.other.official-artwork.front_default">
+      <span class="marque faux">✗</span> .official-artwork
     </button>
-    <button class="bon"
-            data-path='data.sprites.other["official-artwork"].front_default'>
-      ✓ ["official-artwork"]
+    <button data-path='data.sprites.other["official-artwork"].front_default'>
+      <span class="marque bon">✓</span> ["official-artwork"]
     </button>
   </div>
 

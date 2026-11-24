@@ -44,31 +44,46 @@ button {
   cursor: pointer;
 }
 
-.examples {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  margin: 0.9rem 0;
-}
-
-.examples button {
-  background: #1A1A1F;
-  color: #9A9AA2;
-  font: 0.8rem ui-monospace, monospace;
-}
-
-.piege {
-  align-items: center;
-  margin-top: -0.4rem;
+.groupe {
+  margin: 1rem 0 0.4rem;
   color: #9A9AA2;
   font-size: 0.8rem;
 }
 
-.piege .faux { border: 1px solid #FF2B47; color: #FF2B47; }
-.piege .bon { border: 1px solid #3DDC84; color: #3DDC84; }
+.examples {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 0.4rem;
+}
+
+/* Les 5 chemins : de vrais boutons, tous pareils */
+.examples button {
+  border: 1px solid #3A3A42;
+  background: #1A1A1F;
+  color: #F2F2F2;
+  font: 0.85rem ui-monospace, monospace;
+  transition: border-color 0.15s, background 0.15s;
+}
+
+.examples button:hover,
+.examples button:focus-visible {
+  border-color: #F2F2F2;
+  background: #26262D;
+}
+
+/* Le chemin en cours */
+.examples button.actif {
+  border-color: #FF2B47;
+}
+
+/* Seul le symbole est en couleur */
+.marque { font-weight: 700; }
+.faux { color: #FF2B47; }
+.bon { color: #3DDC84; }
 
 .steps {
-  margin: 0 0 1rem;
+  margin: 1.2rem 0 1rem;
   padding-left: 1.4rem;
   font: 0.9rem ui-monospace, monospace;
   line-height: 1.9;

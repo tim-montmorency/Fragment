@@ -136,8 +136,13 @@ form.addEventListener("submit", (event) => {
   run();
 });
 
-document.querySelectorAll(".examples button").forEach((button) => {
+const exampleButtons = document.querySelectorAll(".examples button");
+
+exampleButtons.forEach((button) => {
   button.addEventListener("click", () => {
+    // Le bouton cliqué devient le chemin en cours
+    exampleButtons.forEach((other) => other.classList.remove("actif"));
+    button.classList.add("actif");
     pathInput.value = button.dataset.path;
     run();
   });
