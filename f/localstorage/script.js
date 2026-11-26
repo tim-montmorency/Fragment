@@ -1,22 +1,25 @@
-const video = document.querySelector("#film");
-const bouton = document.querySelector("#lecture");
+// Clé utilisée dans localStorage
+const CLE = "nom";
 
-bouton.addEventListener("click", () => {
-  if (video.paused) {
-    bouton.innerHTML = "Pause";
-    video.play();
-  } else {
-    bouton.innerHTML = "Jouer";
-    video.pause();
-  }
+const champ = document.querySelector("#nom");
+const etat = document.querySelector("#etat");
+const etatTexte = document.querySelector("#etat-texte");
+
+// Au chargement de la page :
+// Met le contenu de la clé localstorage nom dans le champ
+champ.value = localStorage.getItem(CLE);
+
+// Enregistrer
+document.querySelector("#btn-enregistrer").addEventListener("click", () => {
+  localStorage.setItem(CLE, champ.value);
 });
 
-// Barre de progression
-video.addEventListener("timeupdate", () => {
-  const pourcent = (video.currentTime / video.duration) * 100;
-  document.querySelector("#barre").style.width = pourcent + "%";
+// Supprimer
+document.querySelector("#btn-supprimer").addEventListener("click", () => {
+  localStorage.removeItem(CLE);
 });
 
-video.addEventListener("ended", () => {
-  bouton.innerHTML = "Rejouer";
+// Rafraîchir la page
+document.querySelector("#btn-rafraichir").addEventListener("click", () => {
+  location.reload();
 });

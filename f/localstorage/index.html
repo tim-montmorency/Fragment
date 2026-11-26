@@ -10,24 +10,36 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body class="flex items-center justify-center">
-  <div class="min-h-screen grid place-items-center font-sans">
-    <main class="w-[90vw] max-w-2xl">
-      <video id="film" class="block w-full max-h-[70vh] rounded-t-lg">
-        <source
-          src="https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.webm"
-          type="video/webm"
-        />
-      </video>
+  <div class="min-h-screen flex items-center justify-center p-4">
+    <div class="card bg-base-100 shadow-xl w-full max-w-md">
+      <div class="card-body gap-4">
+        <fieldset class="fieldset">
+          <legend class="fieldset-legend">Nom</legend>
+          <input
+            type="text"
+            id="nom"
+            class="input w-full"
+            placeholder="Écrire un nom…"
+          />
+        </fieldset>
 
-      <div class="flex items-center gap-4 p-4 bg-black/50 rounded-b-lg">
-        <button id="lecture" class="px-4 py-2 rounded-full bg-red-600 text-white">
-          Jouer
-        </button>
-        <div class="flex-1 h-3 bg-white/30 rounded-full">
-          <div id="barre" class="w-0 h-full bg-red-600 rounded-full"></div>
+        <div class="flex flex-wrap gap-2">
+          <button id="btn-enregistrer" class="btn btn-success">
+            Enregistrer la valeur
+          </button>
+          <button id="btn-supprimer" class="btn btn-error">
+            Supprimer la valeur
+          </button>
+          <button id="btn-rafraichir" class="btn btn-outline">
+            Rafraîchir la page
+          </button>
+        </div>
+
+        <div id="etat" role="status" class="alert alert-soft">
+          <span id="etat-texte"></span>
         </div>
       </div>
-    </main>
+    </div>
   </div>
 
   <script src="script.js"></script>
