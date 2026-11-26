@@ -7,7 +7,7 @@ const etatTexte = document.querySelector("#etat-texte");
 
 // Au chargement de la page :
 // Met le contenu de la clé localstorage nom dans le champ
-// champ.value = localStorage.getItem(CLE);
+champ.value = localStorage.getItem(CLE);
 
 // Enregistrer
 document.querySelector("#btn-enregistrer").addEventListener("click", () => {
