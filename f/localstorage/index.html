@@ -13,15 +13,15 @@
   <div class="min-h-screen flex items-center justify-center p-4">
     <div class="card bg-base-100 shadow-xl w-full max-w-md">
       <div class="card-body gap-4">
-        <fieldset class="fieldset">
-          <legend class="fieldset-legend">Nom</legend>
+        <label class="floating-label">
           <input
             type="text"
             id="nom"
-            class="input w-full"
-            placeholder="Écrire un nom…"
+            class="input input-xs sm:input-sm md:input-md lg:input-lg xl:input-xl"
+            value="Placeholder"
           />
-        </fieldset>
+          <span>Nom</span>
+        </label>
 
         <div class="flex flex-wrap gap-2">
           <button id="btn-enregistrer" class="btn btn-success">
@@ -29,10 +29,6 @@
           </button>
           <button id="btn-supprimer" class="btn btn-error">Supprimer</button>
           <button id="btn-rafraichir" class="btn btn-outline">Rafraîchir</button>
-        </div>
-
-        <div id="etat" role="status" class="alert alert-soft">
-          <span id="etat-texte"></span>
         </div>
       </div>
     </div>
